@@ -1,0 +1,11 @@
+.downloadManager {
+    background-color: steelblue;
+}
+
+.packList {
+    list-style-type: none;
+}
+
+.packList label {
+    font-weight: bold;
+}
