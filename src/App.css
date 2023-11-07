@@ -1,0 +1,78 @@
+.filters {
+    display: flex;
+    gap: 1em;
+    padding: 1em;
+}
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, calc(150px + .5rem));
+    justify-content: center;
+}
+
+.card {
+    margin: .5rem;
+    box-sizing: border-box;
+    border-radius: 1rem;
+    max-width: 100%;
+    display: flex;
+    gap: 1em;
+    align-items: flex-start;
+    flex-direction: row;
+    grid-column: span 2;
+}
+
+.card.horizontal {
+    flex-direction: column;
+    grid-column: span 3;
+    place-self: center;
+}
+
+.card-content {
+    overflow-x: auto;
+}
+
+.card-content,
+.card-image {
+    width: 300px;
+}
+
+.horizontal .card-content,
+.horizontal .card-image {
+    width: 419px;
+}
+
+.card-image {
+    border-radius: 1rem;
+    aspect-ratio: 300/419;
+}
+
+.horizontal .card-image {
+    aspect-ratio: 419/300;
+}
+
+img {
+    box-sizing: border-box;
+    display: block;
+    max-width: 100%;
+}
+
+.card {
+    position: relative;
+}
+
+
+.card__actions {
+    transition: opacity 400ms ease-in-out;
+    opacity: 0;
+    top: 0;
+    right: 1em;
+    position: absolute;
+    transition: opacity 400ms ease-in-out, top 200ms ease-in;
+}
+
+.card:hover .card__actions {
+    top: 1em;
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 400ms, opacity 400ms ease-in-out, top 400ms ease-in;
+}
