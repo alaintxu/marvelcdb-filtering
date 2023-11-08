@@ -20,6 +20,11 @@ jobs:
         run: npm i
       - name: Build NPM
         run: npm run build
+            - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: react-page
+          path: public
       - run: echo "🍏 This job's status is ${{ job.status }}."
   deploy:
     needs: build
