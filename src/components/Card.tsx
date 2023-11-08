@@ -67,29 +67,53 @@ const Card = ({ card }: Props) => {
   const modal_data_id = `modal-${card.code}-data`;
   return (
     <div className={`card ${additionalClass}`}>
-      <CardImage card={card} flipped={flipped} />
-      <div className="card__actions">
-        <button
-          className="btn btn-info me-1"
-          title="Mostrar información adicional"
-          type="button"
-          data-bs-toggle="modal"
-          data-bs-target={`#${modal_data_id}`}>
-          <BsInfo />
-        </button>
-        <button
-          className={`btn btn-secondary me-1`}
-          title="Mostrar datos en crudo (JSON)"
-          type="button"
-          data-bs-toggle="modal"
-          data-bs-target={`#${modal_json_id}`}>
-          <BsFiletypeJson />
-        </button>
-        <button
-          className={`btn btn-${flipped ? "dark" : "light"} me-1`}
-          onClick={() => setFlipped((prev) => !prev)}>
-          <BsPhoneFlip />
-        </button>
+      <CardImage card={card} flipped={flipped} horizontal={additionalClass.includes("horizontal")} />
+      <div className="card__content">
+        <header>
+          <span className="card__name">
+            <a
+              href={card.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Abre '${card.name}' en MarvelCDB (pestaña nueva)`}>
+              {card.name}
+            </a>
+          </span>
+          <span className="card__actions">
+            <button
+              className="btn btn-info me-1"
+              title="Mostrar información adicional"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target={`#${modal_data_id}`}>
+              <BsInfo />
+            </button>
+            <button
+              className={`btn btn-secondary me-1`}
+              title="Mostrar datos en crudo (JSON)"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target={`#${modal_json_id}`}>
+              <BsFiletypeJson />
+            </button>
+            <button
+              className={`btn btn-${flipped ? "dark" : "light"} me-1`}
+              onClick={() => setFlipped((prev) => !prev)}
+              title="Gira la carta">
+              <BsPhoneFlip />
+            </button>
+          </span>
+        </header>
+        <main>
+          {card.traits && <span className="badge bg-dark">
+            {card.traits}
+          </span>}
+          {card.text && <div
+            className="card__data__text"
+            dangerouslySetInnerHTML={{ __html: card.text }}
+            style={{ borderColor: String(card.meta?.colors?.[0]) || 'black' }}>
+          </div>}
+        </main>
       </div>
       <Modal title={`Carta: ${card.name}`} modal_id={modal_data_id}>
         <p>code: {card.code} </p>
