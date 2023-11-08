@@ -20,7 +20,7 @@ jobs:
         run: npm i
       - name: Build NPM
         run: npm run build
-            - name: Archive code coverage results
+      - name: Archive code coverage results
         uses: actions/upload-artifact@v3
         with:
           name: react-page
