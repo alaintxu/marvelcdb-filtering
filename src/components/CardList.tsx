@@ -48,6 +48,14 @@ const getUniqueCodeNameArray = (cards: MCCard[], key: keyof MCCard, value: keyof
 
 const cardsPerPage: number = 12;
 
+type FieldsType = {
+  "pack": CodeName[]
+  "type": CodeName[]
+  "card_set": CodeName[]
+  "faction": CodeName[]
+  "cars_set_type_name": CodeName[]
+}
+
 const CardList = () => {
   const [cards] = useLocalStorage<MCCard[]>("cards", []);
 
@@ -56,7 +64,7 @@ const CardList = () => {
 
   // Filters
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const fields = {
+  const fields:FieldsType = {
     "pack": getUniqueCodeNameArray(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
     "type": getUniqueCodeNameArray(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard),
     "card_set": getUniqueCodeNameArray(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard),
@@ -133,7 +141,7 @@ const CardList = () => {
                 <span className='filter__label'>{field_key}</span>
                 <MultiselectFilter
                   title={field_key}
-                  options={fields[field_key].map((item) => { return { value: item.code, label: item.name } })}
+                  options={(fields[field_key as keyof FieldsType]).map((item) => { return { value: item.code, label: item.name } })}
                   onChange={(options) => filterFieldChanged(`${field_key}_code` as keyof MCCard, options)}
                 />
               </label>
@@ -146,7 +154,7 @@ const CardList = () => {
         <h1>
           Listado de cartas &nbsp;
           <span className='badge text-dark bg-light'>
-            {visibleFirstCardIndex}-{Math.min(...[visibleLastCardIndex, filteredCards.length])}/{filteredCards.length}
+            {visibleFirstCardIndex + 1}-{Math.min(...[visibleLastCardIndex, filteredCards.length])}/{filteredCards.length}
           </span>
         </h1>
         <div className='p-3'>

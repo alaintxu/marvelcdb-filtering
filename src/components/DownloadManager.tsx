@@ -128,6 +128,7 @@ const DownloadManager = () => {
               }} />
             <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
               {pack.name}
+              {loadingPacks.includes(pack.code) && <span className='ms-3'>loading...</span>}
               {packStatus && <span className='ms-3'>
                 <span className='badge bg-light text-dark' title='Fecha de descarga'>{new Date(packStatus.lastDownload).toLocaleString('es-ES')}</span>
                 <span className='badge bg-dark mx-1' title='Número de cartas'>{packStatus.numberOfCards}</span>
