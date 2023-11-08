@@ -43,6 +43,7 @@ const Modal = ({ children, modal_id, title, onCancel, onAccept }: Props) => {
             {onAccept && <button
               type="button"
               className="btn btn-primary"
+              data-bs-dismiss="modal"
               onClick={() => onAccept()}>
               Seguir
             </button>

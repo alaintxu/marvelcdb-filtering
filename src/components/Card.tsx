@@ -22,6 +22,7 @@ export type MCCard = {
   real_name: string,
   text?: string,
   real_text?: string,
+  back_text?: string,
   quantity?: number,
   hand_size?: number,
   health?: number,
@@ -40,6 +41,7 @@ export type MCCard = {
     offset?: string
   },
   flavor?: string,
+  back_flavor?: string,
   is_unique?: boolean,
   hidden?: boolean,
   permanent?: boolean,
@@ -108,11 +110,11 @@ const Card = ({ card }: Props) => {
           {card.traits && <span className="badge bg-dark">
             {card.traits}
           </span>}
-          {card.text && <div
+          <div
             className="card__data__text"
-            dangerouslySetInnerHTML={{ __html: card.text }}
+            dangerouslySetInnerHTML={{ __html: !flipped ? card.text || "" : card.back_text || "" }}
             style={{ borderColor: String(card.meta?.colors?.[0]) || 'black' }}>
-          </div>}
+          </div>
         </main>
       </div>
       <Modal title={`Carta: ${card.name}`} modal_id={modal_data_id}>

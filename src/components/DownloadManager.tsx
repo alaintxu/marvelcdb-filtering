@@ -92,6 +92,7 @@ const DownloadManager = () => {
           Descargar todos
         </ModalButton>
         <Modal title="Descargar todos los packs" modal_id='modal-select-all' onAccept={async () => {
+          removeAllCards();
           for (const pack of packs) await getPackCards(pack.code);
           console.log("packStatusList", packStatusList);
         }}>
