@@ -24,7 +24,8 @@ type Props = {
   filters: CardFilter[],
   filterText: string,
   onMultiselectFilterChanged: (name: string, selected: string[]) => void
-  onTextFilterChanged: (text: string) => void
+  onTextFilterChanged: (text: string) => void,
+  onFilterReset?: () => void
 }
 
 
@@ -52,7 +53,8 @@ const Filters = ({
   filters,
   filterText,
   onMultiselectFilterChanged,
-  onTextFilterChanged
+  onTextFilterChanged,
+  onFilterReset
 }: Props) => {
   const fields: FieldsType = {
     "pack": getUniqueCodeNameArray(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
@@ -68,7 +70,7 @@ const Filters = ({
     <div className='row'>
       <div className='col-12'>
         <div
-          className="input-group mb-3"
+          className="input-group"
           key="texto">
           <label
             className="input-group-text bg-dark text-light"
@@ -88,7 +90,7 @@ const Filters = ({
       {field_keys.map((field_key) => {
         const selected:CardFilter = filters.filter(
           (filter) => `${field_key}_code` == filter.field
-        )[0];
+        )[0];  // @ToDo: This is not removed.
         return (
           <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
             <span className='filter__label'>{field_key}</span>
@@ -101,6 +103,15 @@ const Filters = ({
           </label>
         )
       })}
+      <div className='col-12'>
+        <button
+          className="btn btn-danger mt-4"
+          onClick={() => {
+            if(onFilterReset) onFilterReset();
+          }}>
+          Borrar filtros
+        </button>
+      </div>
     </div>
   )
 }

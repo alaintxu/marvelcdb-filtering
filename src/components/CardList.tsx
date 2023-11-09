@@ -79,7 +79,11 @@ const CardList = () => {
             filters={filters}
             filterText={filterText}
             onTextFilterChanged={(text) => setFilterText(text)} 
-            onMultiselectFilterChanged={(name, options) => filterFieldChanged(name as keyof MCCard, options)}/>
+            onMultiselectFilterChanged={(name, options) => filterFieldChanged(name as keyof MCCard, options)}
+            onFilterReset={() => {
+              setFilterText("");
+              setFilters([]);
+            }}/>
         </>}
       </section>
       <section className='container bg-dark text-light'>
