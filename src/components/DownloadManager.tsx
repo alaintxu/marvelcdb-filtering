@@ -2,8 +2,7 @@ import { useState } from 'react';
 import usePacks from '../hooks/usePacks';
 import { useLocalStorage } from 'usehooks-ts';
 import { MCCard } from './Card';
-import ModalButton from './ModalButton';
-import Modal from './Modal';
+import { Modal, ModalButton } from './Modal';
 
 type PackStatus = {
   code: string,

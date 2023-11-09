@@ -1,7 +1,7 @@
-import { MCCard } from "./Card";
+import { MCCard } from ".";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import lazyHorizontal from '../assets/mc-lazy-horizontal.webp';
-import lazyVertical from '../assets/mc-lazy-vertical.webp';
+import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
+import lazyVertical from '../../assets/mc-lazy-vertical.webp';
 
 type Props = {
   card: MCCard,

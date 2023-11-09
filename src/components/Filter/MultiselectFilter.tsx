@@ -1,14 +1,16 @@
 import { CSSProperties } from 'react';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { CardFilter } from './Filters';
 
-export type Option = {
+export type OptionType = {
   value: string
   label: string
 }
 
 type Props = {
-  options: Option[],
+  options: readonly OptionType[],
+  selected?: CardFilter,
   title?: string,
   onChange: (selected: string[]) => void
 }
@@ -25,8 +27,16 @@ const style: { [key: string]: CSSProperties } = {
 
 const animatedComponents = makeAnimated();
 
-const MultiselectFilter = ({ options, title, onChange }: Props) => {
+const MultiselectFilter = ({ options, title, onChange, selected }: Props) => {
   const id = `select-${title}`;
+
+  const selectedOptions = options.filter((option) => selected?.values.includes(option.value));
+  const handleChangeChange = (options: MultiValue<OptionType>) => {
+    const selectedOptions = options.map((option) => option.value);
+    if (onChange) {
+      onChange(selectedOptions);
+    }
+  }
   return (
     <div>
       <label style={style.label} id="aria-label" htmlFor={`#${id}`}>
@@ -36,17 +46,14 @@ const MultiselectFilter = ({ options, title, onChange }: Props) => {
       <Select
         id={title}
         options={options}
+        defaultValue={selectedOptions}
         placeholder={title}
         components={animatedComponents}
         isMulti
         name="colors"
         className="basic-multi-select"
         classNamePrefix="select"
-        onChange={(options) => {
-          if (onChange) {
-            onChange((options as Option[]).map((option) => option.value));
-          }
-        }} />
+        onChange={(options) => handleChangeChange(options)} />
     </div >
   )
 }

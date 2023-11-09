@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CardImage from "./CardImage"
-import Modal from "./Modal"
+import { Modal } from "../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsInfo } from "react-icons/bs";
 
 export type MCCard = {
