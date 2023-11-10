@@ -1,10 +1,8 @@
-import { useLocalStorage } from 'usehooks-ts';
 import { Card, MCCard } from './Card';
 import { useState } from 'react';
-import { BsArrowsCollapse, BsArrowsExpand, BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
+import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 
 import { ReactBSPagination } from '@draperez/react-components';
-import { Filters } from './Filter';
 import { CardFilter } from './Filter/Filters';
 
 // Defines the fields where text will be search on text filter
