@@ -6,57 +6,50 @@
 
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, calc(150px + .5rem));
+    grid-template-columns: 1fr;
     justify-content: center;
+    align-items: center;
+    gap: 1em;
+
+    @media (width > 800px) {
+        grid-template-columns: repeat(auto-fill, calc(419px));
+    }
 }
 
 .card {
-    margin: .5rem;
+    margin: auto;
     box-sizing: border-box;
     border-radius: 1rem;
     align-items: flex-start;
     flex-direction: row;
-    grid-column: span 2;
-}
 
-.card,
-.card__image {
     width: 300px;
+    max-width: 100%;
     aspect-ratio: 300/419;
+
+    &.horizontal {
+        width: 419px;
+        aspect-ratio: 419/300;
+    }
 }
 
-.card.horizontal {
-    grid-column: span 3;
-}
-
-.card.horizontal,
-.card.horizontal .card__image {
-    width: 419px;
-    aspect-ratio: 419/300;
-}
-
-.card-content {
-    overflow-x: auto;
-}
-
-.card-content,
-.card__image {
-    width: 300px;
-}
-
-.horizontal .card-content,
-.horizontal .card__image {
-    width: 419px;
-}
-
-.card__image {
+.card__image, .card__content {
     border-radius: 1rem;
-    aspect-ratio: 300/419;
-    transition: 400ms filter linear;
+    width: 100%;
+    height: 100%;
 }
 
-.horizontal .card__image {
-    aspect-ratio: 419/300;
+
+.card__content {
+    position: absolute;
+    top: 0;
+    left:0;
+    right: 0;
+    bottom: 0;
+}
+
+.card__image {
+    transition: 400ms filter linear;
 }
 
 img {
@@ -74,7 +67,7 @@ img {
     transition: 400ms filter linear;
 }
 
-.card__content > header {
+.card__content>header {
     opacity: 0;
     left: 1em;
     right: 1em;
@@ -100,7 +93,7 @@ img {
     font-weight: bold;
 }
 
-.card__content > main {
+.card__content>main {
     opacity: 0;
     bottom: 0;
     left: 1em;
@@ -113,16 +106,17 @@ img {
     gap: 0.5em;
 }
 
-.card:hover > .card__content > * {
+.card:hover>.card__content>* {
     visibility: visible;
     opacity: 1;
     transition: visibility 400ms, opacity 400ms ease-in-out, top 400ms ease-in, bottom 400ms ease-in;
 }
 
-.card:hover > .card__content > header {
+.card:hover>.card__content>header {
     top: 1em;
 }
-.card:hover > .card__content > main {
+
+.card:hover>.card__content>main {
     bottom: 2em;
 }
 

@@ -97,6 +97,7 @@ const CardList = () => {
           <ReactBSPagination
             totalPages={totalPages}
             currentPage={currentPage}
+            buttonSize='sm'
             onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
         </div>
         <div className="card-grid">
@@ -106,6 +107,7 @@ const CardList = () => {
           <ReactBSPagination
             totalPages={totalPages}
             currentPage={currentPage}
+            buttonSize='sm'
             onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
         </div>
       </section>

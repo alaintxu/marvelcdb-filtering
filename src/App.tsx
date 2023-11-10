@@ -7,7 +7,7 @@ import { BsCloudArrowDown, BsCloudSlash } from 'react-icons/bs';
 function App() {
   const [showDM, setShowDM] = useState(false);
   return (
-    <div className="container bg-dark text-light">
+    <div className="container-fluid bg-dark text-light">
       <button
         className={`btn btn-${showDM ? 'primary' : 'secondary'} my-3`}
         onClick={() => setShowDM((prev) => !prev)}>
