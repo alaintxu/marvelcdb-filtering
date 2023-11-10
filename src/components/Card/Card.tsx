@@ -55,21 +55,25 @@ export type MCCard = {
 }
 
 type Props = {
-  card: MCCard
+  card: MCCard,
+  showCardData?: boolean
 }
 
-const Card = ({ card }: Props) => {
+const Card = ({ card, showCardData = false }: Props) => {
   const [flipped, setFlipped] = useState(false);
-  const additionalClass = [
-    "main_scheme",
-    "side_scheme",
-    "player_side_scheme"
-  ].includes(card.type_code) ? "horizontal" : "";
+
+  const isHorizontal = ["main_scheme","side_scheme","player_side_scheme"].includes(card.type_code);
+
+  const classNames = [
+    "card",
+    isHorizontal ? "card--horizontal" : "",
+    showCardData ? "card--show-data" : ""
+  ]
   const modal_json_id = `modal-${card.code}-json`;
   const modal_data_id = `modal-${card.code}-data`;
   return (
-    <div className={`card ${additionalClass}`}>
-      <CardImage card={card} flipped={flipped} horizontal={additionalClass.includes("horizontal")} />
+    <div className={classNames.join(" ")}>
+      <CardImage card={card} flipped={flipped} horizontal={isHorizontal} />
       <div className="card__content">
         <header>
           <span className="card__name">

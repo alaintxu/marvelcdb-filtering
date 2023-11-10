@@ -1,7 +1,7 @@
 import { useLocalStorage } from 'usehooks-ts';
 import { Card, MCCard } from './Card';
 import { useState } from 'react';
-import { BsArrowsCollapse, BsArrowsExpand } from 'react-icons/bs';
+import { BsArrowsCollapse, BsArrowsExpand, BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 
 import { ReactBSPagination } from '@draperez/react-components';
 import { Filters } from './Filter';
@@ -26,6 +26,9 @@ const CardList = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Status
+  const [showAllCardData, setShowAllCardData] = useState(false);
 
   // Filters
   const [filtersVisible, setFiltersVisible] = useState(false);
@@ -66,7 +69,16 @@ const CardList = () => {
   )
 
   return (
-    <div>
+    <>
+      <button
+        className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
+        onClick={() => setShowAllCardData((prev) => !prev)}>
+        {showAllCardData ? <>
+          <BsFillEyeSlashFill /> Esconder datos
+        </> : <>
+          <BsFillEyeFill /> Mostrar datos
+        </>}
+      </button>
       <section className='container bg-dark text-light py-3'>
         <h3 onClick={() => setFiltersVisible((prev) => !prev)} role='button'>
           Filtros {filtersVisible ? <BsArrowsCollapse /> : <BsArrowsExpand />}
@@ -78,12 +90,12 @@ const CardList = () => {
             cards={cards}
             filters={filters}
             filterText={filterText}
-            onTextFilterChanged={(text) => setFilterText(text)} 
+            onTextFilterChanged={(text) => setFilterText(text)}
             onMultiselectFilterChanged={(name, options) => filterFieldChanged(name as keyof MCCard, options)}
             onFilterReset={() => {
               setFilterText("");
               setFilters([]);
-            }}/>
+            }} />
         </>}
       </section>
       <section className='container bg-dark text-light'>
@@ -101,7 +113,7 @@ const CardList = () => {
             onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
         </div>
         <div className="card-grid">
-          {paginatedCards.map((card: MCCard) => <Card card={card} key={card.code} />)}
+          {paginatedCards.map((card: MCCard) => <Card showCardData={showAllCardData} card={card} key={card.code} />)}
         </div>
         <div className='p-3'>
           <ReactBSPagination
@@ -111,7 +123,7 @@ const CardList = () => {
             onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
         </div>
       </section>
-    </div>
+    </>
   )
 }
 
