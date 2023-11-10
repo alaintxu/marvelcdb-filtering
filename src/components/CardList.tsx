@@ -62,9 +62,9 @@ const CardList = ({ cards, filters, filterText }: Props) => {
         className={`position-absolute top-0 end-0 btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
         onClick={() => setShowAllCardData((prev) => !prev)}>
         {showAllCardData ? <>
-          <BsFillEyeSlashFill /> Esconder datos
+          <BsFillEyeSlashFill title="Esconder datos"/>
         </> : <>
-          <BsFillEyeFill /> Mostrar datos
+          <BsFillEyeFill title="Mostrar datos"/>
         </>}
       </button>
       <h1>
