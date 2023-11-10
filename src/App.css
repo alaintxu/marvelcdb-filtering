@@ -4,6 +4,15 @@ img {
     max-width: 100%;
 }
 
+#root {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+#root > main {
+    overflow-y: auto;
+}
+
 .filters {
     display: flex;
     gap: 1em;

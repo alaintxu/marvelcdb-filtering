@@ -67,52 +67,55 @@ const Filters = ({
   const field_keys = Object.keys(fields);
 
   return (
-    <div className='row'>
-      <div className='col-12'>
-        <div
-          className="input-group"
-          key="texto">
-          <label
-            className="input-group-text bg-dark text-light"
-            htmlFor="input-filter-text">
-            Texto
-          </label>
-          <input
-            type="text"
-            value={filterText}
-            className='form-control'
-            id="input-filter-text"
-            onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
-          />
+    <>
+      <h1 className="my-3">Filtros</h1>
+      <div className='row'>
+        <div className='col-12'>
+          <div
+            className="input-group"
+            key="texto">
+            <label
+              className="input-group-text bg-dark text-light"
+              htmlFor="input-filter-text">
+              Texto
+            </label>
+            <input
+              type="text"
+              value={filterText}
+              className='form-control'
+              id="input-filter-text"
+              onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
+            />
+          </div>
+        </div>
+
+        {field_keys.map((field_key) => {
+          const selected: CardFilter = filters.filter(
+            (filter) => `${field_key}_code` == filter.field
+          )[0];  // @ToDo: This is not removed.
+          return (
+            <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
+              <span className='filter__label'>{field_key}</span>
+              <MultiselectFilter
+                title={field_key}
+                selected={selected}
+                options={(fields[field_key as keyof FieldsType]).map((item) => { return { value: item.code, label: item.name } })}
+                onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
+              />
+            </label>
+          )
+        })}
+        <div className='col-12'>
+          <button
+            className="btn btn-danger mt-4"
+            onClick={() => {
+              if (onFilterReset) onFilterReset();
+            }}>
+            Borrar filtros
+          </button>
         </div>
       </div>
-
-      {field_keys.map((field_key) => {
-        const selected:CardFilter = filters.filter(
-          (filter) => `${field_key}_code` == filter.field
-        )[0];  // @ToDo: This is not removed.
-        return (
-          <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
-            <span className='filter__label'>{field_key}</span>
-            <MultiselectFilter
-              title={field_key}
-              selected={selected}
-              options={(fields[field_key as keyof FieldsType]).map((item) => { return { value: item.code, label: item.name } })}
-              onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
-            />
-          </label>
-        )
-      })}
-      <div className='col-12'>
-        <button
-          className="btn btn-danger mt-4"
-          onClick={() => {
-            if(onFilterReset) onFilterReset();
-          }}>
-          Borrar filtros
-        </button>
-      </div>
-    </div>
+    </>
   )
 }
 

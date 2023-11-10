@@ -73,71 +73,73 @@ const DownloadManager = () => {
   }
 
   return (
-    <section>
-      <h2>
+    <>
+      <h1 className="my-3">
         Packs descargados:
         {" "}
         <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
         /
         <span className='badge bg-light text-dark'>{packs.length}</span>
-      </h2>
-      <h3>
+      </h1>
+      <h2>
         Cartas descargadas
         {" "}
         <span className='badge bg-info'>{cards.length}</span>
-      </h3>
-      <div>
+      </h2>
+      <div className='d-flex justify-content-center'>
         <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
           Descargar todos
         </ModalButton>
-        <Modal title="Descargar todos los packs" modal_id='modal-select-all' onAccept={async () => {
-          removeAllCards();
-          for (const pack of packs) await getPackCards(pack.code);
-          console.log("packStatusList", packStatusList);
-        }}>
-          <p>¿Estas seguro de que quieres <b>descargar todos los packs</b>?</p>
-          <p>Esto descargara <b>todas las cartas</b> de la web de <a href='https;//es.marvelcdb.com'>MarvelCDB</a> a tu navegador.</p>
-          <p>Ejecuta esta acción <b>lo menos podible</b> para no saturar la web.</p>
-        </Modal>
 
         <ModalButton className='btn btn-danger me-1' modal_id='modal-remove-all'>
           Borrar todos
         </ModalButton>
-        <Modal
-          title="Borrar todos los packs"
-          modal_id='modal-remove-all'
-          onAccept={removeAllCards}>
-          <p>¿Estas seguro de que quieres <b>borrar todos los packs</b>?</p>
-          <p>Esto borrará <b>todas las cartas</b> de tu navegador.</p>
-        </Modal>
       </div>
-      <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-        {packs.map(pack => {
-          const id = "checkbox-" + pack.code;
-          const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
-          return <>
-            <input
-              type="checkbox"
-              className="btn-check"
-              id={id}
-              checked={packStatus !== undefined}
-              onChange={async (event) => {
-                if (event.currentTarget.checked) await getPackCards(pack.code)
-                else removePack(pack.code)
-              }} />
-            <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
-              {pack.name}
-              {loadingPacks.includes(pack.code) && <span className='ms-3'>loading...</span>}
-              {packStatus && <span className='ms-3'>
-                <span className='badge bg-light text-dark' title='Fecha de descarga'>{new Date(packStatus.lastDownload).toLocaleString('es-ES')}</span>
-                <span className='badge bg-dark mx-1' title='Número de cartas'>{packStatus.numberOfCards}</span>
-                <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>Re-descargar</button>
-              </span>}
-            </label>
-          </>;
-        })}
+      <div className='d-flex justify-content-center py-4'>
+        <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
+          {packs.map(pack => {
+            const id = "checkbox-" + pack.code;
+            const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
+            return <>
+              <input
+                type="checkbox"
+                className="btn-check"
+                id={id}
+                checked={packStatus !== undefined}
+                onChange={async (event) => {
+                  if (event.currentTarget.checked) await getPackCards(pack.code)
+                  else removePack(pack.code)
+                }} />
+              <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
+                {pack.name}
+                {loadingPacks.includes(pack.code) && <span className='ms-3'>loading...</span>}
+                {packStatus && <span className='ms-3'>
+                  <span className='badge bg-light text-dark' title='Fecha de descarga'>{new Date(packStatus.lastDownload).toLocaleString('es-ES')}</span>
+                  <span className='badge bg-dark mx-1' title='Número de cartas'>{packStatus.numberOfCards}</span>
+                  <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>Re-descargar</button>
+                </span>}
+              </label>
+            </>;
+          })}
+        </div>
       </div>
-    </section>
+      <Modal
+        title="Borrar todos los packs"
+        modal_id='modal-remove-all'
+        onAccept={removeAllCards}>
+        <p>¿Estas seguro de que quieres <b>borrar todos los packs</b>?</p>
+        <p>Esto borrará <b>todas las cartas</b> de tu navegador.</p>
+      </Modal>
+      <Modal title="Descargar todos los packs" modal_id='modal-select-all' onAccept={async () => {
+        removeAllCards();
+        for (const pack of packs) await getPackCards(pack.code);
+        console.log("packStatusList", packStatusList);
+      }}>
+        <p>¿Estas seguro de que quieres <b>descargar todos los packs</b>?</p>
+        <p>Esto descargara <b>todas las cartas</b> de la web de <a href='https;//es.marvelcdb.com'>MarvelCDB</a> a tu navegador.</p>
+        <p>Ejecuta esta acción <b>lo menos podible</b> para no saturar la web.</p>
+      </Modal>
+    </>
   )
 }
 
