@@ -72,6 +72,7 @@ const Card = ({ card, showCardData = false }: Props) => {
   const modal_json_id = `modal-${card.code}-json`;
   const modal_data_id = `modal-${card.code}-data`;
   return (
+  <>
     <div className={classNames.join(" ")}>
       <CardImage card={card} flipped={flipped} horizontal={isHorizontal} />
       <div className="card__content">
@@ -121,7 +122,9 @@ const Card = ({ card, showCardData = false }: Props) => {
           </div>
         </main>
       </div>
-      <Modal title={`Carta: ${card.name}`} modal_id={modal_data_id}>
+    </div>
+
+    <Modal title={`Carta: ${card.name}`} modal_id={modal_data_id}>
         <p>code: {card.code} </p>
         <p>faction_code: {card.faction_code} </p>
         <p>pack_code: {card.pack_code} </p>
@@ -131,7 +134,7 @@ const Card = ({ card, showCardData = false }: Props) => {
       <Modal title="JSON" modal_id={modal_json_id}>
         <pre><code>{JSON.stringify(card, undefined, 2)}</code></pre>
       </Modal>
-    </div>
+    </>
   )
 }
 
