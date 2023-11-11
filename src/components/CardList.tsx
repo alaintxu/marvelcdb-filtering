@@ -17,14 +17,13 @@ const textFilterFields = [
   'real_traits'
 ];
 
-const cardsPerPage: number = 12;
-
 type Props = {
   cards: MCCard[],
   filters: CardFilter[],
   filterText: string,
+  cardsPerPage: number
 }
-const CardList = ({ cards, filters, filterText }: Props) => {
+const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);

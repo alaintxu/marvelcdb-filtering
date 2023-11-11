@@ -30,6 +30,7 @@ const navigationOptions: Option[] = [
 
 type Props = {
   selected: NavigationOptionsKey,
+  active: boolean,
   onClick: (newSelected: NavigationOptionsKey) => void
 }
 
@@ -38,7 +39,7 @@ const groupStyle = {
   backgroundColor: "black"
 }
 
-const Navigation = ({ selected, onClick }: Props) => {
+const Navigation = ({ selected, active, onClick }: Props) => {
 
   return (
     <nav style={groupStyle}>
@@ -49,6 +50,7 @@ const Navigation = ({ selected, onClick }: Props) => {
             key={navigationOption.key}
             type="button"
             className={`btn btn-${isCurrent ? '' : 'outline-'}secondary ${isCurrent ? 'active' : ''}`}
+            disabled={!active}
             onClick={() => {
               if (onClick) onClick(navigationOption.key)
             }}>

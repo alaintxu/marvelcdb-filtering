@@ -23,6 +23,8 @@ type Props = {
   cards: MCCard[],
   filters: CardFilter[],
   filterText: string,
+  cardsPerPage: number,
+  cardsPerPageChanged: (newCardsPerPage: number) => void,
   onMultiselectFilterChanged: (name: string, selected: string[]) => void
   onTextFilterChanged: (text: string) => void,
   onFilterReset?: () => void
@@ -52,6 +54,8 @@ const Filters = ({
   cards,
   filters,
   filterText,
+  cardsPerPage,
+  cardsPerPageChanged,
   onMultiselectFilterChanged,
   onTextFilterChanged,
   onFilterReset
@@ -68,6 +72,27 @@ const Filters = ({
 
   return (
     <>
+
+      <div className='row'>
+        <div className='col-8 col-md-6 col-xl-3'>
+          <div
+            className="input-group"
+            key="texto">
+            <label
+              className="input-group-text bg-dark text-light"
+              htmlFor="input-cards-per-page">
+              Cartas por página
+            </label>
+            <input
+              type="number"
+              value={cardsPerPage}
+              className='form-control'
+              id="input-cards-per-page"
+              onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
+            />
+          </div>
+        </div>
+      </div>
       <h1 className="my-3">Filtros</h1>
       <div className='row'>
         <div className='col-12'>
