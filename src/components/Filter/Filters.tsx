@@ -65,7 +65,7 @@ const Filters = ({
     "type": getUniqueCodeNameArray(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard),
     "card_set": getUniqueCodeNameArray(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard),
     "faction": getUniqueCodeNameArray(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard),
-    "card_set_type_name": getUniqueCodeNameArray(cards, 'cars_set_type_name' as keyof MCCard, 'cars_set_type_name' as keyof MCCard)
+    "card_set_type_name": getUniqueCodeNameArray(cards, 'card_set_type_name' as keyof MCCard, 'card_set_type_name' as keyof MCCard)
   }
 
   const field_keys = Object.keys(fields);
