@@ -10,6 +10,8 @@ export type MCCard = {
   type_name: string,
   faction_code: string,
   faction_name: string,
+  duplicate_of_code?: string,
+  duplicate_of_name?: string,
   card_set_code: string,
   card_set_name: string,
   card_set_type_name_code: string,
