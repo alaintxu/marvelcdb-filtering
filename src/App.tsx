@@ -6,6 +6,7 @@ import Navigation, { NavigationOptionsKey } from "./components/Navigation";
 import { Filters } from "./components/Filter";
 import { MCCard } from "./components/Card";
 import { CardFilter } from "./components/Filter/Filters";
+import { FilterStatus } from "./components/Filter/MultiselectFilter";
 
 
 function App() {
@@ -27,14 +28,19 @@ function App() {
     localStorage.setItem("cards_per_page", String(cardsPerPage));
   }, [cardsPerPage]);
 
-  const filterFieldChanged = (field: keyof MCCard, values: string[]) => {
+  const filterStatusChanged = (field: keyof MCCard, newStatus: FilterStatus) => {
     const tmpFilter = [...filters.filter((f) => f.field !== field)]
   
-    if (values.length == 0) return setFilters(tmpFilter);
+    if (newStatus.selected.length == 0) return setFilters(tmpFilter);
   
     setFilters([
       ...tmpFilter,
-      { field: field, values: [...values] }
+      {
+        field: field,
+        filterStatus: {
+          selected: [...newStatus.selected],
+          isAnd: newStatus.isAnd
+        } }
     ])
   }
   
@@ -54,7 +60,7 @@ function App() {
             cardsPerPage={cardsPerPage}
             cardsPerPageChanged={(newCardsPerPage) => setCardsPerPage(newCardsPerPage)}
             onTextFilterChanged={(text) => setFilterText(text)}
-            onMultiselectFilterChanged={(name, options) => filterFieldChanged(name as keyof MCCard, options)}
+            onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(name as keyof MCCard, newFilterStatus)}
             onFilterReset={() => {
               setFilterText("");
               setFilters([]);

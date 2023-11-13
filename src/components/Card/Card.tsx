@@ -56,6 +56,9 @@ export type MCCard = {
   spoiler?: number
 }
 
+
+export type MCCardKeys = keyof MCCard;
+
 type Props = {
   card: MCCard,
   showCardData?: boolean

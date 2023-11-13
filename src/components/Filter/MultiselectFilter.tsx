@@ -1,18 +1,23 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import Select, { MultiValue } from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { CardFilter } from './Filters';
 
 export type OptionType = {
   value: string
   label: string
 }
 
+export type FilterStatus = {
+  selected: OptionType[],
+  isAnd: boolean
+}
+
 type Props = {
-  options: readonly OptionType[],
-  selected?: CardFilter,
+  options: OptionType[],
+  filterStatus: FilterStatus,
   title?: string,
-  onChange: (selected: string[]) => void
+  onChange: (newFilterStatus: FilterStatus) => void,
+  hasAndCheckbox?: boolean
 }
 
 const style: { [key: string]: CSSProperties } = {
@@ -27,33 +32,71 @@ const style: { [key: string]: CSSProperties } = {
 
 const animatedComponents = makeAnimated();
 
-const MultiselectFilter = ({ options, title, onChange, selected }: Props) => {
+const MultiselectFilter = ({ options, title, onChange, filterStatus, hasAndCheckbox = false }: Props) => {
   const id = `select-${title}`;
 
-  const selectedOptions = options.filter((option) => selected?.values.includes(option.value));
-  const handleChangeChange = (options: MultiValue<OptionType>) => {
-    const selectedOptions = options.map((option) => option.value);
-    if (onChange) {
-      onChange(selectedOptions);
-    }
+  const [isAnd, setIsAnd] = useState(filterStatus.isAnd);
+  const [selected, setSelected] = useState(filterStatus.selected);
+
+  const handleSelectChange = (options: MultiValue<OptionType>) => {
+    //const selectedOptions = options.map((option) => option as OptionType);
+    setSelected(options as OptionType[]);
+    if (onChange) onChange({
+      selected: options as OptionType[],
+      isAnd: isAnd
+    });
   }
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isAndSelected = event.target.id === `${id}-is-and`;
+    setIsAnd(isAndSelected);
+    if (onChange) onChange({
+      selected: [...selected],
+      isAnd: isAndSelected
+    })
+  }
+
   return (
     <div>
       <label style={style.label} id="aria-label" htmlFor={`#${id}`}>
         {title}
       </label>
+      <span className='d-flex align-items-center gap-1'>
+        <Select
+          id={title}
+          options={options}
+          defaultValue={selected}
+          placeholder={title}
+          components={animatedComponents}
+          isMulti
+          name="colors"
+          className="basic-multi-select flex-grow-1"
+          classNamePrefix="select"
+          onChange={handleSelectChange} />
+        {hasAndCheckbox &&
+          <>
+            <div className="btn-group" role="group">
+              <input
+                type="radio" 
+                className="btn-check" 
+                name={`${id}-is-and`}
+                id={`${id}-is-or`}
+                checked={!isAnd}
+                onChange={handleRadioChange}/>
+              <label className="btn btn-outline-light" htmlFor={`${id}-is-or`}>OR</label>
 
-      <Select
-        id={title}
-        options={options}
-        defaultValue={selectedOptions}
-        placeholder={title}
-        components={animatedComponents}
-        isMulti
-        name="colors"
-        className="basic-multi-select"
-        classNamePrefix="select"
-        onChange={(options) => handleChangeChange(options)} />
+              <input
+                type="radio" 
+                className="btn-check" 
+                name={`${id}-is-and`}
+                id={`${id}-is-and`}
+                checked={isAnd}
+                onChange={handleRadioChange}/>
+              <label className="btn btn-outline-light" htmlFor={`${id}-is-and`}>AND</label>
+            </div>
+          </>
+        }
+      </span>
     </div >
   )
 }

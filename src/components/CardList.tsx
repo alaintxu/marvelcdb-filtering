@@ -32,10 +32,21 @@ const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
   const [showAllCardData, setShowAllCardData] = useState(false);
 
   // Filters
+  const evaluateCarFiltering = (filter:CardFilter, card:MCCard):boolean => {
+    const filterValues = filter.filterStatus.selected.map((option) => option.value);
+    const cardValues = card[filter.field] as string[];
+
+
+    const filteredCardValues = filterValues.filter((filterValue) => cardValues.includes(filterValue));
+    if(filter.filterStatus.isAnd)
+      return filteredCardValues.length == filterValues.length;
+    else 
+      return filteredCardValues.length > 0;
+  }
 
   const filteredCards = cards.filter((card) => {
     for (const filter of filters)
-      if (!filter.values.includes(String(card[filter.field])))
+      if(!evaluateCarFiltering(filter, card))
         return false
 
 

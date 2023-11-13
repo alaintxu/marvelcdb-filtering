@@ -1,22 +1,18 @@
 import { MultiselectFilter } from "."
 import { MCCard } from "../Card"
+import { FilterStatus, OptionType } from "./MultiselectFilter"
 
-type CodeName = {
-  code: string,
-  name: string
-}
-
-type FieldsType = {
-  "pack": CodeName[]
-  "type": CodeName[]
-  "card_set": CodeName[]
-  "faction": CodeName[]
-  "card_set_type_name_code": CodeName[]
+type AllFieldOptions = {
+  "pack": OptionType[]
+  "type": OptionType[]
+  "card_set": OptionType[]
+  "faction": OptionType[]
+  "card_set_type_name_code": OptionType[]
 }
 
 export type CardFilter = {
   field: keyof MCCard,
-  values: string[]
+  filterStatus: FilterStatus
 }
 
 type Props = {
@@ -25,30 +21,29 @@ type Props = {
   filterText: string,
   cardsPerPage: number,
   cardsPerPageChanged: (newCardsPerPage: number) => void,
-  onMultiselectFilterChanged: (name: string, selected: string[]) => void
+  onMultiselectFilterChanged: (name: string, newFilterStatus: FilterStatus) => void
   onTextFilterChanged: (text: string) => void,
   onFilterReset?: () => void
 }
 
-
-
-const getUniqueCodeNameArray = (cards: MCCard[], key: keyof MCCard, value: keyof MCCard): CodeName[] => {
-  const allCodeNames: CodeName[] = cards.map((card) => {
+const getUniqueOptions = (cards: MCCard[], key: keyof MCCard, value: keyof MCCard): OptionType[] => {
+  const allOptionTypes: OptionType[] = cards.map((card) => {
     return {
-      code: String(card[key]) || `__`,
-      name: String(card[value] || `<Sin ${value}>`)
+      value: String(card[key]) || `__`,
+      label: String(card[value] || `<Sin ${value}>`)
     }
   });
 
-  const filteredCodeNameArray: CodeName[] = allCodeNames.filter(
+  const uniqueOptionTypes: OptionType[] = allOptionTypes.filter(
     (set, index, self) =>
       index === self.findIndex((t) => (
-        t.code === set.code
+        t.value === set.value
       ))
   );  // Filter repeated sets
 
-  return filteredCodeNameArray;
+  return uniqueOptionTypes;
 }
+
 
 const Filters = ({
   cards,
@@ -60,15 +55,15 @@ const Filters = ({
   onTextFilterChanged,
   onFilterReset
 }: Props) => {
-  const fields: FieldsType = {
-    "pack": getUniqueCodeNameArray(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
-    "type": getUniqueCodeNameArray(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard),
-    "card_set": getUniqueCodeNameArray(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard),
-    "faction": getUniqueCodeNameArray(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard),
-    "card_set_type_name_code": getUniqueCodeNameArray(cards, 'card_set_type_name_code' as keyof MCCard, 'card_set_type_name_code' as keyof MCCard)
-  }
 
-  const field_keys = Object.keys(fields);
+  const fieldOptions:AllFieldOptions = {
+    "pack": getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
+    "type": getUniqueOptions(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard),
+    "card_set": getUniqueOptions(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard),
+    "faction": getUniqueOptions(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard),
+    "card_set_type_name_code": getUniqueOptions(cards, 'card_set_type_name_code' as keyof MCCard, 'card_set_type_name_code' as keyof MCCard)
+  }
+  const field_keys = Object.keys(fieldOptions);
 
   return (
     <>
@@ -76,7 +71,7 @@ const Filters = ({
       <div className='row'>
         <div className='col-8 col-md-6 col-xl-3'>
           <div
-            className="input-group"
+            className="input-group mt-3"
             key="texto">
             <label
               className="input-group-text bg-dark text-light"
@@ -115,16 +110,23 @@ const Filters = ({
         </div>
 
         {field_keys.map((field_key) => {
-          const selected: CardFilter = filters.filter(
-            (filter) => `${field_key}_code` == filter.field
-          )[0];  // @ToDo: This is not removed.
+          const options:OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
+          const currentFilter:CardFilter = filters.filter((filter) => filter.field == field_key)[0] || {
+            field: field_key as keyof MCCard,
+            filterStatus: {
+              selected: [],
+              isAnd: false
+            }
+          };
+
           return (
             <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
               <span className='filter__label'>{field_key}</span>
               <MultiselectFilter
                 title={field_key}
-                selected={selected}
-                options={(fields[field_key as keyof FieldsType]).map((item) => { return { value: item.code, label: item.name } })}
+                filterStatus={currentFilter.filterStatus}
+                options={options}
+                hasAndCheckbox={false}
                 onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
               />
             </label>
@@ -139,6 +141,10 @@ const Filters = ({
             Borrar filtros
           </button>
         </div>
+        {/*
+        <pre><code>{JSON.stringify(filterText, undefined, 2)}</code></pre>
+        <pre><code>{JSON.stringify(filters, undefined, 2)}</code></pre>
+          */}
       </div>
     </>
   )
