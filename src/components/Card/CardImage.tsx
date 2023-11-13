@@ -5,13 +5,12 @@ import lazyVertical from '../../assets/mc-lazy-vertical.webp';
 
 type Props = {
   card: MCCard,
-  flipped: boolean,
   horizontal?: boolean
 }
 
 const marvelcdb_basepath = "https://es.marvelcdb.com";
 
-const CardImage = ({ card, flipped, horizontal }: Props) => {
+const CardImage = ({ card, horizontal }: Props) => {
 
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
 
@@ -35,16 +34,29 @@ const CardImage = ({ card, flipped, horizontal }: Props) => {
 
   }
   return (
-    <LazyLoadImage
-      className={`card__image ${card.type_code}`}
-      src={!flipped ? getFrontImageSrc() : getBackImageSrc()}
-      alt={card.name + " card's front image"}
-      placeholderSrc={placeholderImage}
-      loading="lazy"
-      width={horizontal ? "419px" : "300px"}
-      height={horizontal ? "300px" : "419px"}
-      effect="blur"
-    />
+    <>
+      <LazyLoadImage
+        className={`card__image front-image ${card.type_code}`}
+        src={getFrontImageSrc()}
+        alt={card.name + " card's front image"}
+        placeholderSrc={placeholderImage}
+        loading="lazy"
+        width={horizontal ? "419px" : "300px"}
+        height={horizontal ? "300px" : "419px"}
+        effect="blur"
+      />
+
+      <LazyLoadImage
+        className={`card__image back-image ${card.type_code}`}
+        src={getBackImageSrc()}
+        alt={card.name + " card's back image"}
+        placeholderSrc={placeholderImage}
+        loading="lazy"
+        width={horizontal ? "419px" : "300px"}
+        height={horizontal ? "300px" : "419px"}
+        effect="blur"
+      />
+    </>
   )
 }
 

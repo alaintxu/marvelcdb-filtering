@@ -1,7 +1,8 @@
 import { useState } from "react";
 import CardImage from "./CardImage"
 import { Modal } from "../Modal"
-import { BsFiletypeJson, BsPhoneFlip, BsInfo } from "react-icons/bs";
+import { BsFiletypeJson, BsPhoneFlip, BsPersonFill } from "react-icons/bs";
+import comicWebp from "../../assets/comic.webp";
 
 export type MCCard = {
   pack_code: string,
@@ -22,6 +23,8 @@ export type MCCard = {
   code: string,
   name: string,
   real_name: string,
+  subname?: string,
+  cost?: number,
   text?: string,
   real_text?: string,
   back_text?: string,
@@ -32,6 +35,8 @@ export type MCCard = {
   thwart?: number,
   attack?: number,
   defense?: number,
+  threat?: number,
+  base_threat?: number,
   base_threat_fixed?: boolean,
   escalation_threat_fixed?: boolean,
   threat_fixed?: boolean,
@@ -67,75 +72,136 @@ type Props = {
 const Card = ({ card, showCardData = false }: Props) => {
   const [flipped, setFlipped] = useState(false);
 
-  const isHorizontal = ["main_scheme","side_scheme","player_side_scheme"].includes(card.type_code);
+  const isHorizontal = ["main_scheme", "side_scheme", "player_side_scheme"].includes(card.type_code);
 
   const classNames = [
     "card",
+    flipped ? "card--flipped" : "",
     isHorizontal ? "card--horizontal" : "",
     showCardData ? "card--show-data" : ""
   ]
   const modal_json_id = `modal-${card.code}-json`;
-  const modal_data_id = `modal-${card.code}-data`;
   return (
-  <>
-    <div className={classNames.join(" ")}>
-      <CardImage card={card} flipped={flipped} horizontal={isHorizontal} />
-      <div className="card__content">
-        <header>
-          <span className="card__name">
-            <a
-              href={card.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={`Abre '${card.name}' en MarvelCDB (pestaña nueva)`}>
-              {card.name}
-            </a>
-          </span>
-          <span className="card__actions">
-            <button
-              className="btn btn-info me-1"
-              title="Mostrar información adicional"
-              type="button"
-              data-bs-toggle="modal"
-              data-bs-target={`#${modal_data_id}`}>
-              <BsInfo />
-            </button>
-            <button
-              className={`btn btn-secondary me-1`}
-              title="Mostrar datos en crudo (JSON)"
-              type="button"
-              data-bs-toggle="modal"
-              data-bs-target={`#${modal_json_id}`}>
-              <BsFiletypeJson />
-            </button>
-            <button
-              className={`btn btn-${flipped ? "dark" : "light"} me-1`}
-              onClick={() => setFlipped((prev) => !prev)}
-              title="Gira la carta">
-              <BsPhoneFlip />
-            </button>
-          </span>
-        </header>
-        <main>
-          {card.traits && <span className="badge bg-dark">
-            {card.traits}
-          </span>}
-          <div
-            className="card__data__text"
-            dangerouslySetInnerHTML={{ __html: !flipped ? card.text || "" : card.back_text || "" }}
-            style={{ borderColor: String(card.meta?.colors?.[0]) || 'black' }}>
-          </div>
-        </main>
-      </div>
-    </div>
+    <>
+      <div className={classNames.join(" ")}>
+        <CardImage card={card} horizontal={isHorizontal} />
+        <div className="card__content">
+          <header>
+            <div className="d-flex justify-content-between gap-1 mb-1">
+              {card.cost !== undefined &&
+                <span className="card__cost shadowed">
+                  {card.cost}
+                </span>
+              }
+              {card.threat !== undefined && card.threat > 0 &&
+                <span className="card__threat shadowed">
+                  {card.threat}
+                  {card.threat_fixed !== undefined && card.threat_fixed == false && <BsPersonFill title={`${card.threat} por jugador`} />}
+                </span>
+              }
+              <span className="card__name shadowed flex-grow-1" style={{ backgroundImage: comicWebp }}>
+                <a
+                  href={card.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Abre '${card.name}' en MarvelCDB (pestaña nueva)`}>
+                  {card.name}
+                </a>
+              </span>
+            </div>
+            <span className="card__actions d-flex justify-content-end gap-1">
+              <button
+                className={`btn btn-secondary shadowed`}
+                title="Mostrar datos en crudo (JSON)"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target={`#${modal_json_id}`}>
+                <BsFiletypeJson />
+              </button>
+              <button
+                className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
+                onClick={() => setFlipped((prev) => !prev)}
+                title="Gira la carta">
+                <BsPhoneFlip />
+              </button>
+            </span>
+          </header>
+          <main className="d-flex flex-column gap-1 align-items-center">
+            {!flipped ? <>
 
-    <Modal title={`Carta: ${card.name}`} modal_id={modal_data_id}>
-        <p>code: {card.code} </p>
-        <p>faction_code: {card.faction_code} </p>
-        <p>pack_code: {card.pack_code} </p>
-        <p>name: {card.name} </p>
-        <p>card_set_type_name_code: {card.card_set_type_name_code} </p>
-      </Modal>
+              {card.traits && <span className="d-flex gap-1">
+                {card.traits.split(". ").map((trait) =>
+                  <span className="badge bg-dark shadowed">
+                    {trait}
+                  </span>
+                )}
+              </span>}
+
+              {card.text &&
+                <div
+                  className="card__data__text shadowed"
+                  dangerouslySetInnerHTML={{ __html: card.text }}
+                  style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
+                  title="Texto">
+                </div>
+              }
+              {card.flavor &&
+                <i 
+                  className="border rounded bg-light text-dark p-1 mx-3 shadowed" 
+                  style={{ fontSize: "0.75em" }} 
+                  dangerouslySetInnerHTML={{ __html: card.flavor }}
+                  title="Texto de ambientación"></i>
+              }
+
+              {card.base_threat !== undefined && card.base_threat > 0 &&
+                <span className="card__threat shadowed" title="Amenaza base">
+                  {card.base_threat}
+                  {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <BsPersonFill title={`${card.base_threat} por jugador`} />}
+                </span>
+              }
+            </> : <>
+
+              {card.linked_card?.traits && <span className="d-flex gap-1">
+                {card.linked_card?.traits.split(". ").map((trait) =>
+                  <span className="badge bg-dark shadowed">
+                    {trait}
+                  </span>
+                )}
+              </span>}
+              {card.back_text &&
+                <div
+                  className="card__data__text shadowed"
+                  dangerouslySetInnerHTML={{ __html: card.back_text }}
+                  style={{ fontSize: "0.9em",  borderColor: String(card.meta?.colors?.[0]) || 'black' }}
+                  title="Texto">
+                </div>
+              }
+              {card.linked_card?.text &&
+                <div
+                  className="card__data__text shadowed"
+                  dangerouslySetInnerHTML={{ __html: card.linked_card.text }}
+                  style={{ fontSize: "0.9em",  borderColor: String(card.meta?.colors?.[0]) || 'black' }}
+                  title="Texto">
+                </div>
+              }
+
+              {card.linked_card?.flavor &&
+                <i 
+                  className="border rounded bg-light text-dark p-1 mx-3 shadowed" 
+                  style={{ fontSize: "0.75em" }} 
+                  dangerouslySetInnerHTML={{ __html: card.linked_card.flavor }}
+                  title="Texto de ambientación"></i>
+              }
+            </>}
+
+
+
+
+
+          </main>
+        </div>
+      </div>
+
       <Modal title="JSON" modal_id={modal_json_id}>
         <pre><code>{JSON.stringify(card, undefined, 2)}</code></pre>
       </Modal>
