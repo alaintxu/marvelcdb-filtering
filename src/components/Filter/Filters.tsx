@@ -93,6 +93,7 @@ const Filters = ({
       <h1 className="my-3">{t('filters')}</h1>
       <div className='row'>
         <div className='col-12'>
+          {/* @ToDo: text as multiselect filter without options */}
           <div
             className="input-group"
             key="texto">
