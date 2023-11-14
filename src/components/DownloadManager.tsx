@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import usePacks from '../hooks/usePacks';
 import { MCCard } from './Card';
 import { Modal, ModalButton } from './Modal';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   cards: MCCard[],
@@ -14,7 +15,10 @@ type PackStatus = {
   numberOfCards: number
 }
 
-const DownloadManager = ({cards, setCards}: Props) => {
+const langs = ['en', 'es', 'fr', 'de', 'it', 'ko'];
+
+const DownloadManager = ({ cards, setCards }: Props) => {
+  const { t, i18n } = useTranslation('global');
   const { packs, error } = usePacks();
   const [packStatusList, setPackStatusList] = useState<PackStatus[]>(JSON.parse(localStorage.getItem('pack_status') || "[]"));
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
@@ -27,11 +31,11 @@ const DownloadManager = ({cards, setCards}: Props) => {
 
   const getPackCards = async (packCode: string) => {
     console.debug("getCards", packCode);
-    setLoadingPacks((prevLoadingPacks)      => [...prevLoadingPacks, packCode]);  // Set pack loading
-    setPackStatusList((prevPackStatusList)  => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
-    setCards((previousCards)                => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
+    setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
+    setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
+    setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
 
-    const response = await fetch('https://es.marvelcdb.com/api/public/cards/' + packCode + '.json');
+    const response = await fetch(t('base_path')+'/api/public/cards/' + packCode + '.json');
     const data = await response.json();
 
     console.debug("retrieved data", data);
@@ -42,7 +46,7 @@ const DownloadManager = ({cards, setCards}: Props) => {
       // sort by date
       const unorderedCards = [...previousCards, ...duplicateFilteredData];
       const orderedCards = unorderedCards.sort((aCard, bCard) => aCard.code.localeCompare(bCard.code));
-      return  orderedCards;
+      return orderedCards;
     });
     setPackStatusList((prevPackStatusList) => [...prevPackStatusList, {
       code: packCode,
@@ -78,26 +82,39 @@ const DownloadManager = ({cards, setCards}: Props) => {
 
   return (
     <>
-      <h1 className="my-3" style={{textAlign: 'center'}}>
-        Packs descargados:
+      <h1 className="my-3" style={{ textAlign: 'center' }}>
+        {t('downloaded_packs')}:
         {" "}
         <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
         /
         <span className='badge bg-light text-dark'>{packs.length}</span>
       </h1>
-      <h2 style={{textAlign: 'center'}}>
-        Cartas descargadas
+      <h2 style={{ textAlign: 'center' }}>
+        {t('downloaded_cards')}:
         {" "}
         <span className='badge bg-info'>{cards.length}</span>
       </h2>
-      
       <div className='d-flex justify-content-center'>
+        <div className="input-group mb-3" style={{width: '400px', maxWidth: "90%"}}>
+          <label className="input-group-text" htmlFor="langSelect">{t('language')}</label>
+          <select
+            className="form-select"
+            id="langSelect"
+            onChange={(event) => i18n.changeLanguage(event.target.value)}>
+            {langs.map((lang) => <>
+              <option value={lang} selected={i18n.language == lang}>{t('lang.' + lang)}</option>
+            </>)}
+          </select>
+        </div>
+      </div>
+      <div className='d-flex justify-content-center'>
+
         <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
-          Descargar todos
+          {t('download_all')}
         </ModalButton>
 
         <ModalButton className='btn btn-danger me-1' modal_id='modal-remove-all'>
-          Borrar todos
+          {t('remove_all')}
         </ModalButton>
       </div>
       <div className='d-flex justify-content-center py-4'>
@@ -128,6 +145,7 @@ const DownloadManager = ({cards, setCards}: Props) => {
           })}
         </div>
       </div>
+      {/* @ToDo: modal text from i18n */}
       <Modal
         title="Borrar todos los packs"
         modal_id='modal-remove-all'

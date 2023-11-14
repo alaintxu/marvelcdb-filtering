@@ -1,0 +1,29 @@
+{
+  "base_path": "https://es.marvelcdb.com",
+  "card_list": "Listado de cartas",
+  "card_set": "Conjunto de cartas",
+  "card_set_type_name_code": "Nombre de tipo de conjunto de cartas",
+  "cards_per_page": "Cartas por página",
+  "close": "Cerrar",
+  "continue": "Seguir",
+  "download_all": "Descargar todos",
+  "download_manager": "Gestor de descargas",
+  "downloaded_cards": "Cartas descargadas",
+  "downloaded_packs": "Packs descargados",
+  "faction": "Aspecto",
+  "filters": "Filtros",
+  "pack": "Pack",
+  "remove_all": "Borrar todos",
+  "reset_filters": "Borrar filtros",
+  "text": "Texto",
+  "type": "Tipo",
+  "language": "Idioma",
+  "lang": {
+    "en": "Inglés",
+    "es": "Español",
+    "fr": "Francés",
+    "de": "Alemán",
+    "it": "Italiano",
+    "ko": "Koreano"
+  }
+}

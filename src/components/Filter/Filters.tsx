@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { MultiselectFilter } from "."
 import { MCCard } from "../Card"
 import { FilterStatus, OptionType } from "./MultiselectFilter"
@@ -55,6 +56,7 @@ const Filters = ({
   onTextFilterChanged,
   onFilterReset
 }: Props) => {
+  const { t } = useTranslation('global');  // 'global' says that we are looking for a file named global.json
 
   const fieldOptions:AllFieldOptions = {
     "pack": getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
@@ -76,7 +78,7 @@ const Filters = ({
             <label
               className="input-group-text bg-dark text-light"
               htmlFor="input-cards-per-page">
-              Cartas por página
+              {t('cards_per_page')}
             </label>
             <input
               type="number"
@@ -88,7 +90,7 @@ const Filters = ({
           </div>
         </div>
       </div>
-      <h1 className="my-3">Filtros</h1>
+      <h1 className="my-3">{t('filters')}</h1>
       <div className='row'>
         <div className='col-12'>
           <div
@@ -97,7 +99,7 @@ const Filters = ({
             <label
               className="input-group-text bg-dark text-light"
               htmlFor="input-filter-text">
-              Texto
+              {t('text')}
             </label>
             <input
               type="text"
@@ -123,7 +125,7 @@ const Filters = ({
             <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
               <span className='filter__label'>{field_key}</span>
               <MultiselectFilter
-                title={field_key}
+                title={t(field_key)}
                 filterStatus={currentFilter.filterStatus}
                 options={options}
                 hasAndCheckbox={false}
@@ -138,7 +140,7 @@ const Filters = ({
             onClick={() => {
               if (onFilterReset) onFilterReset();
             }}>
-            Borrar filtros
+            {t('reset_filters')}
           </button>
         </div>
         {/*

@@ -4,6 +4,7 @@ import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 
 import { ReactBSPagination } from '@draperez/react-components';
 import { CardFilter } from './Filter/Filters';
+import { useTranslation } from 'react-i18next';
 
 // Defines the fields where text will be search on text filter
 const textFilterFields = [
@@ -24,6 +25,7 @@ type Props = {
   cardsPerPage: number
 }
 const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
+  const {t} = useTranslation('global');
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,7 +80,7 @@ const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
         </>}
       </button>
       <h1>
-        Listado de cartas &nbsp;
+        {t('card_list')} &nbsp;
         <span className='badge text-dark bg-light'>
           {visibleFirstCardIndex + 1}-{Math.min(...[visibleLastCardIndex, filteredCards.length])}/{filteredCards.length}
         </span>

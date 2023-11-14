@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 
@@ -6,27 +7,8 @@ export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
 
 type Option = {
   key: NavigationOptionsKey,
-  name: string,
   icon: ReactNode
 }
-
-const navigationOptions: Option[] = [
-  {
-    key: "download_manager",
-    name: "Gestor de descargas",
-    icon: <BsCloudArrowDown />,
-  },
-  {
-    key: "card_list",
-    name: "Lista de cartas",
-    icon: <BsPersonBadge />,
-  },
-  {
-    key: "filters",
-    name: "Filtros",
-    icon: <BsFunnel />,
-  },
-]
 
 type Props = {
   selected: NavigationOptionsKey,
@@ -40,6 +22,23 @@ const groupStyle = {
 }
 
 const Navigation = ({ selected, active, onClick }: Props) => {
+  const { t } = useTranslation('global');
+
+
+  const navigationOptions: Option[] = [
+    {
+      key: "download_manager",
+      icon: <BsCloudArrowDown />,
+    },
+    {
+      key: "card_list",
+      icon: <BsPersonBadge />,
+    },
+    {
+      key: "filters",
+      icon: <BsFunnel />,
+    },
+  ]
 
   return (
     <nav style={groupStyle}>
@@ -54,7 +53,7 @@ const Navigation = ({ selected, active, onClick }: Props) => {
             onClick={() => {
               if (onClick) onClick(navigationOption.key)
             }}>
-            {navigationOption.icon} {navigationOption.name}
+            {navigationOption.icon} {t(navigationOption.key)}
           </button>
         })}
       </div>

@@ -15,6 +15,7 @@ export interface Pack {
 }
 
 const usePacks = () => {
+  // @ToDo: change to fetch API and get base_path as parameter
   const [packs, setGames] = useState<Pack[]>([]);
   const [error, setError] = useState('');
   useEffect(() => {
