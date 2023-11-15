@@ -9,7 +9,12 @@ const CardList = ({ cards, showAllCardData }: Props) => {
 
   return (
       <div className="card-grid">
-        {cards.map((card: MCCard) => <Card showCardData={showAllCardData} card={card} key={card.code} />)}
+        {cards.map((card: MCCard) => 
+          <Card
+            showCardData={showAllCardData} 
+            card={card}
+            key={`card-${card.code}`} />
+        )}
       </div>
   )
 }

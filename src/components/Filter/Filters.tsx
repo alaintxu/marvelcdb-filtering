@@ -68,79 +68,73 @@ const Filters = ({
   const field_keys = Object.keys(fieldOptions);
 
   return (
-    <>
-      <section id="filters" className="p-3 bg-dark shadow">
-        <div
-          className="input-group"
-          key="texto">
-          <label
-            className="input-group-text bg-dark text-light"
-            htmlFor="input-cards-per-page">
-            {t('cards_per_page')}
-          </label>
-          <input
-            type="number"
-            value={cardsPerPage}
-            className='form-control'
-            id="input-cards-per-page"
-            onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
-          />
-        </div>
-        <h1 className="my-3">{t('filters')}</h1>
-        {/* @ToDo: text as multiselect filter without options */}
-        <div
-          className="input-group"
-          key="texto">
-          <label
-            className="input-group-text bg-dark text-light"
-            htmlFor="input-filter-text">
-            {t('text')}
-          </label>
-          <input
-            type="text"
-            value={filterText}
-            className='form-control'
-            id="input-filter-text"
-            onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
-          />
-        </div>
+    <section id="filters" className="bg-dark shadow d-flex flex-column p-3">
+      <div className="input-group">
+        <label
+          className="input-group-text bg-dark text-light"
+          htmlFor="input-cards-per-page">
+          {t('cards_per_page')}
+        </label>
+        <input
+          type="number"
+          value={cardsPerPage}
+          className='form-control'
+          id="input-cards-per-page"
+          onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
+        />
+      </div>
+      <h1 className="my-3">{t('filters')}</h1>
+      {/* @ToDo: text as multiselect filter without options */}
+      <div className="input-group">
+        <label
+          className="input-group-text bg-dark text-light"
+          htmlFor="input-filter-text">
+          {t('text')}
+        </label>
+        <input
+          type="text"
+          value={filterText}
+          className='form-control'
+          id="input-filter-text"
+          onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
+        />
+      </div>
 
-        {field_keys.map((field_key) => {
-          const options: OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
-          const currentFilter: CardFilter = filters.filter((filter) => filter.field == field_key)[0] || {
-            field: field_key as keyof MCCard,
-            filterStatus: {
-              selected: [],
-              isAnd: false
-            }
-          };
+      {field_keys.map((field_key) => {
+        const options: OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
+        const currentFilter: CardFilter = filters.filter((filter) => filter.field == field_key)[0] || {
+          field: field_key as keyof MCCard,
+          filterStatus: {
+            selected: [],
+            isAnd: false
+          }
+        };
 
-          return (
-            <label className='text-dark' title={field_key} key={field_key}>
-              <span className='filter__label'>{field_key}</span>
-              <MultiselectFilter
-                title={t(field_key)}
-                filterStatus={currentFilter.filterStatus}
-                options={options}
-                hasAndCheckbox={false}
-                onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
-              />
-            </label>
-          )
-        })}
-        <button
-          className="btn btn-danger mt-4"
-          onClick={() => {
-            if (onFilterReset) onFilterReset();
-          }}>
-          {t('reset_filters')}
-        </button>
-        {/*
+        return (
+          <label className='text-dark' title={field_key} key={field_key}>
+            <span className='filter__label'>{field_key}</span>
+            <MultiselectFilter
+              title={t(field_key)}
+              filterStatus={currentFilter.filterStatus}
+              options={options}
+              hasAndCheckbox={false}
+              onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
+            />
+          </label>
+        )
+      })}
+      <button
+        className="btn btn-danger mt-4"
+        onClick={() => {
+          if (onFilterReset) onFilterReset();
+        }}>
+        {t('reset_filters')}
+      </button>
+      {/*
             <pre><code>{JSON.stringify(filterText, undefined, 2)}</code></pre>
             <pre><code>{JSON.stringify(filters, undefined, 2)}</code></pre>
           */}
-      </section>
-    </>
+    </section>
   )
 }
 

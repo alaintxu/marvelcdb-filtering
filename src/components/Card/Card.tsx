@@ -83,7 +83,7 @@ const Card = ({ card, showCardData = false }: Props) => {
   const modal_json_id = `modal-${card.code}-json`;
   return (
     <>
-      <div className={classNames.join(" ")}>
+      <div className={classNames.join(" ")} title={`card-div-${card.code}`} key={`card-div-${card.code}`} >
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="card__content">
           <header>
@@ -193,16 +193,11 @@ const Card = ({ card, showCardData = false }: Props) => {
                   title="Texto de ambientación"></i>
               }
             </>}
-
-
-
-
-
           </main>
         </div>
       </div>
 
-      <Modal title="JSON" modal_id={modal_json_id}>
+      <Modal title="JSON" modal_id={modal_json_id} key={`card-modal-${card.code}`} >
         <pre><code>{JSON.stringify(card, undefined, 2)}</code></pre>
       </Modal>
     </>

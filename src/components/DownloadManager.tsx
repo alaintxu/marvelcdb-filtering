@@ -31,15 +31,12 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   if (error) return (<p>{error}</p>);
 
   const getPackCards = async (packCode: string) => {
-    console.debug("getCards", packCode);
     setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
     setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
     setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
 
     const response = await fetch(t('base_path') + '/api/public/cards/' + packCode + '.json');
     const data = await response.json();
-
-    console.debug("retrieved data", data);
 
     setCards((previousCards) => {
       // Remove duplicated cards
@@ -63,13 +60,11 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   }
 
   const removePackStatus = (packCode: string) => {
-    console.debug("removePackStatus", packCode);
     setPackStatusList((prevState) => prevState.filter((packStatus) => packStatus.code !== packCode));
 
   }
 
   const removeAllCards = () => {
-    console.debug("removeAllCards");
     setCards([]);
     setPackStatusList([]);
   }
@@ -104,9 +99,15 @@ const DownloadManager = ({ cards, setCards }: Props) => {
             <select
               className="form-select"
               id="langSelect"
-              onChange={(event) => i18n.changeLanguage(event.target.value)}>
+              onChange={(event) => i18n.changeLanguage(event.target.value)}
+              value={langs.includes(i18n.language) ? i18n.language : langs[0]}>
               {langs.map((lang) => <>
-                <option value={lang} selected={i18n.language == lang}>{t('lang.' + lang)}</option>
+                <option
+                  value={lang} 
+                  key={`langSelect+${lang}`}
+                  >
+                    {t('lang.' + lang)}
+                </option>
               </>)}
             </select>
           </div>
@@ -134,8 +135,12 @@ const DownloadManager = ({ cards, setCards }: Props) => {
                   onChange={async (event) => {
                     if (event.currentTarget.checked) await getPackCards(pack.code)
                     else removePack(pack.code)
-                  }} />
-                <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
+                  }}
+                  key={`download-manager-input-${id}`}/>
+                <label
+                  className="btn btn-outline-primary d-flex justify-content-between align-items-center"
+                  htmlFor={id}
+                  key={`download-manager-label-${id}`}>
                   <span style={{ textAlign: "left" }}>{pack.name}</span>
 
                   {loadingPacks.includes(pack.code) ?
@@ -179,7 +184,6 @@ const DownloadManager = ({ cards, setCards }: Props) => {
       <Modal title="Descargar todos los packs" modal_id='modal-select-all' onAccept={async () => {
         removeAllCards();
         for (const pack of packs) getPackCards(pack.code);
-        console.log("packStatusList", packStatusList);
       }}>
         <p>¿Estas seguro de que quieres <b>descargar todos los packs</b>?</p>
         <p>Esto descargara <b>todas las cartas</b> de la web de <a href='https;//es.marvelcdb.com'>MarvelCDB</a> a tu navegador.</p>

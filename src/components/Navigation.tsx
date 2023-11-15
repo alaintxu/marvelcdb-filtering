@@ -39,11 +39,15 @@ const Navigation = ({ selected, active, onClick }: Props) => {
     <nav id="main-navigation">
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
         {navigationOptions.map((navigationOption) => {
-          const isCurrent: boolean = navigationOption.key == selected;
+          const isActive: boolean = navigationOption.key == 'card_list' || navigationOption.key == selected;
           return <button
-            key={navigationOption.key}
+            key={`navigation-${navigationOption.key}`}
             type="button"
-            className={`btn btn-${isCurrent ? '' : 'outline-'}secondary ${isCurrent ? 'active' : ''}`}
+            className={`
+              btn 
+              btn-${isActive ? '' : 'outline-'}light 
+              ${isActive ? 'active' : ''}
+            `}
             disabled={!active}
             onClick={() => {
               if (onClick) onClick(navigationOption.key)

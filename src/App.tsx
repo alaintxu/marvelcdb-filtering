@@ -155,7 +155,12 @@ function App() {
         buttonSize='sm'
         onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
       </div>
-      <Navigation selected={selectedNavigationItem} active={cards.length > 0} onClick={(item) => setSelectedNavigationItem(item)} />
+      <Navigation
+        selected={selectedNavigationItem} 
+        active={cards.length > 0} 
+        onClick={(item) => setSelectedNavigationItem(
+          (previousItem) => previousItem == item ? 'card_list' : item
+        )} />
     </>
   )
 }
