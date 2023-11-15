@@ -1,0 +1,45 @@
+{
+  "base_path": "https://es.marvelcdb.com",
+  "card_list": "Listado de cartas",
+  "card_set": "Conjunto de cartas",
+  "card_set_type_name_code": "Nombre de tipo de conjunto de cartas",
+  "cards_per_page": "Cartas por página",
+  "close": "Cerrar",
+  "continue": "Seguir",
+  "download_all": "Descargar todos",
+  "download_manager": "Gestor de descargas",
+  "downloaded_cards": "Cartas descargadas",
+  "downloaded_packs": "Packs descargados",
+  "faction": "Aspecto",
+  "filters": "Filtros",
+  "pack": "Pack",
+  "remove_all": "Borrar todos",
+  "reset_filters": "Borrar filtros",
+  "text": "Texto",
+  "type": "Tipo",
+  "language": "Idioma",
+  "language-redownload": "Cambiar el idioma no redescarga las cartas.",
+  "lang": {
+    "en": "Inglés",
+    "es": "Español",
+    "fr": "Francés",
+    "de": "Alemán",
+    "it": "Italiano",
+    "ko": "Koreano"
+  },
+  "title": {
+    "redownload": "Volver a descargar",
+    "number_of_cards": "Número de cartas",
+    "download_date": "Fecha de descarga"
+  },
+  "modal": {
+    "delete_all_packs": {
+      "title": "Borrar todos los packs",
+      "content": "<p>¿Estas seguro de que quieres <b>borrar todos los packs</b>?</p><p>Esto borrará <b>todas las cartas</b> de tu navegador.</p>"
+    },
+    "download_all_packs": {
+      "title":  "Descargar todos los packs",
+      "content": "<p>¿Estas seguro de que quieres <b>descargar todos los packs</b>?</p><p>Esto descargara <b>todas las cartas</b> de <a href='https://es.marvelcdb.com'>MarvelCDB</a> a tu navegador.</p><p>Ejecuta esta acción <b>lo menos podible</b> para no saturar la web.</p>"
+    }
+  }
+}

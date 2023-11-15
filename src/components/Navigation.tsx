@@ -13,10 +13,11 @@ type Option = {
 type Props = {
   selected: NavigationOptionsKey,
   active: boolean,
+  filterNumber?: number,
   onClick: (newSelected: NavigationOptionsKey) => void
 }
 
-const Navigation = ({ selected, active, onClick }: Props) => {
+const Navigation = ({ selected, active, onClick, filterNumber = 0 }: Props) => {
   const { t } = useTranslation('global');
 
 
@@ -53,6 +54,12 @@ const Navigation = ({ selected, active, onClick }: Props) => {
               if (onClick) onClick(navigationOption.key)
             }}>
             {navigationOption.icon} {t(navigationOption.key)}
+            {navigationOption.key == "filters" && filterNumber>0 && <>
+                &nbsp;
+                <span className='badge bg-secondary'>
+                  {filterNumber}
+                </span>
+            </>}
           </button>
         })}
       </div>

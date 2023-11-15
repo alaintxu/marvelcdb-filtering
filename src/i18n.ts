@@ -1,12 +1,15 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import global_en from "./translations/en/global.json";
 import LanguageDetector from 'i18next-browser-languagedetector';
-import global_es from "./translations/es/global.json";
+import resourcesToBackend from 'i18next-resources-to-backend';
+
+export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
+export const I18N_NAMESPACES = ['global', 'multiselect_filter'];
 
 i18n
   .use(initReactI18next)
   .use(LanguageDetector)
+  .use(resourcesToBackend((language:string, namespace:string) => import(`./locales/${language}/${namespace}.json`)))
   .init({
     detection: {
       // order and from where user language should be detected
@@ -15,16 +18,21 @@ i18n
       lookupQuerystring: 'i18n-lang',
       lookupLocalStorage: 'i18n-lang',
     },
-    debug: true,
-    fallbackLng: 'en',
-    resources: {
-      en: {
-        global: global_en
-      },
-      es: {
-        global: global_es
-      }
-    },
+    debug: false,
+    fallbackLng: I18N_LANGS[0],
   });
+/*
+I18N_LANGS.map((lang) => 
+  I18N_NAMESPACES.map((namespace) => {
+    console.log("addResourceBundle",lang, namespace);
+    i18n.addResourceBundle(
+      lang,
+      namespace, 
+      import(`./translations/${lang}/${namespace}.json`)
+    );
+    }
+  )
+);*/
+
 
 export default i18n;

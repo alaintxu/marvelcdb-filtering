@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   children: React.ReactNode,
@@ -9,6 +10,7 @@ type Props = {
 }
 
 const Modal = ({ children, modal_id, title, onCancel, onAccept }: Props) => {
+  const {t} = useTranslation('modal');
   const label_id = modal_id + "-label";
   return (<>
     <div className="modal fade text-dark"
@@ -26,7 +28,7 @@ const Modal = ({ children, modal_id, title, onCancel, onAccept }: Props) => {
               type="button"
               className="btn-close"
               data-bs-dismiss="modal"
-              aria-label="Close">
+              aria-label={t('close')}>
             </button>
           </div>
           <div className="modal-body">
@@ -38,14 +40,14 @@ const Modal = ({ children, modal_id, title, onCancel, onAccept }: Props) => {
               className="btn btn-secondary"
               data-bs-dismiss="modal"
               onClick={() => { if (onCancel) onCancel() }}>
-              Cerrar
+              {t('close')}
             </button>
             {onAccept && <button
               type="button"
               className="btn btn-primary"
               data-bs-dismiss="modal"
               onClick={() => onAccept()}>
-              Seguir
+              {t('continue')}
             </button>
             }
           </div>

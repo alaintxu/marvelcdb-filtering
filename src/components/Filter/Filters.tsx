@@ -19,11 +19,9 @@ export type CardFilter = {
 type Props = {
   cards: MCCard[],
   filters: CardFilter[],
-  filterText: string,
   cardsPerPage: number,
   cardsPerPageChanged: (newCardsPerPage: number) => void,
   onMultiselectFilterChanged: (name: string, newFilterStatus: FilterStatus) => void
-  onTextFilterChanged: (text: string) => void,
   onFilterReset?: () => void
 }
 
@@ -49,13 +47,12 @@ const getUniqueOptions = (cards: MCCard[], key: keyof MCCard, value: keyof MCCar
 const Filters = ({
   cards,
   filters,
-  filterText,
   cardsPerPage,
   cardsPerPageChanged,
   onMultiselectFilterChanged,
-  onTextFilterChanged,
   onFilterReset
 }: Props) => {
+  const debug = false;
   const { t } = useTranslation('global');  // 'global' says that we are looking for a file named global.json
 
   const fieldOptions: AllFieldOptions = {
@@ -66,6 +63,14 @@ const Filters = ({
     "card_set_type_name_code": getUniqueOptions(cards, 'card_set_type_name_code' as keyof MCCard, 'card_set_type_name_code' as keyof MCCard)
   }
   const field_keys = Object.keys(fieldOptions);
+
+  const multiTextFilter: CardFilter = filters.filter((filter) => filter.field == 'text')[0] || {
+    field: "text" as keyof MCCard,
+    filterStatus: {
+      selected: [],
+      isAnd: false
+    }
+  };
 
   return (
     <section id="filters" className="bg-dark shadow d-flex flex-column p-3">
@@ -84,21 +89,17 @@ const Filters = ({
         />
       </div>
       <h1 className="my-3">{t('filters')}</h1>
-      {/* @ToDo: text as multiselect filter without options */}
-      <div className="input-group">
-        <label
-          className="input-group-text bg-dark text-light"
-          htmlFor="input-filter-text">
-          {t('text')}
-        </label>
-        <input
-          type="text"
-          value={filterText}
-          className='form-control'
-          id="input-filter-text"
-          onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
+      <label className='text-dark'>
+        <span className='filter__label'>{t('text')}</span>
+        <MultiselectFilter
+          title={t('text')}
+          filterStatus={multiTextFilter.filterStatus}
+          options={multiTextFilter.filterStatus.selected}
+          hasAndCheckbox={true}
+          allowCreate={true}
+          onChange={(options) => onMultiselectFilterChanged(`text`, options)}
         />
-      </div>
+      </label>
 
       {field_keys.map((field_key) => {
         const options: OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
@@ -130,10 +131,23 @@ const Filters = ({
         }}>
         {t('reset_filters')}
       </button>
-      {/*
-            <pre><code>{JSON.stringify(filterText, undefined, 2)}</code></pre>
-            <pre><code>{JSON.stringify(filters, undefined, 2)}</code></pre>
-          */}
+
+      {debug &&
+        <div className="accordion accordion-flush mt-3" id="accordionFlushExample">
+          <div className="accordion-item bg-dark text-light">
+            <h2 className="accordion-header">
+              <button className="accordion-button bg-secondary text-light collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                Raw data
+              </button>
+            </h2>
+            <div id="flush-collapseOne" className="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+              <pre className="accordion-body bg-light text-dark">
+                <code>{JSON.stringify(filters, undefined, 2)}</code>
+              </pre>
+            </div>
+          </div>
+        </div>
+      }
     </section>
   )
 }

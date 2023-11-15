@@ -1,0 +1,46 @@
+{
+  "base_path": "https://marvelcdb.com",
+  "card_list": "Card list",
+  "card_set": "Card set",
+  "card_set_type_name_code": "Card set type name",
+  "cards_per_page": "Cards per page",
+  "close": "Close",
+  "continue": "Continue",
+  "download_all": "Download all",
+  "download_manager": "Download manager",
+  "downloaded_cards": "Downloaded cards",
+  "downloaded_packs": "Downloaded packs",
+  "faction": "Faction",
+  "filters": "Filters",
+  "pack": "Pack",
+  "remove_all": "Remove all",
+  "reset_filters": "Reset filters",
+  "text": "Text",
+  "type": "Type",
+  "language": "Language",
+  "language-redownload": "Updating the language does not redownload cards.",
+  "lang": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "it": "Italian",
+    "ko": "Korean"
+  },
+  "loading": "Loading...",
+  "title": {
+    "redownload": "Redownload",
+    "number_of_cards": "Number of cards",
+    "download_date": "Download date"
+  },
+  "modal": {
+    "delete_all_packs": {
+      "title": "Delete all packs",
+      "content": "<p>Are you sure you want to <b>delete all packs</b>?</p><p>This will delete <b>all cards</b> from your browser.</p>"
+    },
+    "download_all_packs": {
+      "title": "Download all packs",
+      "content": "<p>Are you sure you want to <b>download all the packs</b>?</p><p>This will download <b>all the cards</b> from <a href='https://marvelcdb.com'>MarvelCDB</a> to your browser.</p><p>Execute this action <b>as little as possible</b> to avoid saturating the website.</p>"
+    }
+  }
+}

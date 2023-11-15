@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import usePacks from '../hooks/usePacks';
 import { MCCard } from './Card';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsDownload } from "react-icons/bs";
+import { I18N_LANGS } from "../i18n";
+import useFetchPacks from '../hooks/useFetchPacks';
 
 type Props = {
   cards: MCCard[],
@@ -16,19 +17,15 @@ type PackStatus = {
   numberOfCards: number
 }
 
-const langs = ['en', 'es', 'fr', 'de', 'it', 'ko'];
-
 const DownloadManager = ({ cards, setCards }: Props) => {
   const { t, i18n } = useTranslation('global');
-  const { packs, error } = usePacks();
+  const { data, error, isLoading } = useFetchPacks([i18n.language]);
   const [packStatusList, setPackStatusList] = useState<PackStatus[]>(JSON.parse(localStorage.getItem('pack_status') || "[]"));
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
 
   useEffect(() => {
     localStorage.setItem("pack_status", JSON.stringify(packStatusList));
   }, [packStatusList]);
-
-  if (error) return (<p>{error}</p>);
 
   const getPackCards = async (packCode: string) => {
     setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
@@ -70,7 +67,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   }
 
   const getPackStatusColor = () => {
-    const packStatusRatio = packStatusList.length / packs.length;
+    const packStatusRatio = packStatusList.length / data.length;
     if (packStatusRatio === 1) return "success";
     if (packStatusRatio < 0.25) return "danger";
     return "warning";
@@ -79,12 +76,17 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   return (
     <>
       <section id="download-manager" className='p-3 bg-dark shadow'>
+        {error &&
+          <div className="alert alert-danger" role="alert">
+            A simple danger alert—check it out!
+          </div>
+        }
         <h2 style={{ textAlign: 'center' }}>
           <div>{t('downloaded_packs')}</div>
           <div>
             <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
             /
-            <span className='badge bg-light text-dark'>{packs.length}</span>
+            <span className='badge bg-light text-dark'>{data.length}</span>
           </div>
         </h2>
         <h2 style={{ textAlign: 'center' }}>
@@ -93,23 +95,27 @@ const DownloadManager = ({ cards, setCards }: Props) => {
             <span className='badge bg-info'>{cards.length}</span>
           </div>
         </h2>
-        <div className='d-flex justify-content-center'>
-          <div className="input-group mb-3" style={{ width: '400px', maxWidth: "90%" }}>
+        <div className='d-flex justify-content-center align-items-center flex-column mt-3'>
+          <div className="input-group px-3">
             <label className="input-group-text" htmlFor="langSelect">{t('language')}</label>
             <select
               className="form-select"
               id="langSelect"
               onChange={(event) => i18n.changeLanguage(event.target.value)}
-              value={langs.includes(i18n.language) ? i18n.language : langs[0]}>
-              {langs.map((lang) => <>
+              value={I18N_LANGS.includes(i18n.language) ? i18n.language : I18N_LANGS[0]}>
+              {I18N_LANGS.map((lang) => <>
                 <option
-                  value={lang} 
+                  value={lang}
                   key={`langSelect+${lang}`}
-                  >
-                    {t('lang.' + lang)}
+                >
+                  {t('lang.' + lang)}
                 </option>
               </>)}
             </select>
+          </div>
+
+          <div className="alert alert-warning text-center m-3 mt-1" role="alert">
+            {t('language-redownload')}
           </div>
         </div>
         <div className='d-flex justify-content-center'>
@@ -117,77 +123,83 @@ const DownloadManager = ({ cards, setCards }: Props) => {
             {t('download_all')}
           </ModalButton>
 
-          <ModalButton className='btn btn-danger me-1' modal_id='modal-remove-all'>
+          <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
             {t('remove_all')}
           </ModalButton>
         </div>
-        <div className='d-flex justify-content-center py-4'>
-          <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-            {packs.map(pack => {
-              const id = "checkbox-" + pack.code;
-              const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
-              return <>
-                <input
-                  type="checkbox"
-                  className="btn-check"
-                  id={id}
-                  checked={packStatus !== undefined}
-                  onChange={async (event) => {
-                    if (event.currentTarget.checked) await getPackCards(pack.code)
-                    else removePack(pack.code)
-                  }}
-                  key={`download-manager-input-${id}`}/>
-                <label
-                  className="btn btn-outline-primary d-flex justify-content-between align-items-center"
-                  htmlFor={id}
-                  key={`download-manager-label-${id}`}>
-                  <span style={{ textAlign: "left" }}>{pack.name}</span>
+        {!isLoading ?
+          <div className='d-flex justify-content-center'>
+            <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
+              {data.map(pack => {
+                const id = "checkbox-" + pack.code;
+                const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
+                return <>
+                  <input
+                    type="checkbox"
+                    className="btn-check"
+                    id={id}
+                    checked={packStatus !== undefined}
+                    onChange={async (event) => {
+                      if (event.currentTarget.checked) await getPackCards(pack.code)
+                      else removePack(pack.code)
+                    }}
+                    key={`download-manager-input-${id}`} />
+                  <label
+                    className="btn btn-outline-primary d-flex justify-content-between align-items-center"
+                    htmlFor={id}
+                    key={`download-manager-label-${id}`}>
+                    <span style={{ textAlign: "left" }}>{pack.name}</span>
 
-                  {loadingPacks.includes(pack.code) ?
-                    <div className="spinner-border" role="status">
-                      <span className="visually-hidden">{t('loading')}</span>
-                    </div> :
-                    <>
-                      {packStatus && <span className='ms-3 d-flex align-items-center'>
-                        <span
-                          className='badge bg-light text-dark d-flex flex-column'
-                          title='Fecha de descarga'>
-                          <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
-                          <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
-                        </span>
-                        <span
-                          className='badge bg-dark mx-1'
-                          title='Número de cartas'>
-                          {packStatus.numberOfCards}
-                        </span>
-                        <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>
-                          <BsDownload title={t('re-download')} />
-                        </button>
-                      </span>}
-                    </>
-                  }
-                </label>
-              </>;
-            })}
+                    {loadingPacks.includes(pack.code) ?
+                      <div className="spinner-border" role="status">
+                        <span className="visually-hidden">{t('loading')}</span>
+                      </div> :
+                      <>
+                        {packStatus && <span className='ms-3 d-flex align-items-center'>
+                          <span
+                            className='badge bg-light text-dark d-flex flex-column'
+                            title={t('title.download_date')}>
+                            <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
+                            <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
+                          </span>
+                          <span
+                            className='badge bg-dark mx-1'
+                            title={t('title.number_of_cards')}>
+                            {packStatus.numberOfCards}
+                          </span>
+                          <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>
+                            <BsDownload title={t('title.redownload')} />
+                          </button>
+                        </span>}
+                      </>
+                    }
+                  </label>
+                </>;
+              })}
+            </div>
+          </div> :
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
-        </div>
+        }
       </section>
 
       {/* @ToDo: modal text from i18n */}
       <Modal
-        title="Borrar todos los packs"
+        title={t(`modal.delete_all_packs.title`)}
         modal_id='modal-remove-all'
         onAccept={removeAllCards}>
-        <p>¿Estas seguro de que quieres <b>borrar todos los packs</b>?</p>
-        <p>Esto borrará <b>todas las cartas</b> de tu navegador.</p>
+        <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
       </Modal>
-      <Modal title="Descargar todos los packs" modal_id='modal-select-all' onAccept={async () => {
-        removeAllCards();
-        for (const pack of packs) getPackCards(pack.code);
-      }}>
-        <p>¿Estas seguro de que quieres <b>descargar todos los packs</b>?</p>
-        <p>Esto descargara <b>todas las cartas</b> de la web de <a href='https;//es.marvelcdb.com'>MarvelCDB</a> a tu navegador.</p>
-        <p>Ejecuta esta acción <b>lo menos podible</b> para no saturar la web.</p>
+      <Modal
+        title={t(`modal.download_all_packs.title`)}
+        modal_id='modal-select-all'
+        onAccept={async () => {
+          removeAllCards();
+          for (const pack of data)
+            getPackCards(pack.code);
+        }}>
+        <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
       </Modal>
     </>
   )

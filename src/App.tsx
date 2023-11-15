@@ -29,39 +29,70 @@ function App() {
   const [selectedNavigationItem, setSelectedNavigationItem] = useState<NavigationOptionsKey>("card_list");
 
 
-  const [cards, setCards] = useState<MCCard[]>(JSON.parse(localStorage.getItem('cards') || "[]"));
+  const [cards, setCards] = useState<MCCard[]>(JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[]);
   const [cardsPerPage, setCardsPerPage] = useState<number>(parseInt(localStorage.getItem('cards_per_page') || "12"));
 
-  const [filters, setFilters] = useState<CardFilter[]>([]);
-  const [filterText, setFilterText] = useState("");
+  const [filters, setFilters] = useState<CardFilter[]>(JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]);
 
   // Status
   const [showAllCardData, setShowAllCardData] = useState(false);
 
   // Filters
-  const evaluateCarFiltering = (filter: CardFilter, card: MCCard): boolean => {
+  const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
     const filterValues = filter.filterStatus.selected.map((option) => option.value);
     const cardValues = card[filter.field] as string[];
 
 
-    const filteredCardValues = filterValues.filter((filterValue) => cardValues.includes(filterValue));
+    const filteredCardValues = filterValues.filter((filterValue) => cardValues?.includes(filterValue));
     if (filter.filterStatus.isAnd)
       return filteredCardValues.length == filterValues.length;
     else
       return filteredCardValues.length > 0;
   }
 
+  const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard):boolean => {
+    /*
+    ** Evaluate if the given card contains the texts defined in the given
+    ** textFilter
+    */
+
+    // Fields positivelly evaluated (name, text, flavor )
+    const fieldsContainingText = textFilterFields.filter((field) => {
+      // The actual value of the field
+      const fieldValue = String(card[field as keyof MCCard]).toLowerCase();
+
+      // The texts selected in the filters
+      const selectedTexts = textFilter.filterStatus.selected;
+
+      // The selected text found in the fieldValue
+      const evaluatedTexts = selectedTexts.filter((selectedText) => fieldValue.includes(selectedText.value.toLowerCase()))
+
+      if(textFilter.filterStatus.isAnd)
+        // All selected texts must appear
+        return selectedTexts.length == evaluatedTexts.length;
+      else
+        // At least 1 selected text must appear
+        return evaluatedTexts.length > 0;
+
+    });
+
+    // Any field has positive evaluation?
+    return fieldsContainingText.length > 0;
+  }
+
   const filteredCards = cards.filter((card) => {
-    for (const filter of filters)
-      if (!evaluateCarFiltering(filter, card))
-        return false
+    const noTextFilters = filters.filter((filter) => filter.field !== 'text');
+
+    const evaluatedFilters = noTextFilters.filter(
+      (filter) => evaluateCardFiltering(filter, card)
+    );
+    
+    if(evaluatedFilters.length != noTextFilters.length) return false;
 
 
-    for (const field of textFilterFields)
-      if (String(card[field as keyof MCCard]).toLowerCase().includes(filterText))
-        return true;
-
-    return false;
+    const textFilter:CardFilter|undefined = filters.filter((filter) => filter.field == 'text')?.[0];
+    if(!textFilter) return true;
+    return evaluateCardTextFiltering(textFilter, card)
   });
 
   // Pagination
@@ -84,6 +115,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem("cards_per_page", String(cardsPerPage));
   }, [cardsPerPage]);
+
+  useEffect(() => {
+    localStorage.setItem("filters",  JSON.stringify(filters));
+  }, [filters]);
 
   const filterStatusChanged = (field: keyof MCCard, newStatus: FilterStatus) => {
     const tmpFilter = [...filters.filter((f) => f.field !== field)]
@@ -138,13 +173,10 @@ function App() {
         <Filters
           cards={cards}
           filters={filters}
-          filterText={filterText}
           cardsPerPage={cardsPerPage}
           cardsPerPageChanged={(newCardsPerPage) => setCardsPerPage(newCardsPerPage)}
-          onTextFilterChanged={(text) => setFilterText(text)}
           onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(name as keyof MCCard, newFilterStatus)}
           onFilterReset={() => {
-            setFilterText("");
             setFilters([]);
           }} />
       </main>
@@ -157,7 +189,8 @@ function App() {
       </div>
       <Navigation
         selected={selectedNavigationItem} 
-        active={cards.length > 0} 
+        active={cards.length > 0}
+        filterNumber={filters.length}
         onClick={(item) => setSelectedNavigationItem(
           (previousItem) => previousItem == item ? 'card_list' : item
         )} />

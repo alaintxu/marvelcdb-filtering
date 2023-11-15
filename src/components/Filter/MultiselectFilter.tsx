@@ -1,6 +1,9 @@
 import { CSSProperties, useState } from 'react';
 import Select, { MultiValue } from 'react-select';
 import makeAnimated from 'react-select/animated';
+import CreatableSelect from 'react-select/creatable';
+import { MdJoinFull, MdJoinInner } from "react-icons/md";
+import { useTranslation } from 'react-i18next';
 
 export type OptionType = {
   value: string
@@ -13,11 +16,12 @@ export type FilterStatus = {
 }
 
 type Props = {
-  options: OptionType[],
+  options?: OptionType[],
   filterStatus: FilterStatus,
   title?: string,
   onChange: (newFilterStatus: FilterStatus) => void,
-  hasAndCheckbox?: boolean
+  hasAndCheckbox?: boolean,
+  allowCreate?: boolean
 }
 
 const style: { [key: string]: CSSProperties } = {
@@ -32,11 +36,14 @@ const style: { [key: string]: CSSProperties } = {
 
 const animatedComponents = makeAnimated();
 
-const MultiselectFilter = ({ options, title, onChange, filterStatus, hasAndCheckbox = false }: Props) => {
+const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCheckbox = false, allowCreate = false }: Props) => {
+  // @ToDo: does not load from localStorage
+  const {t} = useTranslation('multiselect_filter');
+
   const id = `select-${title}`;
 
   const [isAnd, setIsAnd] = useState(filterStatus.isAnd);
-  const [selected, setSelected] = useState(filterStatus.selected);
+  const [selected, setSelected] = useState<OptionType[]>(filterStatus.selected);
 
   const handleSelectChange = (options: MultiValue<OptionType>) => {
     //const selectedOptions = options.map((option) => option as OptionType);
@@ -62,37 +69,60 @@ const MultiselectFilter = ({ options, title, onChange, filterStatus, hasAndCheck
         {title}
       </label>
       <span className='d-flex align-items-center gap-1'>
-        <Select
-          id={title}
-          options={options}
-          defaultValue={selected}
-          placeholder={title}
-          components={animatedComponents}
-          isMulti
-          name="colors"
-          className="basic-multi-select flex-grow-1"
-          classNamePrefix="select"
-          onChange={handleSelectChange} />
+        {!allowCreate ?
+          <Select
+            id={title}
+            name={title}
+            placeholder={title}
+            className="basic-multi-select flex-grow-1"
+            isMulti
+            options={options}
+            defaultValue={selected}
+            components={animatedComponents}
+            classNamePrefix="select"
+            onChange={handleSelectChange} /> :
+          <CreatableSelect
+            id={title}
+            name={title}
+            placeholder={title}
+            className="basic-multi-select flex-grow-1"
+            isMulti
+            options={options}
+            defaultValue={selected}
+            components={animatedComponents}
+            classNamePrefix="select"
+            onChange={handleSelectChange} />
+        }
         {hasAndCheckbox &&
           <>
             <div className="btn-group" role="group">
               <input
-                type="radio" 
-                className="btn-check" 
+                type="radio"
+                className="btn-check"
                 name={`${id}-is-and`}
                 id={`${id}-is-or`}
                 checked={!isAnd}
-                onChange={handleRadioChange}/>
-              <label className="btn btn-outline-light" htmlFor={`${id}-is-or`}>OR</label>
+                onChange={handleRadioChange} />
+              <label
+                className="btn btn-outline-light"
+                htmlFor={`${id}-is-or`}
+                title={t('title.all_matches')}>
+                <MdJoinFull />
+              </label>
 
               <input
-                type="radio" 
-                className="btn-check" 
+                type="radio"
+                className="btn-check"
                 name={`${id}-is-and`}
                 id={`${id}-is-and`}
                 checked={isAnd}
-                onChange={handleRadioChange}/>
-              <label className="btn btn-outline-light" htmlFor={`${id}-is-and`}>AND</label>
+                onChange={handleRadioChange} />
+              <label
+                className="btn btn-outline-light"
+                htmlFor={`${id}-is-and`}
+                title={t('title.any_match')}>
+                <MdJoinInner />
+              </label>
             </div>
           </>
         }
@@ -101,4 +131,4 @@ const MultiselectFilter = ({ options, title, onChange, filterStatus, hasAndCheck
   )
 }
 
-export default MultiselectFilter
+export default MultiselectFilter;
