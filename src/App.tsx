@@ -162,6 +162,7 @@ function App() {
               <BsFillEyeFill title="Mostrar datos" />
             </>}
           </button>
+          {/* @ToDo: botón para girar todas las cartas */}
           <h1>
             {t('card_list')} &nbsp;
             <span className='badge text-dark bg-light'>
