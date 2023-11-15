@@ -58,7 +58,7 @@ const Filters = ({
 }: Props) => {
   const { t } = useTranslation('global');  // 'global' says that we are looking for a file named global.json
 
-  const fieldOptions:AllFieldOptions = {
+  const fieldOptions: AllFieldOptions = {
     "pack": getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
     "type": getUniqueOptions(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard),
     "card_set": getUniqueOptions(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard),
@@ -69,52 +69,45 @@ const Filters = ({
 
   return (
     <>
-
-      <div className='row'>
-        <div className='col-8 col-md-6 col-xl-3'>
-          <div
-            className="input-group mt-3"
-            key="texto">
-            <label
-              className="input-group-text bg-dark text-light"
-              htmlFor="input-cards-per-page">
-              {t('cards_per_page')}
-            </label>
-            <input
-              type="number"
-              value={cardsPerPage}
-              className='form-control'
-              id="input-cards-per-page"
-              onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
-            />
-          </div>
+      <section id="filters" className="p-3 bg-dark shadow">
+        <div
+          className="input-group"
+          key="texto">
+          <label
+            className="input-group-text bg-dark text-light"
+            htmlFor="input-cards-per-page">
+            {t('cards_per_page')}
+          </label>
+          <input
+            type="number"
+            value={cardsPerPage}
+            className='form-control'
+            id="input-cards-per-page"
+            onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
+          />
         </div>
-      </div>
-      <h1 className="my-3">{t('filters')}</h1>
-      <div className='row'>
-        <div className='col-12'>
-          {/* @ToDo: text as multiselect filter without options */}
-          <div
-            className="input-group"
-            key="texto">
-            <label
-              className="input-group-text bg-dark text-light"
-              htmlFor="input-filter-text">
-              {t('text')}
-            </label>
-            <input
-              type="text"
-              value={filterText}
-              className='form-control'
-              id="input-filter-text"
-              onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
-            />
-          </div>
+        <h1 className="my-3">{t('filters')}</h1>
+        {/* @ToDo: text as multiselect filter without options */}
+        <div
+          className="input-group"
+          key="texto">
+          <label
+            className="input-group-text bg-dark text-light"
+            htmlFor="input-filter-text">
+            {t('text')}
+          </label>
+          <input
+            type="text"
+            value={filterText}
+            className='form-control'
+            id="input-filter-text"
+            onChange={(event) => onTextFilterChanged(event.target.value.toLowerCase())}
+          />
         </div>
 
         {field_keys.map((field_key) => {
-          const options:OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
-          const currentFilter:CardFilter = filters.filter((filter) => filter.field == field_key)[0] || {
+          const options: OptionType[] = fieldOptions[field_key as keyof AllFieldOptions];
+          const currentFilter: CardFilter = filters.filter((filter) => filter.field == field_key)[0] || {
             field: field_key as keyof MCCard,
             filterStatus: {
               selected: [],
@@ -123,7 +116,7 @@ const Filters = ({
           };
 
           return (
-            <label className='col-md-6 col-lg-4 text-dark' title={field_key} key={field_key}>
+            <label className='text-dark' title={field_key} key={field_key}>
               <span className='filter__label'>{field_key}</span>
               <MultiselectFilter
                 title={t(field_key)}
@@ -135,20 +128,18 @@ const Filters = ({
             </label>
           )
         })}
-        <div className='col-12'>
-          <button
-            className="btn btn-danger mt-4"
-            onClick={() => {
-              if (onFilterReset) onFilterReset();
-            }}>
-            {t('reset_filters')}
-          </button>
-        </div>
+        <button
+          className="btn btn-danger mt-4"
+          onClick={() => {
+            if (onFilterReset) onFilterReset();
+          }}>
+          {t('reset_filters')}
+        </button>
         {/*
-        <pre><code>{JSON.stringify(filterText, undefined, 2)}</code></pre>
-        <pre><code>{JSON.stringify(filters, undefined, 2)}</code></pre>
+            <pre><code>{JSON.stringify(filterText, undefined, 2)}</code></pre>
+            <pre><code>{JSON.stringify(filters, undefined, 2)}</code></pre>
           */}
-      </div>
+      </section>
     </>
   )
 }

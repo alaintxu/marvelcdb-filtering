@@ -25,7 +25,7 @@ type Props = {
   cardsPerPage: number
 }
 const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
-  const {t} = useTranslation('global');
+  const { t } = useTranslation('global');
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,21 +34,21 @@ const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
   const [showAllCardData, setShowAllCardData] = useState(false);
 
   // Filters
-  const evaluateCarFiltering = (filter:CardFilter, card:MCCard):boolean => {
+  const evaluateCarFiltering = (filter: CardFilter, card: MCCard): boolean => {
     const filterValues = filter.filterStatus.selected.map((option) => option.value);
     const cardValues = card[filter.field] as string[];
 
 
     const filteredCardValues = filterValues.filter((filterValue) => cardValues.includes(filterValue));
-    if(filter.filterStatus.isAnd)
+    if (filter.filterStatus.isAnd)
       return filteredCardValues.length == filterValues.length;
-    else 
+    else
       return filteredCardValues.length > 0;
   }
 
   const filteredCards = cards.filter((card) => {
     for (const filter of filters)
-      if(!evaluateCarFiltering(filter, card))
+      if (!evaluateCarFiltering(filter, card))
         return false
 
 
@@ -69,14 +69,15 @@ const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
   )
 
   return (
-    <>
+    <section id="card-list" className='p-3'>
       <button
-        className={`position-absolute top-0 end-0 btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
+        id="show-all-button"
+        className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
         onClick={() => setShowAllCardData((prev) => !prev)}>
         {showAllCardData ? <>
-          <BsFillEyeSlashFill title="Esconder datos"/>
+          <BsFillEyeSlashFill title="Esconder datos" />
         </> : <>
-          <BsFillEyeFill title="Mostrar datos"/>
+          <BsFillEyeFill title="Mostrar datos" />
         </>}
       </button>
       <h1>
@@ -102,7 +103,7 @@ const CardList = ({ cards, filters, filterText, cardsPerPage }: Props) => {
           buttonSize='sm'
           onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
       </div>
-    </>
+    </section>
   )
 }
 

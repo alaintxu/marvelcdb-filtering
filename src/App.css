@@ -9,17 +9,14 @@ img {
     display: grid;
     grid-template-rows: 1fr auto;
 
-    --box-shadow: box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-}
-#root > main {
-    overflow-y: auto;
+    --box-shadow: box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-.filters {
+/*.filters {
     display: flex;
     gap: 1em;
     padding: 1em;
-}
+}*/
 
 .card-grid {
     display: grid;
@@ -47,7 +44,7 @@ img {
     max-width: 100%;
     aspect-ratio: 300/419;
     contain: content;
-    
+
     /* Card horizontal modifier */
     &.card--horizontal {
         width: 419px;
@@ -60,7 +57,10 @@ img {
     }
 
     &:hover,
-    &.card--show-data /* Card show data modifier */{
+    &.card--show-data
+
+    /* Card show data modifier */
+        {
         & .card__image {
             filter: blur(1px);
             transition: 400ms filter linear;
@@ -82,7 +82,8 @@ img {
     }
 
     /* Card image element */
-    .card__image, .lazy-load-image-loaded {
+    .card__image,
+    .lazy-load-image-loaded {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -94,10 +95,11 @@ img {
             transform: rotateY(0deg);
             transition: transform 400ms ease-out 400ms;
         }
+
         &.back-image {
             transform: rotateY(-90deg);
             transition: transform 400ms ease-in;
-        
+
         }
     }
 
@@ -105,13 +107,13 @@ img {
         & .front-image {
             transform: rotateY(90deg);
             transition: transform 400ms ease-in;
-        
+
         }
-    
+
         & .back-image {
             transform: rotateY(0deg);
             transition: transform 400ms ease-out 400ms;
-        
+
         }
 
     }
@@ -149,7 +151,9 @@ img {
     }
 
     /* Card name element */
-    .card__name, .card__threat, .card__cost {
+    .card__name,
+    .card__threat,
+    .card__cost {
         background-color: white;
         padding: 0.5em;
         border-radius: 0.25em;
@@ -168,5 +172,81 @@ img {
 }
 
 .shadowed {
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+#card-list {
+    transition: margin 400ms;
+}
+
+#download-manager,
+#filters {
+    position: absolute;
+    top: 0;
+    width: 400px;
+    transform: scale3d(0, 1, 1);
+    transition: transform 400ms, left 400ms;
+    z-index: 10;
+    bottom: 0;
+}
+
+#download-manager {
+    left: -200px;
+}
+
+#filters {
+    right: -200px;
+}
+
+#main-section {
+    height: 100%;
+    position: relative;
+    overflow-y: hidden;
+    &>*{
+        height: 100%;
+        overflow-y: auto;
+    }
+    &.main-section--download-manager {
+        & #download-manager {
+            left: 0;
+            transform: scale3d(1, 1, 1);
+            transition: transform 400ms, left 400ms;
+        }
+
+        & #card-list {
+            @media (min-width: 800px) {
+                margin-inline-start: 400px;
+            }
+        }
+    }
+
+    &.main-section--filters {
+        & #filters {
+            right: 0;
+            transform: scale3d(1, 1, 1);
+            transition: transform 400ms, right 400ms;
+        }
+
+        & #card-list {
+            @media (min-width: 800px) {
+                margin-inline-end: 400px;
+            }
+        }
+        & #show-all-button {
+            right: calc(400px + 1.5em);
+            transition: right 400ms;
+        }
+    }
+}
+
+#main-navigation {
+    width: '100%';
+    background-color: black;
+    z-index: 100;
+}
+#show-all-button {
+    position: fixed;
+    top: 1em;
+    right: 1.5em;
+    transition: right 400ms;
 }

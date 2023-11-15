@@ -16,11 +16,6 @@ type Props = {
   onClick: (newSelected: NavigationOptionsKey) => void
 }
 
-const groupStyle = {
-  width: '100%',
-  backgroundColor: "black"
-}
-
 const Navigation = ({ selected, active, onClick }: Props) => {
   const { t } = useTranslation('global');
 
@@ -41,7 +36,7 @@ const Navigation = ({ selected, active, onClick }: Props) => {
   ]
 
   return (
-    <nav style={groupStyle}>
+    <nav id="main-navigation">
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
         {navigationOptions.map((navigationOption) => {
           const isCurrent: boolean = navigationOption.key == selected;

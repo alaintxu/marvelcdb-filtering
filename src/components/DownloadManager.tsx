@@ -3,6 +3,7 @@ import usePacks from '../hooks/usePacks';
 import { MCCard } from './Card';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
+import { BsDownload } from "react-icons/bs";
 
 type Props = {
   cards: MCCard[],
@@ -35,7 +36,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
     setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
     setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
 
-    const response = await fetch(t('base_path')+'/api/public/cards/' + packCode + '.json');
+    const response = await fetch(t('base_path') + '/api/public/cards/' + packCode + '.json');
     const data = await response.json();
 
     console.debug("retrieved data", data);
@@ -82,69 +83,91 @@ const DownloadManager = ({ cards, setCards }: Props) => {
 
   return (
     <>
-      <h1 className="my-3" style={{ textAlign: 'center' }}>
-        {t('downloaded_packs')}:
-        {" "}
-        <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
-        /
-        <span className='badge bg-light text-dark'>{packs.length}</span>
-      </h1>
-      <h2 style={{ textAlign: 'center' }}>
-        {t('downloaded_cards')}:
-        {" "}
-        <span className='badge bg-info'>{cards.length}</span>
-      </h2>
-      <div className='d-flex justify-content-center'>
-        <div className="input-group mb-3" style={{width: '400px', maxWidth: "90%"}}>
-          <label className="input-group-text" htmlFor="langSelect">{t('language')}</label>
-          <select
-            className="form-select"
-            id="langSelect"
-            onChange={(event) => i18n.changeLanguage(event.target.value)}>
-            {langs.map((lang) => <>
-              <option value={lang} selected={i18n.language == lang}>{t('lang.' + lang)}</option>
-            </>)}
-          </select>
+      <section id="download-manager" className='p-3 bg-dark shadow'>
+        <h2 style={{ textAlign: 'center' }}>
+          <div>{t('downloaded_packs')}</div>
+          <div>
+            <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
+            /
+            <span className='badge bg-light text-dark'>{packs.length}</span>
+          </div>
+        </h2>
+        <h2 style={{ textAlign: 'center' }}>
+          <div>{t('downloaded_cards')}</div>
+          <div>
+            <span className='badge bg-info'>{cards.length}</span>
+          </div>
+        </h2>
+        <div className='d-flex justify-content-center'>
+          <div className="input-group mb-3" style={{ width: '400px', maxWidth: "90%" }}>
+            <label className="input-group-text" htmlFor="langSelect">{t('language')}</label>
+            <select
+              className="form-select"
+              id="langSelect"
+              onChange={(event) => i18n.changeLanguage(event.target.value)}>
+              {langs.map((lang) => <>
+                <option value={lang} selected={i18n.language == lang}>{t('lang.' + lang)}</option>
+              </>)}
+            </select>
+          </div>
         </div>
-      </div>
-      <div className='d-flex justify-content-center'>
+        <div className='d-flex justify-content-center'>
+          <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
+            {t('download_all')}
+          </ModalButton>
 
-        <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
-          {t('download_all')}
-        </ModalButton>
-
-        <ModalButton className='btn btn-danger me-1' modal_id='modal-remove-all'>
-          {t('remove_all')}
-        </ModalButton>
-      </div>
-      <div className='d-flex justify-content-center py-4'>
-        <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-          {packs.map(pack => {
-            const id = "checkbox-" + pack.code;
-            const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
-            return <>
-              <input
-                type="checkbox"
-                className="btn-check"
-                id={id}
-                checked={packStatus !== undefined}
-                onChange={async (event) => {
-                  if (event.currentTarget.checked) await getPackCards(pack.code)
-                  else removePack(pack.code)
-                }} />
-              <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
-                {pack.name}
-                {loadingPacks.includes(pack.code) && <span className='ms-3'>loading...</span>}
-                {packStatus && <span className='ms-3'>
-                  <span className='badge bg-light text-dark' title='Fecha de descarga'>{new Date(packStatus.lastDownload).toLocaleString('es-ES')}</span>
-                  <span className='badge bg-dark mx-1' title='Número de cartas'>{packStatus.numberOfCards}</span>
-                  <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>Re-descargar</button>
-                </span>}
-              </label>
-            </>;
-          })}
+          <ModalButton className='btn btn-danger me-1' modal_id='modal-remove-all'>
+            {t('remove_all')}
+          </ModalButton>
         </div>
-      </div>
+        <div className='d-flex justify-content-center py-4'>
+          <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
+            {packs.map(pack => {
+              const id = "checkbox-" + pack.code;
+              const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
+              return <>
+                <input
+                  type="checkbox"
+                  className="btn-check"
+                  id={id}
+                  checked={packStatus !== undefined}
+                  onChange={async (event) => {
+                    if (event.currentTarget.checked) await getPackCards(pack.code)
+                    else removePack(pack.code)
+                  }} />
+                <label className="btn btn-outline-primary d-flex justify-content-between align-items-center" htmlFor={id}>
+                  <span style={{ textAlign: "left" }}>{pack.name}</span>
+
+                  {loadingPacks.includes(pack.code) ?
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">{t('loading')}</span>
+                    </div> :
+                    <>
+                      {packStatus && <span className='ms-3 d-flex align-items-center'>
+                        <span
+                          className='badge bg-light text-dark d-flex flex-column'
+                          title='Fecha de descarga'>
+                          <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
+                          <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
+                        </span>
+                        <span
+                          className='badge bg-dark mx-1'
+                          title='Número de cartas'>
+                          {packStatus.numberOfCards}
+                        </span>
+                        <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>
+                          <BsDownload title={t('re-download')} />
+                        </button>
+                      </span>}
+                    </>
+                  }
+                </label>
+              </>;
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* @ToDo: modal text from i18n */}
       <Modal
         title="Borrar todos los packs"
