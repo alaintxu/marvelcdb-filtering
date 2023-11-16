@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next"
 import { MultiselectFilter } from "."
-import { MCCard } from "../Card"
 import { FilterStatus, OptionType } from "./MultiselectFilter"
+import { MCCard } from "../../hooks/useCards"
+import { CardFilter } from "../../hooks/useFilters"
 
 type AllFieldOptions = {
   "pack": OptionType[]
@@ -9,11 +10,6 @@ type AllFieldOptions = {
   "card_set": OptionType[]
   "faction": OptionType[]
   "card_set_type_name_code": OptionType[]
-}
-
-export type CardFilter = {
-  field: keyof MCCard,
-  filterStatus: FilterStatus
 }
 
 type Props = {

@@ -4,12 +4,11 @@ import './App.css';
 import { useEffect, useState } from "react";
 import Navigation, { NavigationOptionsKey } from "./components/Navigation";
 import { Filters } from "./components/Filter";
-import { MCCard } from "./components/Card";
-import { CardFilter } from "./components/Filter/Filters";
-import { FilterStatus } from "./components/Filter/MultiselectFilter";
 import { ReactBSPagination } from "@draperez/react-components";
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
+import useCards, { MCCard } from "./hooks/useCards";
+import useFilters, { CardFilter, evaluateCardFiltering, filterStatusChanged } from "./hooks/useFilters";
 
 // Defines the fields where text will be search on text filter
 const textFilterFields = [
@@ -28,29 +27,15 @@ function App() {
   const { t } = useTranslation('global');
   const [selectedNavigationItem, setSelectedNavigationItem] = useState<NavigationOptionsKey>("card_list");
 
-
-  const [cards, setCards] = useState<MCCard[]>(JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[]);
-  const [cardsPerPage, setCardsPerPage] = useState<number>(parseInt(localStorage.getItem('cards_per_page') || "12"));
-
-  const [filters, setFilters] = useState<CardFilter[]>(JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]);
+  const { cards, setCards, cardsPerPage, setCardsPerPage } = useCards();
 
   // Status
   const [showAllCardData, setShowAllCardData] = useState(false);
 
   // Filters
-  const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
-    const filterValues = filter.filterStatus.selected.map((option) => option.value);
-    const cardValues = card[filter.field] as string[];
+  const { filters, setFilters } = useFilters();
 
-
-    const filteredCardValues = filterValues.filter((filterValue) => cardValues?.includes(filterValue));
-    if (filter.filterStatus.isAnd)
-      return filteredCardValues.length == filterValues.length;
-    else
-      return filteredCardValues.length > 0;
-  }
-
-  const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard):boolean => {
+  const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard): boolean => {
     /*
     ** Evaluate if the given card contains the texts defined in the given
     ** textFilter
@@ -67,7 +52,7 @@ function App() {
       // The selected text found in the fieldValue
       const evaluatedTexts = selectedTexts.filter((selectedText) => fieldValue.includes(selectedText.value.toLowerCase()))
 
-      if(textFilter.filterStatus.isAnd)
+      if (textFilter.filterStatus.isAnd)
         // All selected texts must appear
         return selectedTexts.length == evaluatedTexts.length;
       else
@@ -86,12 +71,12 @@ function App() {
     const evaluatedFilters = noTextFilters.filter(
       (filter) => evaluateCardFiltering(filter, card)
     );
-    
-    if(evaluatedFilters.length != noTextFilters.length) return false;
+
+    if (evaluatedFilters.length != noTextFilters.length) return false;
 
 
-    const textFilter:CardFilter|undefined = filters.filter((filter) => filter.field == 'text')?.[0];
-    if(!textFilter) return true;
+    const textFilter: CardFilter | undefined = filters.filter((filter) => filter.field == 'text')?.[0];
+    if (!textFilter) return true;
     return evaluateCardTextFiltering(textFilter, card)
   });
 
@@ -108,34 +93,8 @@ function App() {
 
 
   useEffect(() => {
-    localStorage.setItem("cards", JSON.stringify(cards));
     if (cards.length == 0) setSelectedNavigationItem("download_manager");
   }, [cards]);
-
-  useEffect(() => {
-    localStorage.setItem("cards_per_page", String(cardsPerPage));
-  }, [cardsPerPage]);
-
-  useEffect(() => {
-    localStorage.setItem("filters",  JSON.stringify(filters));
-  }, [filters]);
-
-  const filterStatusChanged = (field: keyof MCCard, newStatus: FilterStatus) => {
-    const tmpFilter = [...filters.filter((f) => f.field !== field)]
-
-    if (newStatus.selected.length == 0) return setFilters(tmpFilter);
-
-    setFilters([
-      ...tmpFilter,
-      {
-        field: field,
-        filterStatus: {
-          selected: [...newStatus.selected],
-          isAnd: newStatus.isAnd
-        }
-      }
-    ])
-  }
 
   const mainClassNames = [
     "container-fluid",
@@ -145,6 +104,14 @@ function App() {
     selectedNavigationItem == "card_list" ? "main-section--only-card-list" : "",
     selectedNavigationItem == "filters" ? "main-section--filters" : "",
   ]
+
+  const navKeyAdditionalTextMap = new Map<NavigationOptionsKey, string>();
+  if (filters.length) navKeyAdditionalTextMap.set("filters", String(filters.length));
+  navKeyAdditionalTextMap.set(
+    "card_list",
+    `${visibleFirstCardIndex + 1}-${Math.min(...[visibleLastCardIndex, filteredCards.length])}/${filteredCards.length}`
+  );
+  // @ToDo: add number of pack downloaded.
 
   return (
     <>
@@ -164,10 +131,7 @@ function App() {
           </button>
           {/* @ToDo: botón para girar todas las cartas */}
           <h1>
-            {t('card_list')} &nbsp;
-            <span className='badge text-dark bg-light'>
-              {visibleFirstCardIndex + 1}-{Math.min(...[visibleLastCardIndex, filteredCards.length])}/{filteredCards.length}
-            </span>
+            {t('card_list')}
           </h1>
           <CardList cards={paginatedCards} showAllCardData={showAllCardData} />
         </section>
@@ -176,22 +140,27 @@ function App() {
           filters={filters}
           cardsPerPage={cardsPerPage}
           cardsPerPageChanged={(newCardsPerPage) => setCardsPerPage(newCardsPerPage)}
-          onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(name as keyof MCCard, newFilterStatus)}
+          onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(
+            filters,
+            setFilters,
+            name as keyof MCCard, 
+            newFilterStatus
+          )}
           onFilterReset={() => {
             setFilters([]);
           }} />
       </main>
-      <div className="bg-dark pt-3 shadow">
-      <ReactBSPagination
-        totalPages={totalPages}
-        currentPage={currentPage}
-        buttonSize='sm'
-        onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
+      <div className="bg-dark pt-3 shadow d-flex flex-column justify-content-center align-items-center">
+        <ReactBSPagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          buttonSize='sm'
+          onPageClick={(pageNumber: number) => setCurrentPage(pageNumber)} />
       </div>
       <Navigation
-        selected={selectedNavigationItem} 
+        selected={selectedNavigationItem}
         active={cards.length > 0}
-        filterNumber={filters.length}
+        additionalText={navKeyAdditionalTextMap}
         onClick={(item) => setSelectedNavigationItem(
           (previousItem) => previousItem == item ? 'card_list' : item
         )} />

@@ -4,16 +4,7 @@ import makeAnimated from 'react-select/animated';
 import CreatableSelect from 'react-select/creatable';
 import { MdJoinFull, MdJoinInner } from "react-icons/md";
 import { useTranslation } from 'react-i18next';
-
-export type OptionType = {
-  value: string
-  label: string
-}
-
-export type FilterStatus = {
-  selected: OptionType[],
-  isAnd: boolean
-}
+import { FilterStatus, OptionType } from '../../hooks/useFilters';
 
 type Props = {
   options?: OptionType[],

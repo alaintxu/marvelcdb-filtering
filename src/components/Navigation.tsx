@@ -5,6 +5,7 @@ import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 
 export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
 
+
 type Option = {
   key: NavigationOptionsKey,
   icon: ReactNode
@@ -13,11 +14,11 @@ type Option = {
 type Props = {
   selected: NavigationOptionsKey,
   active: boolean,
-  filterNumber?: number,
+  additionalText?: Map<NavigationOptionsKey, string>,
   onClick: (newSelected: NavigationOptionsKey) => void
 }
 
-const Navigation = ({ selected, active, onClick, filterNumber = 0 }: Props) => {
+const Navigation = ({ selected, active, onClick, additionalText }: Props) => {
   const { t } = useTranslation('global');
 
 
@@ -41,6 +42,7 @@ const Navigation = ({ selected, active, onClick, filterNumber = 0 }: Props) => {
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
         {navigationOptions.map((navigationOption) => {
           const isActive: boolean = navigationOption.key == 'card_list' || navigationOption.key == selected;
+          const currentAdditionalText = additionalText?.get(navigationOption.key);
           return <button
             key={`navigation-${navigationOption.key}`}
             type="button"
@@ -54,10 +56,10 @@ const Navigation = ({ selected, active, onClick, filterNumber = 0 }: Props) => {
               if (onClick) onClick(navigationOption.key)
             }}>
             {navigationOption.icon} {t(navigationOption.key)}
-            {navigationOption.key == "filters" && filterNumber>0 && <>
-                &nbsp;
+            {currentAdditionalText && <>
+              &nbsp;
                 <span className='badge bg-secondary'>
-                  {filterNumber}
+                  {currentAdditionalText}
                 </span>
             </>}
           </button>
