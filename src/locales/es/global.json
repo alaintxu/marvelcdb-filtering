@@ -27,6 +27,7 @@
     "it": "Italiano",
     "ko": "Koreano"
   },
+  "loading": "Cargando...",
   "title": {
     "redownload": "Volver a descargar",
     "number_of_cards": "Número de cartas",

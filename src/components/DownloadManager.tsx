@@ -1,33 +1,30 @@
-import { useEffect, useState } from 'react';
-import { MCCard } from './Card';
+import { useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsDownload } from "react-icons/bs";
 import { I18N_LANGS } from "../i18n";
-import useFetchPacks from '../hooks/useFetchPacks';
+import { Pack } from '../hooks/useFetchPacks';
+import { MCCard } from '../hooks/useCards';
+import { PackStatus } from '../hooks/usePackStatusList';
 
 type Props = {
   cards: MCCard[],
-  setCards: React.Dispatch<React.SetStateAction<MCCard[]>>
+  setCards: React.Dispatch<React.SetStateAction<MCCard[]>>,
+  packs: Pack[],
+  packsError: string,
+  packsAreLoading: boolean,
+  packStatusList: PackStatus[],
+  setPackStatusList: React.Dispatch<React.SetStateAction<PackStatus[]>>,
 }
 
-type PackStatus = {
-  code: string,
-  lastDownload: Date,
-  numberOfCards: number
-}
-
-const DownloadManager = ({ cards, setCards }: Props) => {
+const DownloadManager = (
+  { cards, setCards, packs, packsError, packsAreLoading, packStatusList, setPackStatusList }: Props
+) => {
   const { t, i18n } = useTranslation('global');
-  const { data, error, isLoading } = useFetchPacks([i18n.language]);
-  const [packStatusList, setPackStatusList] = useState<PackStatus[]>(JSON.parse(localStorage.getItem('pack_status') || "[]"));
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
 
-  useEffect(() => {
-    localStorage.setItem("pack_status", JSON.stringify(packStatusList));
-  }, [packStatusList]);
 
-  const getPackCards = async (packCode: string) => {
+  const downloadPackCards = async (packCode: string) => {
     setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
     setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
     setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
@@ -67,7 +64,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   }
 
   const getPackStatusColor = () => {
-    const packStatusRatio = packStatusList.length / data.length;
+    const packStatusRatio = packStatusList.length / packs.length;
     if (packStatusRatio === 1) return "success";
     if (packStatusRatio < 0.25) return "danger";
     return "warning";
@@ -76,7 +73,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
   return (
     <>
       <section id="download-manager" className='p-3 bg-dark shadow'>
-        {error &&
+        {packsError &&
           <div className="alert alert-danger" role="alert">
             A simple danger alert—check it out!
           </div>
@@ -86,7 +83,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
           <div>
             <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
             /
-            <span className='badge bg-light text-dark'>{data.length}</span>
+            <span className='badge bg-light text-dark'>{packs.length}</span>
           </div>
         </h2>
         <h2 style={{ textAlign: 'center' }}>
@@ -127,12 +124,12 @@ const DownloadManager = ({ cards, setCards }: Props) => {
             {t('remove_all')}
           </ModalButton>
         </div>
-        {!isLoading ?
+        {!packsAreLoading ?
           <div className='d-flex justify-content-center'>
             <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-              {data.map(pack => {
+              {packs.map(pack => {
                 const id = "checkbox-" + pack.code;
-                const packStatus = packStatusList.filter((packStatusItem: PackStatus) => packStatusItem.code === pack.code)[0];
+                const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
                 return <>
                   <input
                     type="checkbox"
@@ -140,7 +137,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
                     id={id}
                     checked={packStatus !== undefined}
                     onChange={async (event) => {
-                      if (event.currentTarget.checked) await getPackCards(pack.code)
+                      if (event.currentTarget.checked) await downloadPackCards(pack.code)
                       else removePack(pack.code)
                     }}
                     key={`download-manager-input-${id}`} />
@@ -167,7 +164,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
                             title={t('title.number_of_cards')}>
                             {packStatus.numberOfCards}
                           </span>
-                          <button className='btn btn-danger' onClick={async () => await getPackCards(pack.code)}>
+                          <button className='btn btn-danger' onClick={async () => await downloadPackCards(pack.code)}>
                             <BsDownload title={t('title.redownload')} />
                           </button>
                         </span>}
@@ -179,7 +176,7 @@ const DownloadManager = ({ cards, setCards }: Props) => {
             </div>
           </div> :
           <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">{t('loading')}</span>
           </div>
         }
       </section>
@@ -196,8 +193,8 @@ const DownloadManager = ({ cards, setCards }: Props) => {
         modal_id='modal-select-all'
         onAccept={async () => {
           removeAllCards();
-          for (const pack of data)
-            getPackCards(pack.code);
+          for (const pack of packs)
+            downloadPackCards(pack.code);
         }}>
         <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
       </Modal>

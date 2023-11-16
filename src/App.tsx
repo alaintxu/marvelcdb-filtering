@@ -9,6 +9,8 @@ import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import useCards, { MCCard } from "./hooks/useCards";
 import useFilters, { CardFilter, evaluateCardFiltering, filterStatusChanged } from "./hooks/useFilters";
+import useFetchPacks from "./hooks/useFetchPacks";
+import usePackStatusList from "./hooks/usePackStatusList";
 
 // Defines the fields where text will be search on text filter
 const textFilterFields = [
@@ -24,10 +26,14 @@ const textFilterFields = [
 
 
 function App() {
-  const { t } = useTranslation('global');
+  const { t, i18n } = useTranslation('global');
   const [selectedNavigationItem, setSelectedNavigationItem] = useState<NavigationOptionsKey>("card_list");
 
   const { cards, setCards, cardsPerPage, setCardsPerPage } = useCards();
+
+  // Packs
+  const { data, error, isLoading } = useFetchPacks([i18n.language]);
+  const { packStatusList, setPackStatusList } = usePackStatusList();
 
   // Status
   const [showAllCardData, setShowAllCardData] = useState(false);
@@ -74,8 +80,7 @@ function App() {
 
     if (evaluatedFilters.length != noTextFilters.length) return false;
 
-
-    const textFilter: CardFilter | undefined = filters.filter((filter) => filter.field == 'text')?.[0];
+    const textFilter = filters.find((filter) => filter.field == 'text');
     if (!textFilter) return true;
     return evaluateCardTextFiltering(textFilter, card)
   });
@@ -111,12 +116,23 @@ function App() {
     "card_list",
     `${visibleFirstCardIndex + 1}-${Math.min(...[visibleLastCardIndex, filteredCards.length])}/${filteredCards.length}`
   );
+  navKeyAdditionalTextMap.set(
+    "download_manager",
+    `${packStatusList.length}/${data.length}`
+  )
   // @ToDo: add number of pack downloaded.
 
   return (
     <>
       <main id="main-section" className={mainClassNames.join(" ")}>
-        <DownloadManager cards={cards} setCards={setCards} />
+        <DownloadManager 
+          cards={cards} 
+          setCards={setCards} 
+          packs={data} 
+          packsAreLoading={isLoading} 
+          packsError={error}
+          packStatusList={packStatusList}
+          setPackStatusList={setPackStatusList}/>
         <section id="card-list" className='p-3'>
 
           <button
