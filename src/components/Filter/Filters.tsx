@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { MultiselectFilter } from ".";
 import { MCCard } from "../../hooks/useCards";
-import { CardFilter, FilterStatus, OptionType } from "../../hooks/useFilters";
+import { CardFilter, FilterStatus, OptionType, textFilterFields } from "../../hooks/useFilters";
 
 type AllFieldOptions = {
   "pack": OptionType[]
@@ -48,7 +48,7 @@ const Filters = ({
   onFilterReset
 }: Props) => {
   const debug = false;
-  const { t } = useTranslation('global');  // 'global' says that we are looking for a file named global.json
+  const { t } = useTranslation('global');
 
   const fieldOptions: AllFieldOptions = {
     "pack": getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard),
@@ -84,10 +84,15 @@ const Filters = ({
         />
       </div>
       <h1 className="my-3">{t('filters')}</h1>
-      <label className='text-dark'>
-        <span className='filter__label'>{t('text')}</span>
+      <label 
+        className='text-dark' 
+        title={`${t('title.text_will_be_search_in_fields')}: ${textFilterFields.join(", ")}`}>
+        <span 
+          className='filter__label'>
+          {t('text')}
+        </span>
         <MultiselectFilter
-          title={t('text')}
+          title={t('text')+"*"}
           filterStatus={multiTextFilter.filterStatus}
           options={multiTextFilter.filterStatus.selected}
           hasAndCheckbox={true}

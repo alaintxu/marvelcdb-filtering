@@ -8,24 +8,11 @@ import { ReactBSPagination } from "@draperez/react-components";
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import useCards, { MCCard } from "./hooks/useCards";
-import useFilters, { CardFilter, evaluateCardFiltering, filterStatusChanged } from "./hooks/useFilters";
+import useFilters, { CardFilter, evaluateCardFiltering, filterStatusChanged, textFilterFields } from "./hooks/useFilters";
 import useFetchPacks from "./hooks/useFetchPacks";
 import usePackStatusList from "./hooks/usePackStatusList";
 
-// Defines the fields where text will be search on text filter
-const textFilterFields = [
-  'name',
-  'real_name',
-  'text',
-  'real_text',
-  'back_text',
-  'flavor',
-  'traits',
-  'real_traits'
-];
-
-
-function App() {
+const App = () => {
   const { t, i18n } = useTranslation('global');
   const [selectedNavigationItem, setSelectedNavigationItem] = useState<NavigationOptionsKey>("card_list");
 

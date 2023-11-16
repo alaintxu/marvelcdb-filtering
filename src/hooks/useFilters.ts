@@ -17,6 +17,18 @@ export type CardFilter = {
   filterStatus: FilterStatus
 }
 
+// Defines the fields where text will be search on text filter
+export const textFilterFields = [
+  'name',
+  'real_name',
+  'text',
+  'real_text',
+  'back_text',
+  'flavor',
+  'traits',
+  'real_traits'
+];
+
 export const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
   const filterValues = filter.filterStatus.selected.map((option) => option.value);
   const cardValues = card[filter.field as keyof MCCard] as string[];

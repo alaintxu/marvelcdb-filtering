@@ -31,7 +31,8 @@
   "title": {
     "redownload": "Volver a descargar",
     "number_of_cards": "Número de cartas",
-    "download_date": "Fecha de descarga"
+    "download_date": "Fecha de descarga",
+    "text_will_be_search_in_fields": "El texto introducido se buscará en los siguientes campos"
   },
   "modal": {
     "delete_all_packs": {
