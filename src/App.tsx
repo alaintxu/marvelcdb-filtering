@@ -98,7 +98,16 @@ const App = () => {
   ]
 
   const navKeyAdditionalTextMap = new Map<NavigationOptionsKey, string>();
-  if (filters.length) navKeyAdditionalTextMap.set("filters", String(filters.length));
+  
+  if (filters.length)
+    navKeyAdditionalTextMap.set(
+      "filters", 
+      //String(filters.length)
+      String(filters.reduce(
+        (previousValue, currentFilter) => previousValue+currentFilter.filterStatus.selected.length,
+        0
+      ))
+    );
   navKeyAdditionalTextMap.set(
     "card_list",
     `${visibleFirstCardIndex + 1}-${Math.min(...[visibleLastCardIndex, filteredCards.length])}/${filteredCards.length}`
@@ -107,7 +116,6 @@ const App = () => {
     "download_manager",
     `${packStatusList.length}/${data.length}`
   )
-  // @ToDo: add number of pack downloaded.
 
   return (
     <>

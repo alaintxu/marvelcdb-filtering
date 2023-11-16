@@ -97,8 +97,8 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
               <label
                 className="btn btn-outline-light"
                 htmlFor={`${id}-is-or`}
-                title={t('title.all_matches')}>
-                <MdJoinFull />
+                title={t('title.any_match')}>
+                <MdJoinInner />
               </label>
 
               <input
@@ -111,8 +111,9 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
               <label
                 className="btn btn-outline-light"
                 htmlFor={`${id}-is-and`}
-                title={t('title.any_match')}>
-                <MdJoinInner />
+
+                title={t('title.all_matches')}>
+                <MdJoinFull />
               </label>
             </div>
           </>
