@@ -1,4 +1,5 @@
-import { Card, MCCard } from './Card';
+import { MCCard } from '../hooks/useCards';
+import { Card } from './Card';
 
 
 type Props = {
