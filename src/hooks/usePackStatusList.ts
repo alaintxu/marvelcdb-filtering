@@ -8,8 +8,8 @@ export type PackStatus = {
 
 const usePackStatusList = () => {
   const [packStatusList, setPackStatusList] = useState<PackStatus[]>(
-    JSON.parse(localStorage.getItem('pack_status') || "[]"
-  ));
+    JSON.parse(localStorage.getItem('pack_status') || "[]")
+  );
   
   useEffect(() => {
     localStorage.setItem("pack_status", JSON.stringify(packStatusList));

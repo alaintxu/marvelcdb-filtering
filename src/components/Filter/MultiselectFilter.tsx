@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from 'react';
+import { CSSProperties } from 'react';
 import Select, { MultiValue } from 'react-select';
 import makeAnimated from 'react-select/animated';
 import CreatableSelect from 'react-select/creatable';
@@ -33,23 +33,18 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
 
   const id = `select-${title}`;
 
-  const [isAnd, setIsAnd] = useState(filterStatus.isAnd);
-  const [selected, setSelected] = useState<OptionType[]>(filterStatus.selected);
-
   const handleSelectChange = (options: MultiValue<OptionType>) => {
-    //const selectedOptions = options.map((option) => option as OptionType);
-    setSelected(options as OptionType[]);
     if (onChange) onChange({
       selected: options as OptionType[],
-      isAnd: isAnd
+      isAnd: filterStatus.isAnd
     });
   }
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isAndSelected = event.target.id === `${id}-is-and`;
-    setIsAnd(isAndSelected);
+    //setIsAnd(isAndSelected);
     if (onChange) onChange({
-      selected: [...selected],
+      selected: [...filterStatus.selected],
       isAnd: isAndSelected
     })
   }
@@ -68,7 +63,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            defaultValue={selected}
+            defaultValue={[...filterStatus.selected]}
             components={animatedComponents}
             classNamePrefix="select"
             onChange={handleSelectChange} /> :
@@ -79,7 +74,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            defaultValue={selected}
+            defaultValue={[...filterStatus.selected]}
             components={animatedComponents}
             classNamePrefix="select"
             onChange={handleSelectChange} />
@@ -92,7 +87,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
                 className="btn-check"
                 name={`${id}-is-and`}
                 id={`${id}-is-or`}
-                checked={!isAnd}
+                checked={!filterStatus.isAnd}
                 onChange={handleRadioChange} />
               <label
                 className="btn btn-outline-light"
@@ -106,7 +101,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
                 className="btn-check"
                 name={`${id}-is-and`}
                 id={`${id}-is-and`}
-                checked={isAnd}
+                checked={filterStatus.isAnd}
                 onChange={handleRadioChange} />
               <label
                 className="btn btn-outline-light"

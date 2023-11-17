@@ -75,7 +75,7 @@ const Card = ({ card, showCardData = false }: Props) => {
 
               {card.traits && <span className="d-flex gap-1">
                 {card.traits.split(". ").map((trait) =>
-                  <span className="badge bg-dark shadowed">
+                  <span className="badge bg-dark shadowed" key={`trait-back-${card.code}-${trait.replace(" ","-")}`}>
                     {trait}
                   </span>
                 )}
@@ -107,7 +107,7 @@ const Card = ({ card, showCardData = false }: Props) => {
 
               {card.linked_card?.traits && <span className="d-flex gap-1">
                 {card.linked_card?.traits.split(". ").map((trait) =>
-                  <span className="badge bg-dark shadowed">
+                  <span className="badge bg-dark shadowed" key={`trait-${card.code}-${trait.replace(" ","-")}`}>
                     {trait}
                   </span>
                 )}

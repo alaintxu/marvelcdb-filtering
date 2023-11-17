@@ -103,7 +103,7 @@ const DownloadManager = (
               {I18N_LANGS.map((lang) => <>
                 <option
                   value={lang}
-                  key={`langSelect+${lang}`}
+                  key={`langSelect-${lang}`}
                 >
                   {t('lang.' + lang)}
                 </option>
@@ -127,8 +127,8 @@ const DownloadManager = (
         {!packsAreLoading ?
           <div className='d-flex justify-content-center'>
             <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-              {packs.map(pack => {
-                const id = "checkbox-" + pack.code;
+              {packs.map((pack, index) => {
+                const id = "download-manager-" + index;
                 const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
                 return <>
                   <input
@@ -140,11 +140,11 @@ const DownloadManager = (
                       if (event.currentTarget.checked) await downloadPackCards(pack.code)
                       else removePack(pack.code)
                     }}
-                    key={`download-manager-input-${id}`} />
+                    key={`${id}-input`} />
                   <label
                     className="btn btn-outline-primary d-flex justify-content-between align-items-center"
                     htmlFor={id}
-                    key={`download-manager-label-${id}`}>
+                    key={`${id}-label`} >
                     <span style={{ textAlign: "left" }}>{pack.name}</span>
 
                     {loadingPacks.includes(pack.code) ?
