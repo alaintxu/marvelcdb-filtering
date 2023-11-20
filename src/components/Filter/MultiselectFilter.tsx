@@ -33,7 +33,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
 
   const id = `select-${title}`;
 
-  const handleSelectChange = (options: MultiValue<OptionType>) => {
+  const handleSelectChange = (options: MultiValue<OptionType|unknown>) => {
     if (onChange) onChange({
       selected: options as OptionType[],
       isAnd: filterStatus.isAnd
@@ -63,10 +63,11 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            defaultValue={[...filterStatus.selected]}
+            value={filterStatus.selected}
             components={animatedComponents}
             classNamePrefix="select"
-            onChange={handleSelectChange} /> :
+            onChange={handleSelectChange}
+            /> :
           <CreatableSelect
             id={title}
             name={title}
@@ -74,7 +75,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            defaultValue={[...filterStatus.selected]}
+            value={filterStatus.selected}
             components={animatedComponents}
             classNamePrefix="select"
             onChange={handleSelectChange} />
