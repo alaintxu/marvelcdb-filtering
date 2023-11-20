@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MCCard } from "./useCards";
 
 export type PaginationStatus = {
@@ -42,8 +42,10 @@ const usePaginationStatus = (filteredCards: MCCard[]) => {
     getInitStatusForCardList(filteredCards, 12);
 
   const [paginationStatus, setPaginationStatus] = useState<PaginationStatus>(initialPaginationStatus);
-  const [paginatedCards, setPaginatedCards] = useState<MCCard[]>(
-    filterPaginatedCards(filteredCards, paginationStatus)
+
+  const paginatedCards = useMemo(
+    () => filterPaginatedCards(filteredCards, paginationStatus)
+    , [ filteredCards, paginationStatus]
   );
 
   useEffect(() =>
@@ -56,10 +58,6 @@ const usePaginationStatus = (filteredCards: MCCard[]) => {
   useEffect(() => {
     localStorage.setItem("pagination_status", JSON.stringify(paginationStatus));
   }, [paginationStatus]);
-
-  useEffect(() => {
-    setPaginatedCards(filterPaginatedCards(filteredCards, paginationStatus));
-  }, [filteredCards, paginationStatus])
 
   return { paginationStatus, setPaginationStatus, paginatedCards };
 }

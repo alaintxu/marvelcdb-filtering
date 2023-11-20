@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { MCCard } from "./useCards";
 
 
@@ -116,16 +116,15 @@ const useFilters = (cards: MCCard[]) => {
     //JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]
     []
   );
-  const [filteredCards, setFilteredCards] = useState<MCCard[]>(filterCards(cards, filters));
+
+  const filteredCards = useMemo(
+    () => filterCards(cards, filters),
+    [cards, filters]
+  );
 
   useEffect(() => {
     localStorage.setItem("filters", JSON.stringify(filters));
   }, [filters]);
-
-  useEffect(
-    () => setFilteredCards(filterCards(cards, filters)),
-    [cards, filters]
-  );
 
   return { filters, setFilters, filteredCards };
 }
