@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, /*useEffect,*/ useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { MCCard } from "./useCards";
 
 
@@ -66,15 +66,15 @@ export const filterStatusChanged = (
 
 const useFilters = () => {
   const [filters, setFilters] = useState<CardFilter[]>(
-    /*JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]*/
+    //JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]
     []
   );
 
 
 
-  /*useEffect(() => {
+  useEffect(() => {
     localStorage.setItem("filters", JSON.stringify(filters));
-  }, [filters]);*/
+  }, [filters]);
 
   return { filters, setFilters };
 }
