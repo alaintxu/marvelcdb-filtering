@@ -237,7 +237,7 @@ img {
                 margin-inline-end: 400px;
             }
         }
-        & #show-all-button {
+        & #card-list-actions {
             right: calc(400px + 1.5em);
             transition: right 400ms;
         }
@@ -249,10 +249,13 @@ img {
     background-color: black;
     z-index: 100;
 }
-#show-all-button {
+#card-list-actions{
     position: fixed;
     top: 1em;
     right: 1.5em;
     transition: right 400ms;
     z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 4px
 }

@@ -29,7 +29,7 @@ export const textFilterFields = [
   'real_traits'
 ];
 
-export const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
+const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
   const filterValues = filter.filterStatus.selected.map((option) => option.value);
   const cardValues = card[filter.field as keyof MCCard] as string[];
 
@@ -63,20 +63,71 @@ export const filterStatusChanged = (
   ])
 }
 
+const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard): boolean => {
+  /*
+  ** Evaluate if the given card contains the texts defined in the given
+  ** textFilter
+  */
 
-const useFilters = () => {
+  // Fields positivelly evaluated (name, text, flavor )
+  const fieldsContainingText = textFilterFields.filter((field) => {
+    // The actual value of the field
+    const fieldValue = String(card[field as keyof MCCard]).toLowerCase();
+
+    // The texts selected in the filters
+    const selectedTexts = textFilter.filterStatus.selected;
+
+    // The selected text found in the fieldValue
+    const evaluatedTexts = selectedTexts.filter((selectedText) => fieldValue.includes(selectedText.value.toLowerCase()))
+
+    if (textFilter.filterStatus.isAnd)
+      // All selected texts must appear
+      return selectedTexts.length == evaluatedTexts.length;
+    else
+      // At least 1 selected text must appear
+      return evaluatedTexts.length > 0;
+
+  });
+
+  // Any field has positive evaluation?
+  return fieldsContainingText.length > 0;
+}
+
+
+const filterCards = (cards: MCCard[], filters: CardFilter[]): MCCard[] => {
+  return cards.filter((card) => {
+    const noTextFilters = filters.filter((filter) => filter.field !== 'text');
+
+    const evaluatedFilters = noTextFilters.filter(
+      (filter) => evaluateCardFiltering(filter, card)
+    );
+
+    if (evaluatedFilters.length != noTextFilters.length) return false;
+
+    const textFilter = filters.find((filter) => filter.field == 'text');
+    if (!textFilter) return true;
+    return evaluateCardTextFiltering(textFilter, card);
+  });
+}
+
+
+const useFilters = (cards: MCCard[]) => {
   const [filters, setFilters] = useState<CardFilter[]>(
     //JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]
     []
   );
-
-
+  const [filteredCards, setFilteredCards] = useState<MCCard[]>(filterCards(cards, filters));
 
   useEffect(() => {
     localStorage.setItem("filters", JSON.stringify(filters));
   }, [filters]);
 
-  return { filters, setFilters };
+  useEffect(
+    () => setFilteredCards(filterCards(cards, filters)),
+    [cards, filters]
+  );
+
+  return { filters, setFilters, filteredCards };
 }
 
 export default useFilters;

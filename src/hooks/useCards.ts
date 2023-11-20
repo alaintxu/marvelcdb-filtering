@@ -64,9 +64,6 @@ const useCards = () => {
   const [cards, setCards] = useState<MCCard[]>(
     JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[]
   );
-  const [cardsPerPage, setCardsPerPage] = useState<number>(
-    parseInt(localStorage.getItem('cards_per_page') || "12")
-  );
   
   /*const filteredCards = useMemo(() => {
     
@@ -75,12 +72,8 @@ const useCards = () => {
   useEffect(() => {
     localStorage.setItem("cards", JSON.stringify(cards));
   }, [cards]);
-
-  useEffect(() => {
-    localStorage.setItem("cards_per_page", String(cardsPerPage));
-  }, [cardsPerPage]);
   
-  return { cards, setCards, cardsPerPage, setCardsPerPage };
+  return { cards, setCards };
 }
 
 export default useCards;

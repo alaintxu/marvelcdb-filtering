@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CardImage from "./CardImage"
 import { Modal } from "../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill } from "react-icons/bs";
@@ -10,11 +10,17 @@ export type MCCardKeys = keyof MCCard;
 
 type Props = {
   card: MCCard,
-  showCardData?: boolean
+  showCardData?: boolean,
+  flipAllCards?: boolean,
 }
 
-const Card = ({ card, showCardData = false }: Props) => {
-  const [flipped, setFlipped] = useState(false);
+const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
+  const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
+  const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
+
+  useEffect(() => {
+    setManualFlipped(undefined);
+  }, [flipAllCards]);
 
   const isHorizontal = ["main_scheme", "side_scheme", "player_side_scheme"].includes(card.type_code);
 
@@ -64,7 +70,7 @@ const Card = ({ card, showCardData = false }: Props) => {
               </button>
               <button
                 className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
-                onClick={() => setFlipped((prev) => !prev)}
+                onClick={() => setManualFlipped((prev) => prev === undefined ? !flipAllCards : !prev )}
                 title="Gira la carta">
                 <BsPhoneFlip />
               </button>

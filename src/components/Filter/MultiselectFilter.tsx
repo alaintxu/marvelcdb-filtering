@@ -42,7 +42,6 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isAndSelected = event.target.id === `${id}-is-and`;
-    //setIsAnd(isAndSelected);
     if (onChange) onChange({
       selected: [...filterStatus.selected],
       isAnd: isAndSelected
@@ -63,7 +62,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            value={filterStatus.selected}
+            value={filterStatus.selected}  // Loading from LocalStorage not working
             components={animatedComponents}
             classNamePrefix="select"
             onChange={handleSelectChange}
@@ -75,7 +74,7 @@ const MultiselectFilter = ({ options=[], title, onChange, filterStatus, hasAndCh
             className="basic-multi-select flex-grow-1"
             isMulti
             options={options}
-            value={filterStatus.selected}
+            value={filterStatus.selected}  // Loading from LocalStorage not working
             components={animatedComponents}
             classNamePrefix="select"
             onChange={handleSelectChange} />
