@@ -47,10 +47,10 @@ const Filters = ({
 
   const fieldOptions:Map<string, OptionType[]> = useMemo(() => {
     const map = new Map<string, OptionType[]>();
-    map.set("pack", getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard));
-    map.set("type", getUniqueOptions(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard));
-    map.set("card_set", getUniqueOptions(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard));
-    map.set("faction", getUniqueOptions(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard));
+    map.set("pack_code", getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard));
+    map.set("type_code", getUniqueOptions(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard));
+    map.set("card_set_code", getUniqueOptions(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard));
+    map.set("faction_code", getUniqueOptions(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard));
     map.set("card_set_type_name_code", getUniqueOptions(cards, 'card_set_type_name_code' as keyof MCCard, 'card_set_type_name_code' as keyof MCCard));
     return map;
   }, [cards]);
@@ -90,7 +90,7 @@ const Filters = ({
           {t('text')}
         </span>
         <MultiselectFilter
-          title={t('text')+"*"}
+          title={t('field.text')+"*"}
           filterStatus={multiTextFilter.filterStatus}
           options={multiTextFilter.filterStatus.selected}
           hasAndCheckbox={true}
@@ -113,11 +113,11 @@ const Filters = ({
           <label className='text-dark' title={field_key} key={field_key}>
             <span className='filter__label'>{field_key}</span>
             <MultiselectFilter
-              title={t(field_key)}
+              title={t(`field.${field_key}`)}
               filterStatus={currentFilter.filterStatus}
               options={options}
               hasAndCheckbox={false}
-              onChange={(options) => onMultiselectFilterChanged(`${field_key}_code`, options)}
+              onChange={(options) => onMultiselectFilterChanged(`${field_key}`, options)}
             />
           </label>
         )

@@ -1,8 +1,6 @@
 {
   "base_path": "https://marvelcdb.com",
   "card_list": "Card list",
-  "card_set": "Card set",
-  "card_set_type_name_code": "Card set type name",
   "cards_per_page": "Cards per page",
   "close": "Close",
   "continue": "Continue",
@@ -10,13 +8,17 @@
   "download_manager": "Download manager",
   "downloaded_cards": "Downloaded cards",
   "downloaded_packs": "Downloaded packs",
-  "faction": "Faction",
   "filters": "Filters",
-  "pack": "Pack",
+  "field": {
+    "text": "Text",
+    "pack_code": "Pack",
+    "type_code": "Type",
+    "card_set_code": "Card set",
+    "faction_code": "Faction",
+    "card_set_type_name_code": "Card set type name"
+  },
   "remove_all": "Remove all",
   "reset_filters": "Reset filters",
-  "text": "Text",
-  "type": "Type",
   "language": "Language",
   "language-redownload": "Updating the language does not redownload cards.",
   "lang": {
