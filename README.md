@@ -1,17 +1,14 @@
-# marvelcdb-filtering
-MarvelCDB filtering web app.
+# MarvelCDB filtering
 
-Thanks to MarvelCDB for the work and excelent application.
+## Reducir la carga de MarvelCDB
 
-## Reducing the load of MarvelCDB
+No me gustaría que marvelcdb se sature debido a esta aplicación, así que estas son las
+Principales medidas tomadas para reducir la cantidad de llamadas a MarvelCDB:
 
-I wouldn't like marvelcdb to saturate due to this app, so this are the 
-main things done to reduce the amount of calls to MarvelCDB:
+* Las cartas se descargan al navegador (usando almacenamiento local).
+* Advertencias cuando se borran las cartas y cuando se descargan todas las cartas.
+* Las cartas están paginadas (no se muestran todas a la vez).
+* Las imágenes se cargan de forma diferida, por lo que se descargan justo cuando son visibles.
+* El filtrado se realiza contra una copia local de las cartas.
 
-* Cards are downloaded to the browser (using local storage).
-* Warnings when cards are removed and when all pack cards are loaded.
-* Images are paginated.
-* Images are lazy loaded, so they are downloaded just when they are visible.
-* Filtering is done against local list of cards.
-
-Pack list is always downloaded.
+> La lista de packs siempre se descarga de MarvelCDB por si ha habido alguna actualización.
