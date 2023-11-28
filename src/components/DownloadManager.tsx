@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
-import { BsDownload } from "react-icons/bs";
+import { BsDownload, BsFiletypeJson } from "react-icons/bs";
 import { I18N_LANGS } from "../i18n";
 import { Pack } from '../hooks/useFetchPacks';
 import { MCCard } from '../hooks/useCards';
 import { PackStatus } from '../hooks/usePackStatusList';
+import { FaFileImport, FaFileExport } from "react-icons/fa6";
 
 type Props = {
   cards: MCCard[],
@@ -22,6 +23,38 @@ const DownloadManager = (
 ) => {
   const { t, i18n } = useTranslation('global');
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
+
+  const exportCardsToJSONFile = () => {
+    const element = document.createElement("a");
+    const cards_str = JSON.stringify(cards, null, 2);
+    const file = new Blob([cards_str], { type: "application/json" });
+    element.href = URL.createObjectURL(file);
+    element.download = "cards.json";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+  
+  const importCardsFromJSONFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileReader = new FileReader();
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      fileReader.readAsText(file, "UTF-8");
+      fileReader.onload = e => {
+        const result = (e.target as FileReader).result as string;
+        const loadedCards: MCCard[] = JSON.parse(result) as MCCard[];
+        setCards(loadedCards);
+
+        // ToDo: update pack status list from cards
+        setPackStatusList([/* ToDo: update pack status list from cards*/ ]);
+        // setPackStatusList((prevPackStatusList) => [...prevPackStatusList, {
+        //   code: packCode,
+        //   lastDownload: new Date(),
+        //   numberOfCards: data.length,
+        // }])
+      }
+    }
+  }
 
 
   const downloadPackCards = async (packCode: string) => {
@@ -179,6 +212,23 @@ const DownloadManager = (
             <span className="visually-hidden">{t('loading')}</span>
           </div>
         }
+
+        <div className='d-flex justify-content-center flex-column mt-1 gap-1'>
+          <h3><BsFiletypeJson />&nbsp;{t(`import_export`)}</h3>
+          <div className="my-3">
+            <label htmlFor="importFileInput" className="form-label">
+              <FaFileImport />
+              &nbsp;
+              {t(`import`)}
+            </label>
+            <input className="form-control bg-secondary text-light" type="file" id="importFileInput" onChange={importCardsFromJSONFile} />
+          </div>
+          <button className='btn btn-secondary' onClick={exportCardsToJSONFile}>
+            <FaFileExport />
+            &nbsp;
+            {t('export')}
+          </button>
+        </div>
       </section>
 
       {/* @ToDo: modal text from i18n */}

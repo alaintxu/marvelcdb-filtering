@@ -8,6 +8,9 @@
   "download_manager": "Gestor de descargas",
   "downloaded_cards": "Cartas descargadas",
   "downloaded_packs": "Packs descargados",
+  "import_export": "Gestionar datos manualmente",
+  "export": "Exportar JSON",
+  "import": "Importar JSON",
   "filters": "Filtros",
   "field": {
     "text": "Texto",
