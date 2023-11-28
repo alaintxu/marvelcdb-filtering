@@ -14,6 +14,7 @@ img {
     grid-template-rows: 1fr auto;
 
     --box-shadow: box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
 }
 
 /*.filters {
@@ -28,9 +29,16 @@ img {
     justify-content: center;
     align-items: center;
     gap: 1em;
+    font-size: 0.8em;
 
-    @media (width > 800px) {
-        grid-template-columns: repeat(auto-fill, calc(419px));
+    @media (width >= 768px) {
+        --min-width: 325px;
+        grid-template-columns: repeat(auto-fill, var(--min-width));
+    }
+
+    @media (width >= 1200px) {
+        --min-width: 419px;
+        font-size: 1em;
     }
 }
 
@@ -44,14 +52,14 @@ img {
     flex-direction: row;
     background-color: transparent;
 
-    width: 300px;
-    max-width: 100%;
+    width: 100%;
+    max-width: calc(300% / 4.19);
     aspect-ratio: 300/419;
     contain: content;
 
     /* Card horizontal modifier */
     &.card--horizontal {
-        width: 419px;
+        max-width: 100%;
         aspect-ratio: 419/300;
     }
 
@@ -60,14 +68,14 @@ img {
         height: 100%;
     }
 
-    &:hover,
-    &.card--show-data
 
     /* Card show data modifier */
-        {
+    &:hover,
+    &.card--show-data {
         & .card__image {
             filter: blur(1px);
             transition: 400ms filter linear;
+            width: 100%;
         }
 
         & .card__content>* {
@@ -94,6 +102,7 @@ img {
         left: 0;
         right: 0;
         transition: 400ms filter linear;
+        border-radius: 1rem;
 
         &.front-image {
             transform: rotateY(0deg);
@@ -258,4 +267,13 @@ img {
     display: flex;
     flex-direction: column;
     gap: 4px
+}
+
+#pagination-container {
+    z-index: 500;
+    box-shadow: 0 -4px 4px #0000001C;
+
+    & .pagination {
+        margin-block: .5em;
+    }
 }

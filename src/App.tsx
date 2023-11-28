@@ -90,7 +90,7 @@ const App = () => {
             setFilters([]);
           }} />
       </main>
-      <div className="bg-dark pt-3 shadow d-flex flex-column justify-content-center align-items-center">
+      <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center">
         <ReactBSPagination
           totalPages={paginationStatus.totalPages}
           currentPage={paginationStatus.currentPage}

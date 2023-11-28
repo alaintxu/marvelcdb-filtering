@@ -41,8 +41,8 @@ const CardImage = ({ card, horizontal }: Props) => {
         alt={card.name + " card's front image"}
         placeholderSrc={placeholderImage}
         loading="lazy"
-        width={horizontal ? "419px" : "300px"}
-        height={horizontal ? "300px" : "419px"}
+        // width={horizontal ? "419px" : "300px"}
+        // height={horizontal ? "300px" : "419px"}
         effect="blur"
       />
 
@@ -52,8 +52,8 @@ const CardImage = ({ card, horizontal }: Props) => {
         alt={card.name + " card's back image"}
         placeholderSrc={placeholderImage}
         loading="lazy"
-        width={horizontal ? "419px" : "300px"}
-        height={horizontal ? "300px" : "419px"}
+        // width={horizontal ? "419px" : "300px"}
+        // height={horizontal ? "300px" : "419px"}
         effect="blur"
       />
     </>
