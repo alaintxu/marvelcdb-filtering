@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
-import { BsDownload, BsFiletypeJson } from "react-icons/bs";
+import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsStack, BsTranslate, BsTrash } from "react-icons/bs";
 import { I18N_LANGS } from "../i18n";
 import { Pack } from '../hooks/useFetchPacks';
 import { MCCard } from '../hooks/useCards';
@@ -23,6 +23,7 @@ const DownloadManager = (
 ) => {
   const { t, i18n } = useTranslation('global');
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
+  const [showPackList, setShowPackList] = useState<boolean>(false);
 
   const exportCardsToJSONFile = () => {
     const element = document.createElement("a");
@@ -34,7 +35,7 @@ const DownloadManager = (
     element.click();
     document.body.removeChild(element);
   }
-  
+
   const importCardsFromJSONFile = (e: ChangeEvent<HTMLInputElement>) => {
     const fileReader = new FileReader();
     const file = (e.target as HTMLInputElement).files?.[0];
@@ -43,17 +44,35 @@ const DownloadManager = (
       fileReader.onload = e => {
         const result = (e.target as FileReader).result as string;
         const loadedCards: MCCard[] = JSON.parse(result) as MCCard[];
-        setCards(loadedCards);
+        setCards((prev) => [...prev, ...loadedCards]);
 
         // ToDo: update pack status list from cards
-        setPackStatusList([/* ToDo: update pack status list from cards*/ ]);
-        // setPackStatusList((prevPackStatusList) => [...prevPackStatusList, {
-        //   code: packCode,
-        //   lastDownload: new Date(),
-        //   numberOfCards: data.length,
-        // }])
+        const newPackStatusList: PackStatus[] = getPackStatusListFromCars(loadedCards);
+        setPackStatusList([...newPackStatusList])
       }
     }
+  }
+
+  const getPackStatusListFromCars = (cards: MCCard[]): PackStatus[] => {
+    const newPackStatusList: PackStatus[] = [...packStatusList.map(
+      (packStatus) => { return { ...packStatus } }
+    )];
+
+    for (const card of cards) {
+      const packStatus: PackStatus | undefined = newPackStatusList.find(
+        (packStatus) => packStatus.code == card.pack_code
+      );
+      if (packStatus) {
+        packStatus.numberOfCards += 1;
+      } else {
+        newPackStatusList.push({
+          code: card.pack_code,
+          lastDownload: new Date(),
+          numberOfCards: 1,
+        });
+      }
+    }
+    return newPackStatusList;
   }
 
 
@@ -108,26 +127,38 @@ const DownloadManager = (
       <section id="download-manager" className='p-3 bg-dark shadow'>
         {packsError &&
           <div className="alert alert-danger" role="alert">
-            A simple danger alert—check it out!
+            {packsError}
           </div>
         }
-        <h2 style={{ textAlign: 'center' }}>
-          <div>{t('downloaded_packs')}</div>
-          <div>
+        <div id="pack-data"
+          className='d-flex flex-column align-items-center justify-content-center gap-1 mb-4'
+        >
+          <span>
+            <b>{t('downloaded_packs')}</b>
+            &nbsp;
             <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
             /
             <span className='badge bg-light text-dark'>{packs.length}</span>
-          </div>
-        </h2>
-        <h2 style={{ textAlign: 'center' }}>
-          <div>{t('downloaded_cards')}</div>
-          <div>
+          </span>
+          <span>
             <span className='badge bg-info'>{cards.length}</span>
-          </div>
-        </h2>
-        <div className='d-flex justify-content-center align-items-center flex-column mt-3'>
-          <div className="input-group px-3">
-            <label className="input-group-text" htmlFor="langSelect">{t('language')}</label>
+            &nbsp;
+            <b>{t('downloaded_cards')}</b>
+          </span>
+        </div>
+        <hr />
+        <h3 className='fs-4 mb-4'>
+          <img style={{ filter: "invert(1)", height: "1em", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
+          &nbsp;
+          {t(`import_marvelcdb`)}
+        </h3>
+        <div className='px-3'>
+          <div className="input-group mb-1">
+            <label className="input-group-text" htmlFor="langSelect">
+              <BsTranslate />
+              &nbsp;
+              {t('language')}
+            </label>
             <select
               className="form-select"
               id="langSelect"
@@ -144,78 +175,102 @@ const DownloadManager = (
             </select>
           </div>
 
-          <div className="alert alert-warning text-center m-3 mt-1" role="alert">
+          <div className="alert alert-warning text-center" role="alert">
+            <BsExclamationTriangle />
+            &nbsp;
             {t('language-redownload')}
           </div>
         </div>
-        <div className='d-flex justify-content-center'>
+        <div className='d-flex justify-content-center px-3 mb-3'>
           <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
+            <BsDownload />
+            &nbsp;
             {t('download_all')}
           </ModalButton>
 
           <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
+            <BsTrash />
+            &nbsp;
             {t('remove_all')}
           </ModalButton>
         </div>
-        {!packsAreLoading ?
-          <div className='d-flex justify-content-center'>
-            <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-              {packs.map((pack, index) => {
-                const id = "download-manager-" + index;
-                const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
-                return <>
-                  <input
-                    type="checkbox"
-                    className="btn-check"
-                    id={id}
-                    checked={packStatus !== undefined}
-                    onChange={async (event) => {
-                      if (event.currentTarget.checked) await downloadPackCards(pack.code)
-                      else removePack(pack.code)
-                    }}
-                    key={`${id}-input`} />
-                  <label
-                    className="btn btn-outline-primary d-flex justify-content-between align-items-center"
-                    htmlFor={id}
-                    key={`${id}-label`} >
-                    <span style={{ textAlign: "left" }}>{pack.name}</span>
+        <div id="packListAccordion" className='px-3 mb-3'>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setShowPackList((prev) => !prev)}>
+            {showPackList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
+            &nbsp;
+            {t("pack_list")}
+          </button>
+          {showPackList && <>
+            {!packsAreLoading ?
+              <div className='d-flex justify-content-center'>
+                <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
+                  {packs.map((pack, index) => {
+                    const id = "download-manager-" + index;
+                    const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
+                    return <>
+                      <input
+                        type="checkbox"
+                        className="btn-check"
+                        id={id}
+                        checked={packStatus !== undefined}
+                        onChange={async (event) => {
+                          if (event.currentTarget.checked) await downloadPackCards(pack.code)
+                          else removePack(pack.code)
+                        }}
+                        key={`${id}-input`} />
+                      <label
+                        className="btn btn-outline-primary d-flex justify-content-between align-items-center"
+                        htmlFor={id}
+                        key={`${id}-label`} >
+                        <span style={{ textAlign: "left" }}>
+                          <BsStack />
+                          &nbsp;
+                          {pack.name}
+                        </span>
 
-                    {loadingPacks.includes(pack.code) ?
-                      <div className="spinner-border" role="status">
-                        <span className="visually-hidden">{t('loading')}</span>
-                      </div> :
-                      <>
-                        {packStatus && <span className='ms-3 d-flex align-items-center'>
-                          <span
-                            className='badge bg-light text-dark d-flex flex-column'
-                            title={t('title.download_date')}>
-                            <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
-                            <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
-                          </span>
-                          <span
-                            className='badge bg-dark mx-1'
-                            title={t('title.number_of_cards')}>
-                            {packStatus.numberOfCards}
-                          </span>
-                          <button className='btn btn-danger' onClick={async () => await downloadPackCards(pack.code)}>
-                            <BsDownload title={t('title.redownload')} />
-                          </button>
-                        </span>}
-                      </>
-                    }
-                  </label>
-                </>;
-              })}
-            </div>
-          </div> :
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">{t('loading')}</span>
-          </div>
-        }
+                        {loadingPacks.includes(pack.code) ?
+                          <div className="spinner-border" role="status">
+                            <span className="visually-hidden">{t('loading')}</span>
+                          </div> :
+                          <>
+                            {packStatus && <span className='ms-3 d-flex align-items-center'>
+                              <span
+                                className='badge bg-light text-dark d-flex flex-column'
+                                title={t('title.download_date')}>
+                                <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
+                                <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
+                              </span>
+                              <span
+                                className='badge bg-dark mx-1'
+                                title={t('title.number_of_cards')}>
+                                {packStatus.numberOfCards}
+                              </span>
+                              <button className='btn btn-danger' onClick={async () => await downloadPackCards(pack.code)}>
+                                <BsDownload title={t('title.redownload')} />
+                              </button>
+                            </span>}
+                          </>
+                        }
+                      </label>
+                    </>;
+                  })}
+                </div>
+              </div> :
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">{t('loading')}</span>
+              </div>
+            }
+          </>}
+        </div>
 
-        <div className='d-flex justify-content-center flex-column mt-1 gap-1'>
-          <h3><BsFiletypeJson />&nbsp;{t(`import_export`)}</h3>
-          <div className="my-3">
+        <hr />
+        <div className='d-flex flex-column mt-1 gap-1'>
+          <h3 className='fs-4 mb-4'>
+            <BsFiletypeJson />&nbsp;{t(`import_export`)}
+          </h3>
+          <div className="mb-3 px-3">
             <label htmlFor="importFileInput" className="form-label">
               <FaFileImport />
               &nbsp;
@@ -223,21 +278,23 @@ const DownloadManager = (
             </label>
             <input className="form-control bg-secondary text-light" type="file" id="importFileInput" onChange={importCardsFromJSONFile} />
           </div>
-          <button className='btn btn-secondary' onClick={exportCardsToJSONFile}>
-            <FaFileExport />
-            &nbsp;
-            {t('export')}
-          </button>
+          <div className="mb-3 px-3">
+            <button className='btn btn-secondary' onClick={exportCardsToJSONFile}>
+              <FaFileExport />
+              &nbsp;
+              {t('export')}
+            </button>
+          </div>
         </div>
-      </section>
+        <hr />
+      </section >
 
-      {/* @ToDo: modal text from i18n */}
-      <Modal
+      < Modal
         title={t(`modal.delete_all_packs.title`)}
         modal_id='modal-remove-all'
-        onAccept={removeAllCards}>
+        onAccept={removeAllCards} >
         <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
-      </Modal>
+      </Modal >
       <Modal
         title={t(`modal.download_all_packs.title`)}
         modal_id='modal-select-all'

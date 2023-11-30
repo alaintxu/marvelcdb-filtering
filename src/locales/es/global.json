@@ -11,6 +11,7 @@
   "import_export": "Gestionar datos manualmente",
   "export": "Exportar JSON",
   "import": "Importar JSON",
+  "import_marvelcdb": "Importar datos de MarvelCDB",
   "filters": "Filtros",
   "field": {
     "text": "Texto",
