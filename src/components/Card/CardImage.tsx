@@ -2,6 +2,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../assets/mc-lazy-vertical.webp';
 import { MCCard } from "../../hooks/useCards";
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   card: MCCard,
@@ -11,6 +12,9 @@ type Props = {
 const marvelcdb_basepath = "https://es.marvelcdb.com";
 
 const CardImage = ({ card, horizontal }: Props) => {
+  const { i18n } = useTranslation('global');
+  const lang = i18n.language;
+
 
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
 
@@ -33,12 +37,31 @@ const CardImage = ({ card, horizontal }: Props) => {
 
 
   }
+
+  const replaceImgSrcTranslation = (imgSrc: string) => {
+    if (lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
+      const code = imgSrc.split("/").pop()?.replace(".png", ".webp");
+      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + code;
+    }
+    return imgSrc;
+  }
+
+  const getBackImageSrcTranslations = () => {
+    const imgSrc = getBackImageSrc();
+    return replaceImgSrcTranslation(imgSrc);
+  }
+
+  const getFrontImageSrcTranslations = () => {
+    const imgSrc = getFrontImageSrc();
+    return replaceImgSrcTranslation(imgSrc);
+  }
+
   return (
     <>
       <LazyLoadImage
         className={`card__image front-image ${card.type_code}`}
-        src={getFrontImageSrc()}
-        alt={card.name + " card's front image"}
+        src={getFrontImageSrcTranslations()}
+        alt={card.name + " card's front image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
         loading="lazy"
         // width={horizontal ? "419px" : "300px"}
@@ -48,8 +71,8 @@ const CardImage = ({ card, horizontal }: Props) => {
 
       <LazyLoadImage
         className={`card__image back-image ${card.type_code}`}
-        src={getBackImageSrc()}
-        alt={card.name + " card's back image"}
+        src={getBackImageSrcTranslations()}
+        alt={card.name + " card's back image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
         loading="lazy"
         // width={horizontal ? "419px" : "300px"}
