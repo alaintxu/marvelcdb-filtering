@@ -3,6 +3,7 @@ import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../assets/mc-lazy-vertical.webp';
 import { MCCard } from "../../hooks/useCards";
 import { useTranslation } from 'react-i18next';
+import { useState } from "react";
 
 type Props = {
   card: MCCard,
@@ -14,6 +15,7 @@ const marvelcdb_basepath = "https://es.marvelcdb.com";
 const CardImage = ({ card, horizontal }: Props) => {
   const { i18n } = useTranslation('global');
   const lang = i18n.language;
+  const [error, serError] = useState(false);
 
 
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
@@ -39,7 +41,7 @@ const CardImage = ({ card, horizontal }: Props) => {
   }
 
   const replaceImgSrcTranslation = (imgSrc: string) => {
-    if (lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
+    if (!error && lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
       const code = imgSrc.split("/").pop()?.replace(".png", ".webp");
       return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + code;
     }
@@ -67,6 +69,7 @@ const CardImage = ({ card, horizontal }: Props) => {
         // width={horizontal ? "419px" : "300px"}
         // height={horizontal ? "300px" : "419px"}
         effect="blur"
+        onError={() => serError(true)}
       />
 
       <LazyLoadImage
@@ -78,6 +81,7 @@ const CardImage = ({ card, horizontal }: Props) => {
         // width={horizontal ? "419px" : "300px"}
         // height={horizontal ? "300px" : "419px"}
         effect="blur"
+        onError={() => serError(true)}
       />
     </>
   )
