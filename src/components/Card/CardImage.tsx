@@ -21,29 +21,32 @@ const CardImage = ({ card, horizontal }: Props) => {
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
 
   const getBackImageSrc = () => {
-    if (card.backimagesrc) return marvelcdb_basepath + card.backimagesrc;
-    if (card.linked_card?.imagesrc) return marvelcdb_basepath + card.linked_card.imagesrc;
-    if (card.faction_code == "encounter")
-      return "https://hallofheroeshome.files.wordpress.com/2021/02/marvel-encounter-back.png?w=300&h=419";
+    if (card.backimagesrc)
+      return marvelcdb_basepath + card.backimagesrc;
 
-    return "https://hallofheroeshome.files.wordpress.com/2021/02/marvel-player-back.png?w=300&h=";
+    if (card.linked_card?.imagesrc)
+      return marvelcdb_basepath + card.linked_card.imagesrc;
+
+    if (card.type_code == "villain")
+      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_purple.webp";
+
+    if (card.faction_code == "encounter")
+      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_orange.webp";
+
+    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_blue.webp";
   }
 
   const getFrontImageSrc = () => {
     if (card.imagesrc) return marvelcdb_basepath + card.imagesrc;
 
-    if (card.faction_code == "encounter")
-      return "https://hallofheroeshome.files.wordpress.com/2021/02/fan-back-encounter.png?w=300&h=419";
-
-    return "https://hallofheroeshome.files.wordpress.com/2021/02/fan-back-player.png?w=300&h=419";
-
-
+    return marvelcdb_basepath + "/bundles/cards/" + card.code + ".png";
   }
 
   const replaceImgSrcTranslation = (imgSrc: string) => {
     if (!error && lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
-      const code = imgSrc.split("/").pop()?.replace(".png", ".webp");
-      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + code;
+      const code = imgSrc.split("/").pop();
+      const codeNoExt = code?.split(".").shift();
+      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + codeNoExt + ".webp";
     }
     return imgSrc;
   }
@@ -66,8 +69,6 @@ const CardImage = ({ card, horizontal }: Props) => {
         alt={card.name + " card's front image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
         loading="lazy"
-        // width={horizontal ? "419px" : "300px"}
-        // height={horizontal ? "300px" : "419px"}
         effect="blur"
         onError={() => serError(true)}
       />
@@ -78,11 +79,11 @@ const CardImage = ({ card, horizontal }: Props) => {
         alt={card.name + " card's back image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
         loading="lazy"
-        // width={horizontal ? "419px" : "300px"}
-        // height={horizontal ? "300px" : "419px"}
         effect="blur"
         onError={() => serError(true)}
       />
+      <p>Front image {getFrontImageSrcTranslations()}</p>
+      <p>Back image {getBackImageSrcTranslations()}</p>
     </>
   )
 }
