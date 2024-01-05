@@ -10,15 +10,15 @@ type Props = {
 const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false }: Props) => {
 
   return (
-      <div className="card-grid">
-        {cards.map((card: MCCard) => 
-          <Card
-            showCardData={showAllCardData}
-            flipAllCards={flipAllCards}
-            card={card}
-            key={`card-${card.code}`} />
-        )}
-      </div>
+    <div className="mc-card-grid">
+      {cards.map((card: MCCard) =>
+        <Card
+          showCardData={showAllCardData}
+          flipAllCards={flipAllCards}
+          card={card}
+          key={`card-${card.code}`} />
+      )}
+    </div>
   )
 }
 

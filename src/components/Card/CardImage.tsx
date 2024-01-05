@@ -64,17 +64,18 @@ const CardImage = ({ card, horizontal }: Props) => {
   return (
     <>
       <LazyLoadImage
-        className={`card__image front-image ${card.type_code}`}
+        className={`mc-card__image front-image ${card.type_code}`}
         src={getFrontImageSrcTranslations()}
         alt={card.name + " card's front image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
         loading="lazy"
         effect="blur"
         onError={() => serError(true)}
+        title=""
       />
 
       <LazyLoadImage
-        className={`card__image back-image ${card.type_code}`}
+        className={`mc-card__image back-image ${card.type_code}`}
         src={getBackImageSrcTranslations()}
         alt={card.name + " card's back image (" + card.code + ")"}
         placeholderSrc={placeholderImage}
@@ -82,8 +83,6 @@ const CardImage = ({ card, horizontal }: Props) => {
         effect="blur"
         onError={() => serError(true)}
       />
-      <p>Front image {getFrontImageSrcTranslations()}</p>
-      <p>Back image {getBackImageSrcTranslations()}</p>
     </>
   )
 }

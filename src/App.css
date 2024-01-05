@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -23,7 +25,7 @@ img {
     padding: 1em;
 }*/
 
-.card-grid {
+.mc-card-grid {
     display: grid;
     grid-template-columns: 1fr;
     justify-content: center;
@@ -31,19 +33,19 @@ img {
     gap: 1em;
     font-size: 0.8em;
 
-    @media (width >= 768px) {
+    @media (width >=768px) {
         --min-width: 325px;
         grid-template-columns: repeat(auto-fill, var(--min-width));
     }
 
-    @media (width >= 1200px) {
+    @media (width >=1200px) {
         --min-width: 419px;
         font-size: 1em;
     }
 }
 
 /* Card block */
-.card {
+.mc-card {
     position: relative;
     margin: auto;
     box-sizing: border-box;
@@ -53,14 +55,14 @@ img {
     background-color: transparent;
 
     width: 100%;
-    max-width: calc(300% / 4.19);
-    aspect-ratio: 300/419;
+    max-width: calc(750% / 10.39);
+    aspect-ratio: 750/1039;
     contain: content;
 
     /* Card horizontal modifier */
-    &.card--horizontal {
+    &.mc-card--horizontal {
         max-width: 100%;
-        aspect-ratio: 419/300;
+        aspect-ratio: 1039/750;
     }
 
     &>* {
@@ -71,30 +73,32 @@ img {
 
     /* Card show data modifier */
     &:hover,
-    &.card--show-data {
-        & .card__image {
+    &.mc-card--show-data {
+        & .mc-card__image {
             filter: blur(1px);
             transition: 400ms filter linear;
             width: 100%;
         }
 
-        & .card__content>* {
+        & .mc-card__content>* {
             visibility: visible;
             opacity: 1;
             transition: visibility 400ms, opacity 400ms ease-in-out, top 400ms ease-in, bottom 400ms ease-in;
         }
 
-        & .card__content>header {
+        & .mc-card__content>header {
+            z-index: 1;
             top: .5em;
         }
 
-        & .card__content>main {
+        & .mc-card__content>main {
+            z-index: 0;
             bottom: 2em;
         }
     }
 
     /* Card image element */
-    .card__image,
+    .mc-card__image,
     .lazy-load-image-loaded {
         position: absolute;
         top: 0;
@@ -116,7 +120,7 @@ img {
         }
     }
 
-    &.card--flipped {
+    &.mc-card--flipped {
         & .front-image {
             transform: rotateY(90deg);
             transition: transform 400ms ease-in;
@@ -132,7 +136,7 @@ img {
     }
 
     /* Card content element */
-    .card__content {
+    .mc-card__content {
         position: absolute;
         top: 0;
         left: 0;
@@ -159,14 +163,15 @@ img {
     }
 
     /* Card actions element */
-    .card__actions {
+    .mc-card__actions {
         flex-shrink: 0;
     }
 
     /* Card name element */
-    .card__name,
-    .card__threat,
-    .card__cost {
+    .mc-card__name,
+    .mc-card__threat,
+    .mc-card__cost {
+        color: black;
         background-color: white;
         padding: 0.5em;
         border-radius: 0.25em;
@@ -176,10 +181,11 @@ img {
     }
 
     /* Card data text sub element */
-    .card__data__text {
+    .mc-card__data__text {
         border-radius: 0.5em;
         border: 1px solid transparent;
         padding: 0.5em;
+        color: black;
         background-color: white;
     }
 }
@@ -188,7 +194,7 @@ img {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-#card-list {
+#mc-card-list {
     transition: margin 400ms;
 }
 
@@ -216,10 +222,12 @@ img {
     height: 100%;
     position: relative;
     overflow-y: hidden;
-    &>*{
+
+    &>* {
         height: 100%;
         overflow-y: auto;
     }
+
     &.main-section--download-manager {
         & #download-manager {
             left: 0;
@@ -227,7 +235,7 @@ img {
             transition: transform 400ms, left 400ms;
         }
 
-        & #card-list {
+        & #mc-card-list {
             @media (min-width: 800px) {
                 margin-inline-start: 400px;
             }
@@ -241,12 +249,13 @@ img {
             transition: transform 400ms, right 400ms;
         }
 
-        & #card-list {
+        & #mc-card-list {
             @media (min-width: 800px) {
                 margin-inline-end: 400px;
             }
         }
-        & #card-list-actions {
+
+        & #mc-card-list-actions {
             right: calc(400px + 1.5em);
             transition: right 400ms;
         }
@@ -258,7 +267,8 @@ img {
     background-color: black;
     z-index: 100;
 }
-#card-list-actions{
+
+#mc-card-list-actions {
     position: fixed;
     top: 1em;
     right: 1.5em;

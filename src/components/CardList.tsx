@@ -10,7 +10,7 @@ type Props = {
 
 
 const CardList = ({ cards }: Props) => {
-  const {t} = useTranslation('global');
+  const { t } = useTranslation('global');
 
   // Status
   const [showAllCardData, setShowAllCardData] = useState(false);
@@ -18,8 +18,8 @@ const CardList = ({ cards }: Props) => {
 
   return (
 
-    <section id="card-list" className='p-3'>
-      <span id="card-list-actions">
+    <section id="mc-card-list" className='p-3'>
+      <span id="mc-card-list-actions">
         <button
           className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
           onClick={() => setShowAllCardData((prev) => !prev)}>
@@ -32,13 +32,13 @@ const CardList = ({ cards }: Props) => {
         <button
           className={`btn btn-${flipAllCards ? 'primary' : 'secondary'}`}
           onClick={() => setFlipAllCards((prev) => !prev)}>
-          <BsPhoneFlip/>
+          <BsPhoneFlip />
         </button>
       </span>
       <h1>
         {t('card_list')}
       </h1>
-      <CardGrid cards={cards} showAllCardData={showAllCardData} flipAllCards={flipAllCards}/>
+      <CardGrid cards={cards} showAllCardData={showAllCardData} flipAllCards={flipAllCards} />
     </section>
   )
 }
