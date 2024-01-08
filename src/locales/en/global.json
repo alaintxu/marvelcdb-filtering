@@ -19,7 +19,8 @@
     "type_code": "Type",
     "card_set_code": "Card set",
     "faction_code": "Faction",
-    "card_set_type_name_code": "Card set type name"
+    "card_set_type_name_code": "Card set type name",
+    "illustrator": "Illustrator"
   },
   "remove_all": "Remove all",
   "reset_filters": "Reset filters",

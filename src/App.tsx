@@ -34,13 +34,13 @@ const App = () => {
   }, [cards]);
 
   const navKeyAdditionalTextMap = new Map<NavigationOptionsKey, string>();
-  
+
   if (filters.length)
     navKeyAdditionalTextMap.set(
-      "filters", 
+      "filters",
       //String(filters.length)
       String(filters.reduce(
-        (previousValue, currentFilter) => previousValue+currentFilter.filterStatus.selected.length,
+        (previousValue, currentFilter) => previousValue + currentFilter.filterStatus.selected.length,
         0
       ))
     );
@@ -52,7 +52,7 @@ const App = () => {
     "download_manager",
     `${packStatusList.length}/${data.length}`
   )
-  
+
   // Other
   const mainClassNames = [
     "container-fluid",
@@ -66,24 +66,24 @@ const App = () => {
   return (
     <>
       <main id="main-section" className={mainClassNames.join(" ")}>
-        <DownloadManager 
-          cards={cards} 
-          setCards={setCards} 
-          packs={data} 
-          packsAreLoading={isLoading} 
+        <DownloadManager
+          cards={cards}
+          setCards={setCards}
+          packs={data}
+          packsAreLoading={isLoading}
           packsError={error}
           packStatusList={packStatusList}
-          setPackStatusList={setPackStatusList}/>
+          setPackStatusList={setPackStatusList} />
         <CardList cards={paginatedCards} />
         <Filters
           cards={cards}
           filters={filters}
           cardsPerPage={paginationStatus.cardsPerPage}
-          cardsPerPageChanged={(newCardsPerPage) => setPaginationStatus({...paginationStatus, cardsPerPage: newCardsPerPage})}
+          cardsPerPageChanged={(newCardsPerPage) => setPaginationStatus({ ...paginationStatus, cardsPerPage: newCardsPerPage })}
           onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(
             filters,
             setFilters,
-            name as keyof MCCard, 
+            name as keyof MCCard,
             newFilterStatus
           )}
           onFilterReset={() => {

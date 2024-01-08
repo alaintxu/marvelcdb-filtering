@@ -45,13 +45,14 @@ const Filters = ({
   const debug = false;
   const { t } = useTranslation('global');
 
-  const fieldOptions:Map<string, OptionType[]> = useMemo(() => {
+  const fieldOptions: Map<string, OptionType[]> = useMemo(() => {
     const map = new Map<string, OptionType[]>();
     map.set("pack_code", getUniqueOptions(cards, 'pack_code' as keyof MCCard, 'pack_name' as keyof MCCard));
     map.set("type_code", getUniqueOptions(cards, 'type_code' as keyof MCCard, 'type_name' as keyof MCCard));
     map.set("card_set_code", getUniqueOptions(cards, 'card_set_code' as keyof MCCard, 'card_set_name' as keyof MCCard));
     map.set("faction_code", getUniqueOptions(cards, 'faction_code' as keyof MCCard, 'faction_name' as keyof MCCard));
     map.set("card_set_type_name_code", getUniqueOptions(cards, 'card_set_type_name_code' as keyof MCCard, 'card_set_type_name_code' as keyof MCCard));
+    map.set("illustrator", getUniqueOptions(cards, 'illustrator' as keyof MCCard, 'illustrator' as keyof MCCard));
     return map;
   }, [cards]);
   const field_keys = fieldOptions.keys();
@@ -82,15 +83,15 @@ const Filters = ({
         />
       </div>
       <h1 className="my-3">{t('filters')}</h1>
-      <label 
-        className='text-dark' 
+      <label
+        className='text-dark'
         title={`${t('title.text_will_be_search_in_fields')}: ${textFilterFields.join(", ")}`}>
-        <span 
+        <span
           className='filter__label'>
           {t('text')}
         </span>
         <MultiselectFilter
-          title={t('field.text')+"*"}
+          title={t('field.text') + "*"}
           filterStatus={multiTextFilter.filterStatus}
           options={multiTextFilter.filterStatus.selected}
           hasAndCheckbox={true}

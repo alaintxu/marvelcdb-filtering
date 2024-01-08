@@ -18,7 +18,8 @@
     "type_code": "Tipo",
     "card_set_code": "Conjunto de cartas",
     "faction_code": "Aspecto/Facción",
-    "card_set_type_name_code": "Nombre de tipo de conjunto de cartas"
+    "card_set_type_name_code": "Nombre de tipo de conjunto de cartas",
+    "illustrator": "Ilustrador"
   },
   "remove_all": "Borrar todos",
   "reset_filters": "Borrar filtros",
