@@ -22,7 +22,15 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     setManualFlipped(undefined);
   }, [flipAllCards]);
 
-  const isHorizontal = ["main_scheme", "side_scheme", "player_side_scheme"].includes(card.type_code);
+  const isCardHorizontal = () => {
+    const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
+    const front_horizontal = horizontal_types.includes(card.type_code);
+    const back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
+
+    return flipped ? back_horizontal : front_horizontal;
+  }
+
+  const isHorizontal = isCardHorizontal();
 
   const classNames = [
     "mc-card",
