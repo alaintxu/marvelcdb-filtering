@@ -25,6 +25,7 @@
   },
   "remove_all": "Remove all",
   "reset_filters": "Reset filters",
+  "reset_app": "Reset app",
   "language": "Language",
   "language-redownload": "Updating the language does not redownload cards.",
   "lang": {
@@ -50,6 +51,10 @@
     "download_all_packs": {
       "title": "Download all packs",
       "content": "<p>Are you sure you want to <b>download all the packs</b>?</p><p>This will download <b>all the cards</b> from <a href='https://marvelcdb.com'>MarvelCDB</a> to your browser.</p><p>Execute this action <b>as little as possible</b> to avoid saturating the website.</p>"
+    },
+    "reset_app": {
+      "title": "Reset app",
+      "content": "<p>Are you sure you want to <b>reset the app</b>?</p><p>This will delete <b>all the packs, cards, language configuration...</b> from your browser.</p>"
     }
   }
 }

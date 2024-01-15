@@ -6,7 +6,7 @@ import { I18N_LANGS } from "../i18n";
 import { Pack } from '../hooks/useFetchPacks';
 import { MCCard } from '../hooks/useCards';
 import { PackStatus } from '../hooks/usePackStatusList';
-import { FaFileImport, FaFileExport } from "react-icons/fa6";
+import { FaFileImport, FaFileExport, FaArrowRotateLeft } from "react-icons/fa6";
 
 type Props = {
   cards: MCCard[],
@@ -34,6 +34,11 @@ const DownloadManager = (
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+  }
+
+  const resetApp = () => {
+    localStorage.clear();
+    window.location.reload();
   }
 
   const importCardsFromJSONFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -286,6 +291,13 @@ const DownloadManager = (
               {t('export')}
             </button>
           </div>
+          <div className="mb-3 px-3">
+            <ModalButton className='btn btn-danger' modal_id='modal-reset-app'>
+              <FaArrowRotateLeft />
+              &nbsp;
+              {t('reset_app')}
+            </ModalButton>
+          </div>
         </div>
         <hr />
       </section >
@@ -305,6 +317,14 @@ const DownloadManager = (
             downloadPackCards(pack.code);
         }}>
         <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
+      </Modal>
+      <Modal
+        title={t(`modal.reset_app.title`)}
+        modal_id='modal-reset-app'
+        onAccept={() => {
+          resetApp();
+        }}>
+        <div dangerouslySetInnerHTML={{ __html: t('modal.reset_app.content') }} />
       </Modal>
     </>
   )
