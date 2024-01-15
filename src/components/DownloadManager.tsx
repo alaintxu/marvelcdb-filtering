@@ -23,7 +23,7 @@ const DownloadManager = (
 ) => {
   const { t, i18n } = useTranslation('global');
   const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
-  const [showPackList, setShowPackList] = useState<boolean>(false);
+  const [showPackList, setShowPackList] = useState<boolean>(cards.length === 0);
 
   const exportCardsToJSONFile = () => {
     const element = document.createElement("a");
@@ -201,6 +201,7 @@ const DownloadManager = (
             {showPackList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
             &nbsp;
             {t("pack_list")}
+            <span className={`badge bg-${getPackStatusColor()} ms-1`}>{packStatusList.length}/{packs.length}</span>
           </button>
           {showPackList && <>
             {!packsAreLoading ?
@@ -292,7 +293,7 @@ const DownloadManager = (
       < Modal
         title={t(`modal.delete_all_packs.title`)}
         modal_id='modal-remove-all'
-        onAccept={removeAllCards} >
+        onAccept={() => { removeAllCards(); }} >
         <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
       </Modal >
       <Modal

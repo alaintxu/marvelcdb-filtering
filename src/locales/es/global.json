@@ -1,6 +1,7 @@
 {
   "base_path": "https://es.marvelcdb.com",
   "card_list": "Listado de cartas",
+  "pack_list": "Listado de packs",
   "cards_per_page": "Cartas por página",
   "close": "Cerrar",
   "continue": "Seguir",

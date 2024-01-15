@@ -11,6 +11,7 @@ import useFilters, { filterStatusChanged } from "./hooks/useFilters";
 import useFetchPacks from "./hooks/useFetchPacks";
 import usePackStatusList from "./hooks/usePackStatusList";
 import usePaginationStatus, { changePage } from "./hooks/usePaginationStatus";
+import Instructions from "./components/Instructions";
 
 const App = () => {
   const { i18n } = useTranslation('global');
@@ -74,7 +75,7 @@ const App = () => {
           packsError={error}
           packStatusList={packStatusList}
           setPackStatusList={setPackStatusList} />
-        <CardList cards={paginatedCards} />
+        {cards.length > 0 ? <CardList cards={paginatedCards} /> : <Instructions />}
         <Filters
           cards={cards}
           filters={filters}

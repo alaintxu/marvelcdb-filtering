@@ -4,12 +4,12 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
 export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
-export const I18N_NAMESPACES = ['global', 'multiselect_filter'];
+export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions'];
 
 i18n
   .use(initReactI18next)
   .use(LanguageDetector)
-  .use(resourcesToBackend((language:string, namespace:string) => import(`./locales/${language}/${namespace}.json`)))
+  .use(resourcesToBackend((language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`)))
   .init({
     detection: {
       // order and from where user language should be detected
