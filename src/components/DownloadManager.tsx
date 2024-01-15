@@ -232,11 +232,11 @@ const DownloadManager = (
                         </span>
 
                         {loadingPacks.includes(pack.code) ?
-                          <div className="spinner-border" role="status">
+                          <div className="spinner-border" role="status" key={`${id}-spinner`}>
                             <span className="visually-hidden">{t('loading')}</span>
                           </div> :
                           <>
-                            {packStatus && <span className='ms-3 d-flex align-items-center'>
+                            {packStatus && <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
                               <span
                                 className='badge bg-light text-dark d-flex flex-column'
                                 title={t('title.download_date')}>
