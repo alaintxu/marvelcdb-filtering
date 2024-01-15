@@ -1,12 +1,12 @@
 # MarvelCDB filtering
 
-Web application to visualize cards from MarvelCDB with filtering options.
+Web application to visualize cards from MarvelCDB with filtering options: [https://alaintxu.github.io/marvelcdb-filtering/](https://alaintxu.github.io/marvelcdb-filtering/).
 
 Thanks to [MarvelCDB](https://marvelcdb.com/) for the work and excelent application.
 
 If you want to support the project, I would recommend **their** [Patreon](https://www.patreon.com/kamalisk). In my case it does not entail any more cost than the hours dedicated to this project.
 
-Applicación web para visualizar cartas desde MarvelCDB con opciones de filtrado.
+Applicación web para visualizar cartas desde MarvelCDB con opciones de filtrado: [https://alaintxu.github.io/marvelcdb-filtering/](https://alaintxu.github.io/marvelcdb-filtering/).
 
 Gracias a [MarvelCDB](https://es.marvelcdb.com/) por el trabajo y excelente aplicación.
 
@@ -36,7 +36,7 @@ The first time you enter the app, you have to click on *Download manager*. There
 
 Now, you will have the list of cards on your browser. If you click on *Card list*, you should see the list of cards.
 
-### Examples
+### Filtering Examples
 
 #### 1. Forced and hero interrupts
 

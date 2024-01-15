@@ -6,14 +6,14 @@
 # MarvelCDB filtering
 
 <!-- [en] -->
-Web application to visualize cards from MarvelCDB with filtering options.
+Web application to visualize cards from MarvelCDB with filtering options: [https://alaintxu.github.io/marvelcdb-filtering/](https://alaintxu.github.io/marvelcdb-filtering/).
 
 Thanks to [MarvelCDB](https://marvelcdb.com/) for the work and excelent application.
 
 If you want to support the project, I would recommend **their** [Patreon](https://www.patreon.com/kamalisk). In my case it does not entail any more cost than the hours dedicated to this project.
 
 <!--- [es] -->
-Applicación web para visualizar cartas desde MarvelCDB con opciones de filtrado.
+Applicación web para visualizar cartas desde MarvelCDB con opciones de filtrado: [https://alaintxu.github.io/marvelcdb-filtering/](https://alaintxu.github.io/marvelcdb-filtering/).
 
 Gracias a [MarvelCDB](https://es.marvelcdb.com/) por el trabajo y excelente aplicación.
 
@@ -50,6 +50,10 @@ Principales medidas tomadas para reducir la cantidad de llamadas a MarvelCDB:
 <!-- [en] -->
 ## How does it work?
 
+<!-- [es] -->
+## ¿Cómo funciona?
+
+<!-- [en] -->
 ### First time
 
 The first time you enter the app, you have to click on *Download manager*. There:
@@ -59,7 +63,18 @@ The first time you enter the app, you have to click on *Download manager*. There
 
 Now, you will have the list of cards on your browser. If you click on *Card list*, you should see the list of cards.
 
-### Examples
+<!-- [es] -->
+### Primera vez
+
+La primera vez que entras en la aplicación, tienes que hacer clic en *Administrador de descargas*. Ahí:
+
+1. Elige el *idioma*.
+1. 2. Pulsa en *Descargar todo* o elige los packs que tengas/quieras descargar.
+
+Ahora, tendrás la lista de cartas en tu navegador. Si haces clic en *Lista de cartas*, deberías ver la lista de cartas.
+
+<!-- [en] -->
+### Filtering Examples
 
 #### 1. Forced and hero interrupts
 
@@ -69,5 +84,17 @@ So we have to add those concepts in the text input and choose the left option (*
 
 That way, you will get all cards with *Hero interrupt* text on them and all cards wth *Forced interrupt* on them.
 
+<!-- [es] -->
+### Ejemplos de filtrado
+
+#### 1. Interrupciones obligadas y de héroe
+
+Queremos listar todas las cartas que contengan *Interrupción de héroe* o *Interrupción obligada* en su texto.
+
+Así que tenemos que añadir esos conceptos en la entrada de texto y elegir la opción de la izquierda (*Al menos una debe coincidir*).
+
+De esta forma, obtendrás todas las cartas con el texto *Interrupción de héroe* y todas las cartas con *Interrupción obligada*.
+
+<!-- [common] -->
 ![](./screenshots/example1-en-text_filter.png)
 ![](./screenshots/example1-en-result.png)
