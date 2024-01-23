@@ -80,7 +80,20 @@ const App = () => {
           cards={cards}
           filters={filters}
           cardsPerPage={paginationStatus.cardsPerPage}
-          cardsPerPageChanged={(newCardsPerPage) => setPaginationStatus({ ...paginationStatus, cardsPerPage: newCardsPerPage })}
+          cardsPerPageChanged={(newCardsPerPage) => {
+            const newTotalPages = Math.ceil(filteredCards.length / newCardsPerPage);
+            const newCurrentPage = Math.floor(paginationStatus.visibleFirstCardIndex / newCardsPerPage) + 1;
+            const newVisibleLastCardIndex = paginationStatus.visibleFirstCardIndex + newCardsPerPage;
+            //console.debug("cardsPerPageChanged", newCardsPerPage, newTotalPages, newCurrentPage, newVisibleLastCardIndex);
+            setPaginationStatus(
+              {
+                ...paginationStatus,
+                totalPages: newTotalPages,
+                cardsPerPage: newCardsPerPage,
+                currentPage: newCurrentPage,
+                visibleLastCardIndex: newVisibleLastCardIndex
+              })
+          }}
           onMultiselectFilterChanged={(name, newFilterStatus) => filterStatusChanged(
             filters,
             setFilters,

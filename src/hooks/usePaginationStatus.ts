@@ -19,14 +19,14 @@ const getInitStatusForCardList = (filteredCards: MCCard[], cardsPerPage: number 
   }
 }
 
-const filterPaginatedCards = (filteredCards: MCCard[], paginationStatus: PaginationStatus):MCCard[] => {
-  return  filteredCards.slice(
+const filterPaginatedCards = (filteredCards: MCCard[], paginationStatus: PaginationStatus): MCCard[] => {
+  return filteredCards.slice(
     paginationStatus.visibleFirstCardIndex,
     paginationStatus.visibleLastCardIndex
   )
 }
 
-export const changePage = (prev: PaginationStatus, newCurrentPage: number):PaginationStatus => {
+export const changePage = (prev: PaginationStatus, newCurrentPage: number): PaginationStatus => {
   return {
     ...prev,
     currentPage: newCurrentPage,
@@ -45,7 +45,7 @@ const usePaginationStatus = (filteredCards: MCCard[]) => {
 
   const paginatedCards = useMemo(
     () => filterPaginatedCards(filteredCards, paginationStatus)
-    , [ filteredCards, paginationStatus]
+    , [filteredCards, paginationStatus]
   );
 
   useEffect(() =>

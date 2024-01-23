@@ -79,6 +79,8 @@ const Filters = ({
           value={cardsPerPage}
           className='form-control'
           id="input-cards-per-page"
+          min="1"
+          step="1"
           onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
         />
       </div>
