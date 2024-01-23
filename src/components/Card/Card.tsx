@@ -15,6 +15,7 @@ type Props = {
 }
 
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
+  const [isClicked, setIsClicked] = useState<boolean>(false);
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
 
@@ -42,12 +43,18 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     "mc-card",
     flipped ? "mc-card--flipped" : "",
     isHorizontal ? "mc-card--horizontal" : "",
-    showCardData ? "mc-card--show-data" : ""
+    showCardData ? "mc-card--show-data" : "",
+    isClicked ? "mc-card--clicked" : "",
   ]
   const modal_json_id = `modal-${card.code}-json`;
   return (
     <>
-      <div className={classNames.join(" ")} title={`mc-card-div-${card.code}`} key={`mc-card-div-${card.code}`} >
+      <div
+        className={classNames.join(" ")}
+        title={`mc-card-div-${card.code}`}
+        key={`mc-card-div-${card.code}`}
+        onClick={() => setIsClicked((prev) => !prev)}
+      >
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="mc-card__content">
           <header>

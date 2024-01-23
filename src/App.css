@@ -72,7 +72,7 @@ img {
 
 
     /* Card show data modifier */
-    &:hover,
+    &.mc-card--clicked,
     &.mc-card--show-data {
         & .mc-card__image {
             filter: blur(1px);
