@@ -166,17 +166,18 @@ const DownloadManager = (
             </label>
             <select
               className="form-select"
+              key="lang-select"
               id="langSelect"
               onChange={(event) => i18n.changeLanguage(event.target.value)}
               value={I18N_LANGS.includes(i18n.language) ? i18n.language : I18N_LANGS[0]}>
-              {I18N_LANGS.map((lang) => <>
-                <option
-                  value={lang}
-                  key={`langSelect-${lang}`}
-                >
-                  {t('lang.' + lang)}
-                </option>
-              </>)}
+              {I18N_LANGS.map((lang) => <option
+                key={`lang-select-option-${lang}`}
+                title={`lang-select-option-${lang}`}
+                value={lang}
+              >
+                {t('lang.' + lang)}
+              </option>
+              )}
             </select>
           </div>
 
