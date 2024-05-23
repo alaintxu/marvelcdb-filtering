@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-const useData = <T>(baseURL:string, endpoint: string, requestConfig?: RequestInit, deps?: any[]) => {
+const useData = <T>(baseURL: string, endpoint: string, requestConfig?: RequestInit, deps?: any[]) => {
   const [data, setData] = useState<T[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ const useData = <T>(baseURL:string, endpoint: string, requestConfig?: RequestIni
     fetch(baseURL + endpoint, { signal: controller.signal, ...requestConfig })
       .then((res) => res.json() as Promise<T[]>)
       .then((res) => {
-        console.log("response", endpoint, res);
+        console.debug("response", endpoint, res);
         setData(res);
 
         setError("");
@@ -34,7 +34,7 @@ const useData = <T>(baseURL:string, endpoint: string, requestConfig?: RequestIni
 
     return () => controller.abort();
   }, deps ? [...deps] : []);
-  
+
   return { data, error, isLoading };
 };
 

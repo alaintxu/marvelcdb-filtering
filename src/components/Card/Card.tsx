@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import CardImage from "./CardImage"
+import CardImage, { getCardImage } from "./CardImage"
 import { Modal } from "../Modal"
-import { BsFiletypeJson, BsPhoneFlip, BsPersonFill } from "react-icons/bs";
+import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import comicWebp from "../../assets/comic.webp";
 import { MCCard } from "../../hooks/useCards";
+import { useTranslation } from "react-i18next";
 
 
 export type MCCardKeys = keyof MCCard;
@@ -15,6 +16,7 @@ type Props = {
 }
 
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
+  const { i18n } = useTranslation('global');
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
@@ -81,6 +83,12 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
               </span>
             </div>
             <span className="mc-card__actions d-flex justify-content-end gap-1">
+              <a className="btn btn-secondary shadowed"
+                href={getCardImage(card, flipped || flipAllCards, i18n.language)}
+                target="_blank"
+                title={`Abre imagen de '${card.name}' (pestaña nueva)`}>
+                <BsImage />
+                </a>
               <button
                 className={`btn btn-secondary shadowed`}
                 title="Mostrar datos en crudo (JSON)"
