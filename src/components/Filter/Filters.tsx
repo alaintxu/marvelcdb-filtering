@@ -2,11 +2,13 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { MultiselectFilter } from ".";
 import { MCCard } from "../../hooks/useCards";
-import { CardFilter, FilterStatus, OptionType, textFilterFields } from "../../hooks/useFilters";
+import { CardFilter, FilterStatus, OptionType, SelectedFilters, textFilterFields } from "../../hooks/useFilters";
 
 type Props = {
   cards: MCCard[],
   filters: CardFilter[],
+  selectedFilters: SelectedFilters,
+  setSelectedFilters: (newSelectedFilters: SelectedFilters) => void,
   cardsPerPage: number,
   cardsPerPageChanged: (newCardsPerPage: number) => void,
   onMultiselectFilterChanged: (name: string, newFilterStatus: FilterStatus) => void
@@ -34,9 +36,13 @@ const getUniqueOptions = (cards: MCCard[], key: keyof MCCard, value: keyof MCCar
 }
 
 
+
+
 const Filters = ({
   cards,
   filters,
+  selectedFilters,
+  setSelectedFilters,
   cardsPerPage,
   cardsPerPageChanged,
   onMultiselectFilterChanged,

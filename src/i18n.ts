@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
 export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
-export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions'];
+export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions', 'filters'];
 
 i18n
   .use(initReactI18next)

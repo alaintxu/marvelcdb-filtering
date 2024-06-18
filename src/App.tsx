@@ -3,15 +3,15 @@ import DownloadManager from "./components/DownloadManager";
 import './App.css';
 import { useEffect, useState } from "react";
 import Navigation, { NavigationOptionsKey } from "./components/Navigation";
-import { Filters } from "./components/Filter";
 import { ReactBSPagination } from "@draperez/react-components";
 import { useTranslation } from "react-i18next";
-import useCards, { MCCard } from "./hooks/useCards";
-import useFilters, { filterStatusChanged } from "./hooks/useFilters";
+import useCards from "./hooks/useCards";
+import useFilters from "./hooks/useFilters";
 import useFetchPacks from "./hooks/useFetchPacks";
 import usePackStatusList from "./hooks/usePackStatusList";
 import usePaginationStatus, { changePage } from "./hooks/usePaginationStatus";
 import Instructions from "./components/Instructions";
+import NewFilters from "./components/Filter/NewFilters";
 
 const App = () => {
   const { i18n } = useTranslation('global');
@@ -24,7 +24,7 @@ const App = () => {
 
   // Cards and filters
   const { cards, setCards } = useCards();
-  const { filters, setFilters, filteredCards } = useFilters(cards);
+  const { /*filters, setFilters,*/ selectedFilters, setSelectedFilters, filteredCards } = useFilters(cards);
 
   // Pagination
   const { paginationStatus, setPaginationStatus, paginatedCards } = usePaginationStatus(filteredCards);
@@ -34,17 +34,9 @@ const App = () => {
     if (cards.length == 0) setSelectedNavigationItem("download_manager");
   }, [cards]);
 
+
   const navKeyAdditionalTextMap = new Map<NavigationOptionsKey, string>();
 
-  if (filters.length)
-    navKeyAdditionalTextMap.set(
-      "filters",
-      //String(filters.length)
-      String(filters.reduce(
-        (previousValue, currentFilter) => previousValue + currentFilter.filterStatus.selected.length,
-        0
-      ))
-    );
   navKeyAdditionalTextMap.set(
     "card_list",
     `${paginationStatus.visibleFirstCardIndex + 1}-${Math.min(...[paginationStatus.visibleLastCardIndex, filteredCards.length])}/${filteredCards.length}`
@@ -76,15 +68,16 @@ const App = () => {
           packStatusList={packStatusList}
           setPackStatusList={setPackStatusList} />
         {cards.length > 0 ? <CardList cards={paginatedCards} /> : <Instructions />}
-        <Filters
+        {/*<Filters
           cards={cards}
           filters={filters}
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
           cardsPerPage={paginationStatus.cardsPerPage}
           cardsPerPageChanged={(newCardsPerPage) => {
             const newTotalPages = Math.ceil(filteredCards.length / newCardsPerPage);
             const newCurrentPage = Math.floor(paginationStatus.visibleFirstCardIndex / newCardsPerPage) + 1;
             const newVisibleLastCardIndex = paginationStatus.visibleFirstCardIndex + newCardsPerPage;
-            //console.debug("cardsPerPageChanged", newCardsPerPage, newTotalPages, newCurrentPage, newVisibleLastCardIndex);
             setPaginationStatus(
               {
                 ...paginationStatus,
@@ -102,7 +95,8 @@ const App = () => {
           )}
           onFilterReset={() => {
             setFilters([]);
-          }} />
+          }} />*/}
+        <NewFilters selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
       </main>
       <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center">
         <ReactBSPagination

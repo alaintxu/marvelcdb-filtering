@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+
 import { MCCard } from "./useCards";
 
 
@@ -15,6 +16,10 @@ export type FilterStatus = {
 export type CardFilter = {
   field: keyof MCCard,
   filterStatus: FilterStatus
+}
+
+export type SelectedFilters = {
+  [key: string]: string[]
 }
 
 // Defines the fields where text will be search on text filter
@@ -110,23 +115,66 @@ const filterCards = (cards: MCCard[], filters: CardFilter[]): MCCard[] => {
   });
 }
 
+const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: SelectedFilters): MCCard[] => {
+  return cards.filter((card) => {
+    for (const [key, filterValues] of Object.entries(selectedFilters)) {
+      if (!card.hasOwnProperty(key)) return false;
+      const cardValue = card[key as keyof MCCard];
+
+      switch (typeof cardValue) {
+        case 'string':
+          if (!filterValues.includes(cardValue.toLowerCase())) return false;
+          break;
+        case 'number':
+          const numberFilterValues = filterValues.map((value) => parseInt(value));
+          if (!numberFilterValues.includes(cardValue)) return false;
+          break;
+        case 'boolean':
+          const booleanFilterValues = filterValues.map((value) => value == 'true');
+          if (!booleanFilterValues.includes(cardValue)) return false;
+          break;
+        default:
+          break;
+      }
+    }
+    return true;
+  })
+}
+
 
 const useFilters = (cards: MCCard[]) => {
-  const [filters, setFilters] = useState<CardFilter[]>(
-    //JSON.parse(localStorage.getItem('filters') || "[]") as CardFilter[]
-    []
-  );
+  // const [filters, setFilters] = useState<CardFilter[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
 
-  const filteredCards = useMemo(
+  /*const filteredCards = useMemo(
     () => filterCards(cards, filters),
     [cards, filters]
+  );*/
+
+  const filteredCards = useMemo(
+    () => filterCardsBySelectedFilters(cards, selectedFilters),
+    [cards, selectedFilters]
   );
 
-  useEffect(() => {
-    localStorage.setItem("filters", JSON.stringify(filters));
-  }, [filters]);
+  /*useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    // Foreach key of MCCard class get query Params
+    let queryParamSelectedFilters: SelectedFilters = {};
+    for (const [key, value] of queryParams.entries()) {
+      queryParamSelectedFilters[key] = value.split(",");
+      setSelectedFilters(queryParamSelectedFilters);
+    }
+  }, []);*/
 
-  return { filters, setFilters, filteredCards };
+  useEffect(() => {
+    let filterString = "";
+    for(let [key, values] of Object.entries(selectedFilters)){
+      filterString += `${key}=${values.join(",")}&`
+    }
+    window.history.pushState(null, "", `?${filterString}`);
+  }, [selectedFilters]);
+
+  return { /*filters, setFilters,*/ selectedFilters, setSelectedFilters, filteredCards };
 }
 
 export default useFilters;
