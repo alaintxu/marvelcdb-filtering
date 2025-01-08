@@ -2,6 +2,7 @@ import {
     Controller,
     Control,
   } from "react-hook-form";
+  import Select from 'react-select';
   import { useTranslation } from "react-i18next";
   import { MCCard, UniqueFilterOptions } from "../../hooks/useCards";
   
@@ -35,27 +36,20 @@ import {
           {t(fieldValueName)}
         </label>
         <br />
-        <div className="btn-group" role="group" aria-label={t(fieldName)}>
+        <div className="form-group text-dark" role="group" aria-label={t(fieldName)}>
           <Controller
             name={fieldName}
             control={control}
             defaultValue={defaultValue}
-            render={({ field }) => (
-              <select
-                id={`filter_${fieldName}_multiselect`}
-                onChange={(e) => {
-                  field.onChange(e.target.value.toLocaleLowerCase());
-                }}
-                multiple
-                >
-                  <option value="">{t("all")}</option>
-                  {Array.from(uniqueFilterOptions.options.entries()).map(([key, value]) => (
-                      <option key={key} value={key}>
-                        {value}
-                        {key !== value ? ` (${key})` : ""}
-                      </option>
-                  ))}
-              </select>
+            render={({ field }) => (<>
+              <Select 
+                options={Array.from(uniqueFilterOptions.options.entries()).map(([key, value]) => ({ value: key, label: value }))}
+                isMulti
+                onChange={(selectedOptions: any) => {
+                  const values = selectedOptions.map((option: any) => option.value.toLocaleLowerCase());
+                  field.onChange(values);
+                }}/>
+          </>
             )}
           />
         </div>

@@ -14,7 +14,7 @@ import NumberFilter from "./NumberFilter";
 import { FaEraser, FaFilter } from "react-icons/fa6";
 import { VscSymbolString } from "react-icons/vsc";
 import { MdNumbers, MdCheckBox } from "react-icons/md";
-import { TbCards } from "react-icons/tb";
+import { TbBracketsContain, TbCards } from "react-icons/tb";
 import { GoMultiSelect } from "react-icons/go";
 import MultiselectFilterNew from "./MultiselectFilterNew";
 
@@ -132,20 +132,10 @@ const NewFilters = ({
     })}
         </details>
         <details>
-            <summary>{t("contains_filters_title")} <VscSymbolString /></summary>
+            <summary>{t("contains_filters_title")} <TbBracketsContain /></summary>
             {containsFields.map((field) => (
                 <StringFilter
                     key={`contains_filter_${field.name}`}
-                    control={control}
-                    fieldName={field.name as keyof MCCard}
-                />
-            ))}
-        </details>
-        <details>
-            <summary>{t("string_filters_title")} <VscSymbolString /></summary>
-            {stringFields.map((field) => (
-                <StringFilter
-                    key={`string_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
                 />
@@ -170,6 +160,16 @@ const NewFilters = ({
                 control={control}
                 fieldName={field.name as keyof MCCard}
             />
+            ))}
+        </details>
+        <details>
+            <summary>{t("string_filters_title")} <VscSymbolString /></summary>
+            {stringFields.map((field) => (
+                <StringFilter
+                    key={`string_filter_${field.name}`}
+                    control={control}
+                    fieldName={field.name as keyof MCCard}
+                />
             ))}
         </details>
         <button
