@@ -1,5 +1,6 @@
-import Filters from "./Filters";
-import MultiselectFilter from "./MultiselectFilter";
+import NewFilters from "./NewFilters";
 import MultiselectFilterNew from "./MultiselectFilterNew";
+import NumberFilter from "./NumberFilter";
+import BooleanFilter from "./BooleanFilter";
 
-export {Filters, MultiselectFilter, MultiselectFilterNew};
+export {NewFilters, MultiselectFilterNew, NumberFilter, BooleanFilter};
