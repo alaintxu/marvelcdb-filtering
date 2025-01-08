@@ -132,7 +132,6 @@ const useCards = () => {
   const uniqueFilterOptions: UniqueFilterOptions[] = useMemo(() => {
     // Get all multiselect fields
     const multiselectFields = MCCardFilterableFields.filter((field) => field.type === "multiselect");
-    console.log("multiselectFields", multiselectFields);
 
     const options = multiselectFields.map((field) => {
       const key = field.name as keyof MCCard;
@@ -146,9 +145,9 @@ const useCards = () => {
           if (field.dotted) {
             const splittedValues = valueValue.split(". ");
             splittedValues.forEach((splittedValue) => {
-              if(!splittedValue.endsWith(".")) {
-                splittedValue = splittedValue + ".";
-                //splittedValue = splittedValue.slice(0, -1);
+              if(splittedValue.endsWith(".")) {
+                //splittedValue = splittedValue + ".";
+                splittedValue = splittedValue.slice(0, -1);
               }
               uniqueValuesMap.set(splittedValue, splittedValue);
             });
@@ -170,58 +169,7 @@ const useCards = () => {
         options: sortedUniqueValuesMap
       };
     });
-    // Get all field names
-    // const allFieldNamesMap = new Map<keyof MCCard, keyof MCCard>(
-    //   multiselectFields.map((field) => [field.name as keyof MCCard, field.value_name as keyof MCCard])
-    // );
 
-    // const options = Array.from(allFieldNamesMap.entries()).map(([key, value]) => {
-    //   const uniqueValuesMap = new Map<string, string>();
-    //   const dotted = multiselectFields.find((field) => field.name === key)?.dotted;
-    //   cards.forEach((card) => {
-        
-    //     const keyValue = card[key] as string;
-    //     const valueValue = card[value] as string;
-    //     if (keyValue && valueValue)
-    //       uniqueValuesMap.set(keyValue, valueValue);
-    //   });
-
-    //   //
-    //   return {
-    //     fieldName: key, 
-    //     fieldValueName: value, 
-    //     options: uniqueValuesMap
-    //   };
-    // });
-
-    // const allFieldNames = multiselectFields.map((field) => {
-    //   const map = new Map<keyof MCCard, keyof MCCard>();
-    //   map.set(field.name as keyof MCCard, field.value_name as keyof MCCard);
-    //   return map;
-    // });
-    // console.log("allFieldNames", allFieldNames);
-    // // Get all options for each field
-    // const options = allFieldNames.map((fieldNameMap) => {
-    //   // const key = fieldNameKeyValuePair.key as keyof MCCard;
-    //   // const value = fieldNameKeyValuePair.value as keyof MCCard;
-    //   const [key, value] = Array.from(fieldNameMap.entries())[0];
-    //   const uniqueValuesMap = new Map<string, string>();
-    //   cards.forEach((card) => {
-    //     const keyValue = card[key] as string;
-    //     const valueValue = card[value] as string;
-    //     if (keyValue && valueValue)
-    //       uniqueValuesMap.set(keyValue, valueValue);
-    //   });
-
-    //   //
-    //   return {
-    //     fieldName: value, 
-    //     fieldValueName: key, 
-    //     options: uniqueValuesMap
-    //   };
-    // });
-
-    console.log("uniqueFilterOptions", options);
     return options;
   }, [cards]);
   

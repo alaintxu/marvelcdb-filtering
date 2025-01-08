@@ -43,7 +43,7 @@
     "filters": "Filtros",
     "contains_filters_title": "Contiene texto",
     "multiselect_filters_title": "Filtros multiselección",
-    "boolean_filters_title": "Filtros booleanos",
+    "boolean_filters_title": "Filtros Sí/No (booleanos)",
     "number_filters_title": "Filtros numéricos",
     "string_filters_title": "Filtros de texto",
     "filter_disabled": "Desactivar filtro",

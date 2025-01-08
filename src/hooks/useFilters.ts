@@ -34,17 +34,17 @@ export const textFilterFields = [
   'real_traits'
 ];
 
-const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
-  const filterValues = filter.filterStatus.selected.map((option) => option.value);
-  const cardValues = card[filter.field as keyof MCCard] as string[];
+// const evaluateCardFiltering = (filter: CardFilter, card: MCCard): boolean => {
+//   const filterValues = filter.filterStatus.selected.map((option) => option.value);
+//   const cardValues = card[filter.field as keyof MCCard] as string[];
 
 
-  const filteredCardValues = filterValues.filter((filterValue) => cardValues?.includes(filterValue));
-  if (filter.filterStatus.isAnd)
-    return filteredCardValues.length == filterValues.length;
-  else
-    return filteredCardValues.length > 0;
-}
+//   const filteredCardValues = filterValues.filter((filterValue) => cardValues?.includes(filterValue));
+//   if (filter.filterStatus.isAnd)
+//     return filteredCardValues.length == filterValues.length;
+//   else
+//     return filteredCardValues.length > 0;
+// }
 
 export const filterStatusChanged = (
   filters: CardFilter[],
@@ -68,52 +68,52 @@ export const filterStatusChanged = (
   ])
 }
 
-const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard): boolean => {
-  /*
-  ** Evaluate if the given card contains the texts defined in the given
-  ** textFilter
-  */
+// const evaluateCardTextFiltering = (textFilter: CardFilter, card: MCCard): boolean => {
+//   /*
+//   ** Evaluate if the given card contains the texts defined in the given
+//   ** textFilter
+//   */
 
-  // Fields positivelly evaluated (name, text, flavor )
-  const fieldsContainingText = textFilterFields.filter((field) => {
-    // The actual value of the field
-    const fieldValue = String(card[field as keyof MCCard]).toLowerCase();
+//   // Fields positivelly evaluated (name, text, flavor )
+//   const fieldsContainingText = textFilterFields.filter((field) => {
+//     // The actual value of the field
+//     const fieldValue = String(card[field as keyof MCCard]).toLowerCase();
 
-    // The texts selected in the filters
-    const selectedTexts = textFilter.filterStatus.selected;
+//     // The texts selected in the filters
+//     const selectedTexts = textFilter.filterStatus.selected;
 
-    // The selected text found in the fieldValue
-    const evaluatedTexts = selectedTexts.filter((selectedText) => fieldValue.includes(selectedText.value.toLowerCase()))
+//     // The selected text found in the fieldValue
+//     const evaluatedTexts = selectedTexts.filter((selectedText) => fieldValue.includes(selectedText.value.toLowerCase()))
 
-    if (textFilter.filterStatus.isAnd)
-      // All selected texts must appear
-      return selectedTexts.length == evaluatedTexts.length;
-    else
-      // At least 1 selected text must appear
-      return evaluatedTexts.length > 0;
+//     if (textFilter.filterStatus.isAnd)
+//       // All selected texts must appear
+//       return selectedTexts.length == evaluatedTexts.length;
+//     else
+//       // At least 1 selected text must appear
+//       return evaluatedTexts.length > 0;
 
-  });
+//   });
 
-  // Any field has positive evaluation?
-  return fieldsContainingText.length > 0;
-}
+//   // Any field has positive evaluation?
+//   return fieldsContainingText.length > 0;
+// }
 
 
-const filterCards = (cards: MCCard[], filters: CardFilter[]): MCCard[] => {
-  return cards.filter((card) => {
-    const noTextFilters = filters.filter((filter) => filter.field !== 'text');
+// const filterCards = (cards: MCCard[], filters: CardFilter[]): MCCard[] => {
+//   return cards.filter((card) => {
+//     const noTextFilters = filters.filter((filter) => filter.field !== 'text');
 
-    const evaluatedFilters = noTextFilters.filter(
-      (filter) => evaluateCardFiltering(filter, card)
-    );
+//     const evaluatedFilters = noTextFilters.filter(
+//       (filter) => evaluateCardFiltering(filter, card)
+//     );
 
-    if (evaluatedFilters.length != noTextFilters.length) return false;
+//     if (evaluatedFilters.length != noTextFilters.length) return false;
 
-    const textFilter = filters.find((filter) => filter.field == 'text');
-    if (!textFilter) return true;
-    return evaluateCardTextFiltering(textFilter, card);
-  });
-}
+//     const textFilter = filters.find((filter) => filter.field == 'text');
+//     if (!textFilter) return true;
+//     return evaluateCardTextFiltering(textFilter, card);
+//   });
+// }
 
 const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: SelectedFilters): MCCard[] => {
   return cards.filter((card) => {
@@ -123,8 +123,10 @@ const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: Selected
 
       switch (typeof cardValue) {
         case 'string':
-          console.info(`Filtering by string ${key}: ${cardValue}`);
-          if (!filterValues.includes(cardValue.toLowerCase())) return false;
+          const lowerCardValue = cardValue.toLowerCase();
+          const found = filterValues.find((value) => lowerCardValue.includes(value.toLowerCase()));
+          if (!found) return false;
+          //if (!filterValues.includes(lowerCardValue)) return false;
           break;
         case 'number':
           console.info(`Filtering by number ${key}: ${cardValue}`);
@@ -147,13 +149,7 @@ const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: Selected
 
 
 const useFilters = (cards: MCCard[]) => {
-  // const [filters, setFilters] = useState<CardFilter[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
-
-  /*const filteredCards = useMemo(
-    () => filterCards(cards, filters),
-    [cards, filters]
-  );*/
 
   const filteredCards = useMemo(
     () => filterCardsBySelectedFilters(cards, selectedFilters),

@@ -44,7 +44,7 @@ import {
               <select
                 id={`filter_${fieldName}_multiselect`}
                 onChange={(e) => {
-                  field.onChange(e.target.value);
+                  field.onChange(e.target.value.toLocaleLowerCase());
                 }}
                 multiple
                 >
