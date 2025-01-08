@@ -8,6 +8,7 @@
     "pack_name": "Pack",
     "type_name": "Tipo",
     "card_set_name": "Conjunto de cartas",
+    "cards_per_page": "Cartas por página",
 
     "name": "Nombre",
     "real_name": "Nombre (original)",

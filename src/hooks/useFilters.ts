@@ -123,17 +123,21 @@ const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: Selected
 
       switch (typeof cardValue) {
         case 'string':
+          console.info(`Filtering by string ${key}: ${cardValue}`);
           if (!filterValues.includes(cardValue.toLowerCase())) return false;
           break;
         case 'number':
+          console.info(`Filtering by number ${key}: ${cardValue}`);
           const numberFilterValues = filterValues.map((value) => parseInt(value));
           if (!numberFilterValues.includes(cardValue)) return false;
           break;
         case 'boolean':
+          console.info(`Filtering by boolean ${key}: ${cardValue}`);
           const booleanFilterValues = filterValues.map((value) => value == 'true');
           if (!booleanFilterValues.includes(cardValue)) return false;
           break;
         default:
+          console.warn(`Unknown type for field ${key}: ${cardValue} (${typeof cardValue})`);
           break;
       }
     }

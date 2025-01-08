@@ -21,7 +21,7 @@ import {
     const { t } = useTranslation("filters");
     
     return (
-      <div key={`filter_${fieldName}`} className="mb-3">
+      <div key={`filter_${fieldName}`} className="mb-3 form-group">
         <label
           style={{
             fontSize: "0.75rem",
@@ -40,6 +40,7 @@ import {
             defaultValue={defaultValue}
             render={({ field }) => (
                 <input
+                  className="form-control"
                   type="text"
                   id={`filter_${fieldName}_text`}
                   checked={field.value === undefined}

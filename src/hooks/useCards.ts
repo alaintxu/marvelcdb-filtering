@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type MCCard = {
   attack?: number,
@@ -85,15 +85,15 @@ export const MCCardFilterableFields = [
   { name: "hidden", type: "boolean" },
   { name: "double_sided", type: "boolean" },
   { name: "escalation_threat_fixed", type: "boolean" },
-  { name: "traits", type: "multiselect" },
-  { name: "faction_code", type: "multiselect" },
-  { name: "faction_name", type: "multiselect" },
-  { name: "pack_code", type: "multiselect" },
-  { name: "pack_name", type: "multiselect" },
-  { name: "type_code", type: "multiselect" },
-  { name: "type_name", type: "multiselect" },
-  { name: "card_set_code", type: "multiselect" },
-  { name: "card_set_name", type: "multiselect" },
+  { name: "traits", type: "multiselect", value_name: "traits", dotted: true },
+  { name: "faction_code", type: "multiselect", value_name: "faction_name" },
+  // { name: "faction_name", type: "multiselect", key_name: "faction_code" },
+  { name: "pack_code", type: "multiselect", value_name: "pack_name" },
+  // { name: "pack_name", type: "multiselect", key_name: "pack_code" },
+  { name: "type_code", type: "multiselect", value_name: "type_name" },
+  // { name: "type_name", type: "multiselect", key_name: "type_code" },
+  { name: "card_set_code", type: "multiselect", value_name: "card_set_name" },
+  // { name: "card_set_name", type: "multiselect", key_name: "card_set_code" },
   { name: "duplicate_of_code", type: "string" },
   { name: "duplicate_of_name", type: "string" },
   { name: "card_set_type_name_code", type: "string" },
@@ -117,13 +117,113 @@ export const MCCardFilterableFields = [
   /*{ name: "url", type: "string" }*/
 ];
 
-
+export type UniqueFilterOptions = {
+  fieldName: keyof MCCard,
+  fieldValueName: keyof MCCard,
+  options: Map<string, string>
+}
 
 
 const useCards = () => {
   const [cards, setCards] = useState<MCCard[]>(
     JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[]
   );
+
+  const uniqueFilterOptions: UniqueFilterOptions[] = useMemo(() => {
+    // Get all multiselect fields
+    const multiselectFields = MCCardFilterableFields.filter((field) => field.type === "multiselect");
+    console.log("multiselectFields", multiselectFields);
+
+    const options = multiselectFields.map((field) => {
+      const key = field.name as keyof MCCard;
+      const value = field.value_name as keyof MCCard;
+
+      const uniqueValuesMap = new Map<string, string>();
+      cards.forEach((card) => {
+        const keyValue = card[key] as string;
+        const valueValue = card[value] as string;
+        if (keyValue && valueValue){
+          if (field.dotted) {
+            const splittedValues = valueValue.split(". ");
+            splittedValues.forEach((splittedValue) => {
+              if(!splittedValue.endsWith(".")) {
+                splittedValue = splittedValue + ".";
+                //splittedValue = splittedValue.slice(0, -1);
+              }
+              uniqueValuesMap.set(splittedValue, splittedValue);
+            });
+          } else {
+            uniqueValuesMap.set(keyValue, valueValue);
+          }
+        }
+      });
+
+      // Convert the Map to an array, sort it by the values, and convert it back to a Map
+      const sortedUniqueValuesMap = new Map(
+        Array.from(uniqueValuesMap.entries()).sort((a, b) => a[1].localeCompare(b[1]))
+      );
+
+      //
+      return {
+        fieldName: key, 
+        fieldValueName: value, 
+        options: sortedUniqueValuesMap
+      };
+    });
+    // Get all field names
+    // const allFieldNamesMap = new Map<keyof MCCard, keyof MCCard>(
+    //   multiselectFields.map((field) => [field.name as keyof MCCard, field.value_name as keyof MCCard])
+    // );
+
+    // const options = Array.from(allFieldNamesMap.entries()).map(([key, value]) => {
+    //   const uniqueValuesMap = new Map<string, string>();
+    //   const dotted = multiselectFields.find((field) => field.name === key)?.dotted;
+    //   cards.forEach((card) => {
+        
+    //     const keyValue = card[key] as string;
+    //     const valueValue = card[value] as string;
+    //     if (keyValue && valueValue)
+    //       uniqueValuesMap.set(keyValue, valueValue);
+    //   });
+
+    //   //
+    //   return {
+    //     fieldName: key, 
+    //     fieldValueName: value, 
+    //     options: uniqueValuesMap
+    //   };
+    // });
+
+    // const allFieldNames = multiselectFields.map((field) => {
+    //   const map = new Map<keyof MCCard, keyof MCCard>();
+    //   map.set(field.name as keyof MCCard, field.value_name as keyof MCCard);
+    //   return map;
+    // });
+    // console.log("allFieldNames", allFieldNames);
+    // // Get all options for each field
+    // const options = allFieldNames.map((fieldNameMap) => {
+    //   // const key = fieldNameKeyValuePair.key as keyof MCCard;
+    //   // const value = fieldNameKeyValuePair.value as keyof MCCard;
+    //   const [key, value] = Array.from(fieldNameMap.entries())[0];
+    //   const uniqueValuesMap = new Map<string, string>();
+    //   cards.forEach((card) => {
+    //     const keyValue = card[key] as string;
+    //     const valueValue = card[value] as string;
+    //     if (keyValue && valueValue)
+    //       uniqueValuesMap.set(keyValue, valueValue);
+    //   });
+
+    //   //
+    //   return {
+    //     fieldName: value, 
+    //     fieldValueName: key, 
+    //     options: uniqueValuesMap
+    //   };
+    // });
+
+    console.log("uniqueFilterOptions", options);
+    return options;
+  }, [cards]);
   
   /*const filteredCards = useMemo(() => {
     
@@ -133,7 +233,7 @@ const useCards = () => {
     localStorage.setItem("cards", JSON.stringify(cards));
   }, [cards]);
   
-  return { cards, setCards };
+  return { cards, setCards, uniqueFilterOptions };
 }
 
 export default useCards;

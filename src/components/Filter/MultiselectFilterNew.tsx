@@ -3,11 +3,11 @@ import {
     Control,
   } from "react-hook-form";
   import { useTranslation } from "react-i18next";
-  import { MCCard } from "../../hooks/useCards";
+  import { MCCard, UniqueFilterOptions } from "../../hooks/useCards";
   
   interface Props {
     control: Control<MCCard>;
-    fieldName: keyof MCCard;
+    uniqueFilterOptions: UniqueFilterOptions;
   }
   
   const getQueryParamStringValue = (fieldName: string): string => {
@@ -16,7 +16,9 @@ import {
     return str ? str : "";
   }
   
-  const MultiselectFilterNew = ({ control, fieldName }: Props) => {
+  const MultiselectFilterNew = ({ control, uniqueFilterOptions }: Props) => {
+    const fieldName = uniqueFilterOptions.fieldName;
+    const fieldValueName = uniqueFilterOptions.fieldValueName;
     const defaultValue = getQueryParamStringValue(fieldName);
     const { t } = useTranslation("filters");
     
@@ -30,7 +32,7 @@ import {
             color: "white",
           }}
         >
-          {t(fieldName)}
+          {t(fieldValueName)}
         </label>
         <br />
         <div className="btn-group" role="group" aria-label={t(fieldName)}>
@@ -39,14 +41,21 @@ import {
             control={control}
             defaultValue={defaultValue}
             render={({ field }) => (
-                <input
-                  type="text"
-                  id={`filter_${fieldName}_text`}
-                  checked={field.value === undefined}
-                  onChange={(e) => {
-                    field.onChange(e.target.value);
-                  }}
-                />
+              <select
+                id={`filter_${fieldName}_multiselect`}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                }}
+                multiple
+                >
+                  <option value="">{t("all")}</option>
+                  {Array.from(uniqueFilterOptions.options.entries()).map(([key, value]) => (
+                      <option key={key} value={key}>
+                        {value}
+                        {key !== value ? ` (${key})` : ""}
+                      </option>
+                  ))}
+              </select>
             )}
           />
         </div>

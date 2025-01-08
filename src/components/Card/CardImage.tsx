@@ -17,7 +17,10 @@ const marvelcdb_basepath = "https://es.marvelcdb.com";
 function getFrontImage(card: MCCard) {
   if (card.imagesrc) return marvelcdb_basepath + card.imagesrc;
 
-  return marvelcdb_basepath + "/bundles/cards/" + card.code + ".png";
+  let code = card.code;
+  if (card.duplicate_of_code) code = card.duplicate_of_code;
+
+  return marvelcdb_basepath + "/bundles/cards/" + code + ".png";
 }
 
 function getBackImage(card: MCCard) {

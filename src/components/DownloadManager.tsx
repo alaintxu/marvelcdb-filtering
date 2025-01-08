@@ -91,9 +91,10 @@ const DownloadManager = (
 
     setCards((previousCards) => {
       // Remove duplicated cards
-      const duplicateFilteredData = (data as MCCard[]).filter((card) => !card.duplicate_of_code);
+      //const duplicateFilteredData = (data as MCCard[]).filter((card) => !card.duplicate_of_code);
       // sort by date
-      const unorderedCards = [...previousCards, ...duplicateFilteredData];
+      //const unorderedCards = [...previousCards, ...duplicateFilteredData];
+      const unorderedCards = [...previousCards, ...(data as MCCard[])];
       const orderedCards = unorderedCards.sort((aCard, bCard) => aCard.code.localeCompare(bCard.code));
       return orderedCards;
     });

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CardImage, { getCardImage } from "./CardImage"
 import { Modal } from "../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
+import { TbCards } from "react-icons/tb";
 import comicWebp from "../../assets/comic.webp";
 import { MCCard } from "../../hooks/useCards";
 import { useTranslation } from "react-i18next";
@@ -81,6 +82,12 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                   {card.name}
                 </a>
               </span>
+
+              {(card.quantity ?? 1) > 1 && 
+              <span className="bg-light text-dark shadowed d-flex align-items-center rounded px-1" title="Número de copias">
+                <TbCards />x{card.quantity}
+              </span>
+              }
             </div>
             <span className="mc-card__actions d-flex justify-content-end gap-1">
               <a className="btn btn-secondary shadowed"

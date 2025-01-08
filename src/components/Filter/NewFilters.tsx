@@ -2,6 +2,7 @@ import {
   FiltrableFieldType,
   MCCard,
   MCCardFilterableFields,
+  UniqueFilterOptions
 } from "../../hooks/useCards";
 import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
@@ -12,16 +13,25 @@ import StringFilter from "./StringFilter";
 import NumberFilter from "./NumberFilter";
 import { FaEraser, FaFilter } from "react-icons/fa6";
 import { VscSymbolString } from "react-icons/vsc";
-import { MdNumbers } from "react-icons/md";
-import { MdCheckBox } from "react-icons/md";
+import { MdNumbers, MdCheckBox } from "react-icons/md";
+import { TbCards } from "react-icons/tb";
+import { GoMultiSelect } from "react-icons/go";
 import MultiselectFilterNew from "./MultiselectFilterNew";
 
 type Props = {
   selectedFilters: SelectedFilters;
   setSelectedFilters: (newSelectedFilters: SelectedFilters) => void;
+  cardsPerPage: number,
+  cardsPerPageChanged: (newCardsPerPage: number) => void,
+  uniqueFilterOptions: UniqueFilterOptions[]
 };
 
-const NewFilters = ({ selectedFilters, setSelectedFilters }: Props) => {
+const NewFilters = ({
+  selectedFilters, setSelectedFilters,
+  cardsPerPage,
+  cardsPerPageChanged,
+  uniqueFilterOptions
+}: Props) => {
   const { t } = useTranslation("filters");
   console.debug("SelectedFilters", selectedFilters);
   const { control, watch, reset } = useForm<MCCard>({
@@ -89,19 +99,43 @@ const NewFilters = ({ selectedFilters, setSelectedFilters }: Props) => {
     <section id="filters" className="bg-dark shadow d-flex flex-column p-3">
       <h3><FaFilter /> {t('filters')}</h3>
       <form>
+        <div className="input-group mb-4">
+          <label
+            className="input-group-text bg-dark text-light"
+            htmlFor="input-cards-per-page">
+              <TbCards />&nbsp;
+            {t('cards_per_page')}
+          </label>
+          <input
+            type="number"
+            value={cardsPerPage}
+            className='form-control'
+            id="input-cards-per-page"
+            min="1"
+            step="1"
+            onChange={(event) => cardsPerPageChanged(parseInt(event.target.value))}
+          />
+        </div>
         <details>
-            <summary>{t("multiselect_filters_title")} <VscSymbolString /></summary>
-            {multiselectFields.map((field) => (
+            <summary>{t("multiselect_filters_title")} <GoMultiSelect /></summary>
+            {multiselectFields.map((field) => {
+              const uniqueOptions: UniqueFilterOptions = uniqueFilterOptions.find(
+                (filterOptions) => filterOptions.fieldName === field.name
+              ) || { fieldName: "wrong!" as keyof MCCard, fieldValueName: "wrong!" as keyof MCCard, options: new Map<string, string>() };
+              return (
                 <MultiselectFilterNew
+                    key={`multiselect_filter_${field.name}`}
                     control={control}
-                    fieldName={field.name as keyof MCCard}
+                    uniqueFilterOptions={uniqueOptions}
                 />
-            ))}
+              );
+    })}
         </details>
         <details>
             <summary>{t("contains_filters_title")} <VscSymbolString /></summary>
             {containsFields.map((field) => (
                 <StringFilter
+                    key={`contains_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
                 />
@@ -111,6 +145,7 @@ const NewFilters = ({ selectedFilters, setSelectedFilters }: Props) => {
             <summary>{t("string_filters_title")} <VscSymbolString /></summary>
             {stringFields.map((field) => (
                 <StringFilter
+                    key={`string_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
                 />
@@ -120,6 +155,7 @@ const NewFilters = ({ selectedFilters, setSelectedFilters }: Props) => {
             <summary>{t("number_filters_title")} <MdNumbers /></summary>
             {numberFields.map((field) => (
                 <NumberFilter
+                    key={`number_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
                 />
@@ -130,6 +166,7 @@ const NewFilters = ({ selectedFilters, setSelectedFilters }: Props) => {
 
             {booleanFields.map((field) => (
             <BooleanFilter
+                key={`boolean_filter_${field.name}`}
                 control={control}
                 fieldName={field.name as keyof MCCard}
             />

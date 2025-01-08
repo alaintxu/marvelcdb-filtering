@@ -23,7 +23,7 @@ const App = () => {
   const { packStatusList, setPackStatusList } = usePackStatusList();
 
   // Cards and filters
-  const { cards, setCards } = useCards();
+  const { cards, setCards, uniqueFilterOptions } = useCards();
   const { /*filters, setFilters,*/ selectedFilters, setSelectedFilters, filteredCards } = useFilters(cards);
 
   // Pagination
@@ -96,7 +96,25 @@ const App = () => {
           onFilterReset={() => {
             setFilters([]);
           }} />*/}
-        <NewFilters selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
+        <NewFilters
+          selectedFilters={selectedFilters} 
+          setSelectedFilters={setSelectedFilters}
+          cardsPerPage={paginationStatus.cardsPerPage}
+          cardsPerPageChanged={(newCardsPerPage: number) => {
+            const newTotalPages = Math.ceil(filteredCards.length / newCardsPerPage);
+            const newCurrentPage = Math.floor(paginationStatus.visibleFirstCardIndex / newCardsPerPage) + 1;
+            const newVisibleLastCardIndex = paginationStatus.visibleFirstCardIndex + newCardsPerPage;
+            setPaginationStatus(
+              {
+                ...paginationStatus,
+                totalPages: newTotalPages,
+                cardsPerPage: newCardsPerPage,
+                currentPage: newCurrentPage,
+                visibleLastCardIndex: newVisibleLastCardIndex
+              })
+          }}
+          uniqueFilterOptions={uniqueFilterOptions}
+          />
       </main>
       <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center">
         <ReactBSPagination

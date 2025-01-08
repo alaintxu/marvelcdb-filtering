@@ -8,6 +8,7 @@
     "pack_name": "Pack",
     "type_name": "Type",
     "card_set_name": "Card set",
+    "cards_per_page": "Cards per page",
 
     "name": "Name",
     "real_name": "Real name",
