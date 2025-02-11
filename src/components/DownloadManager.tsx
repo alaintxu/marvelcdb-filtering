@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsStack, BsTranslate, BsTrash } from "react-icons/bs";
@@ -217,7 +217,7 @@ const DownloadManager = (
                   {packs.map((pack, index) => {
                     const id = "download-manager-" + index;
                     const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
-                    return <>
+                    return <React.Fragment key={id}>
                       <input
                         type="checkbox"
                         className="btn-check"
@@ -262,7 +262,7 @@ const DownloadManager = (
                           </>
                         }
                       </label>
-                    </>;
+                    </React.Fragment>;
                   })}
                 </div>
               </div> :
