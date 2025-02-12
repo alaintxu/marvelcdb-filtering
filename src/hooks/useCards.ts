@@ -123,11 +123,13 @@ export type UniqueFilterOptions = {
   options: Map<string, string>
 }
 
+function initializeCards(): MCCard[] {
+  return JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[];
+}
+
 
 const useCards = () => {
-  const [cards, setCards] = useState<MCCard[]>(
-    JSON.parse(localStorage.getItem('cards') || "[]") as MCCard[]
-  );
+  const [cards, setCards] = useState<MCCard[]>(initializeCards);
 
   const uniqueFilterOptions: UniqueFilterOptions[] = useMemo(() => {
     // Get all multiselect fields

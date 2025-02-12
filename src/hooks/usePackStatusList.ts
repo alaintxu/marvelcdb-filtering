@@ -6,10 +6,12 @@ export type PackStatus = {
   numberOfCards: number
 }
 
+function initializePackStatus(): PackStatus[] {
+  return JSON.parse(localStorage.getItem('pack_status') || "[]") as PackStatus[];
+}
+
 const usePackStatusList = () => {
-  const [packStatusList, setPackStatusList] = useState<PackStatus[]>(
-    JSON.parse(localStorage.getItem('pack_status') || "[]")
-  );
+  const [packStatusList, setPackStatusList] = useState<PackStatus[]>(initializePackStatus);
   
   useEffect(() => {
     localStorage.setItem("pack_status", JSON.stringify(packStatusList));

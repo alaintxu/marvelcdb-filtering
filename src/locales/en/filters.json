@@ -29,7 +29,7 @@
     "threat": "Threat",
     "thwart": "Thwart",
     
-    "attack_star": "\u2606 in attack",
+    "attack_star": "* in attack",
     "base_threat_fixed": "Base thread fixed",
     "double_sided": "Double sided",
     "escalation_threat_fixed": "Escalation thread fixed",
@@ -38,7 +38,7 @@
     "is_unique": "Is unique",
     "permanent": "Permanent",
     "threat_fixed": "Thread fixed",
-    "thwart_star": "\u2606 in thwart",
+    "thwart_star": "* in thwart",
 
     "filters": "Filters",
     "contains_filters_title": "Contains text",

@@ -35,13 +35,17 @@ export const changePage = (prev: PaginationStatus, newCurrentPage: number): Pagi
   }
 }
 
-const usePaginationStatus = (filteredCards: MCCard[]) => {
+function initializePaginationStatus(filteredCards: MCCard[]): PaginationStatus {
   const localStoragePaginationStatusString = localStorage.getItem('pagination_status');
-  const initialPaginationStatus = localStoragePaginationStatusString != null ?
-    JSON.parse(localStoragePaginationStatusString) as PaginationStatus :
-    getInitStatusForCardList(filteredCards, 12);
 
-  const [paginationStatus, setPaginationStatus] = useState<PaginationStatus>(initialPaginationStatus);
+  if (localStoragePaginationStatusString == null) {
+    return getInitStatusForCardList(filteredCards, 12);
+  }
+  return JSON.parse(localStoragePaginationStatusString) as PaginationStatus;
+}
+
+const usePaginationStatus = (filteredCards: MCCard[]) => {
+  const [paginationStatus, setPaginationStatus] = useState<PaginationStatus>(initializePaginationStatus(filteredCards));
 
   const paginatedCards = useMemo(
     () => filterPaginatedCards(filteredCards, paginationStatus)
