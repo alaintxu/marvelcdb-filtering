@@ -60,9 +60,9 @@ const DeckView = ({ deck }: Props) => {
           </div>
           <div className="d-flex flex-wrap align-items-center gap-1 mt-4">
             {Object.entries(deck.slots).map(([cardId, quantity]) => (
-              <span className="badge bg-light text-dark" key={cardId}>
+              <a className="badge bg-light text-dark" key={cardId} href={`${t('base_path')}/card/${cardId}`} target="_blank" rel="noreferrer">
                 {cardId} {quantity > 1 &&<span className='ms-1 badge bg-dark text-light'>x{quantity}</span>}
-              </span>
+              </a>
             ))}
           </div>
         </div>
