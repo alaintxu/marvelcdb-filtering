@@ -1,10 +1,24 @@
 import i18n from 'i18next';
+import type {
+  i18n as i18nType,
+} from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
 export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
 export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions', 'filters'];
+
+export const getLanguage = (i18n: i18nType): string => {
+  return checkLanguageString(i18n.language);
+}
+
+export const checkLanguageString = (language: string): string => {
+  if (!I18N_LANGS.includes(language)) {
+    return I18N_LANGS[0];
+  }
+  return language;
+}
 
 i18n
   .use(initReactI18next)

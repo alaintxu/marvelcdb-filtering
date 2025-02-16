@@ -4,8 +4,9 @@ import { Modal } from "../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import { TbCards } from "react-icons/tb";
 import comicWebp from "../../assets/comic.webp";
-import { MCCard } from "../../hooks/useCards";
+import { MCCard } from "../../hooks/useCardsQuery";
 import { useTranslation } from "react-i18next";
+import { getLanguage } from "../../i18n";
 
 
 export type MCCardKeys = keyof MCCard;
@@ -91,7 +92,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
             </div>
             <span className="mc-card__actions d-flex justify-content-end gap-1">
               <a className="btn btn-secondary shadowed"
-                href={getCardImage(card, flipped || flipAllCards, i18n.language)}
+                href={getCardImage(card, flipped || flipAllCards, getLanguage(i18n))}
                 target="_blank"
                 title={`Abre imagen de '${card.name}' (pestaña nueva)`}>
                 <BsImage />

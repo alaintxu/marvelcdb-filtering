@@ -1,9 +1,10 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../assets/mc-lazy-vertical.webp';
-import { MCCard } from "../../hooks/useCards";
+import { MCCard } from "../../hooks/useCardsQuery";
 import { useTranslation } from 'react-i18next';
 import { useState } from "react";
+import { getLanguage } from "../../i18n";
 
 type Props = {
   card: MCCard,
@@ -64,7 +65,7 @@ export function getCardImage(card: MCCard, flipped: boolean, lang: string) {
 
 const CardImage = ({ card, horizontal }: Props) => {
   const { i18n } = useTranslation('global');
-  const lang = i18n.language;
+  const lang = getLanguage(i18n);
   const [error, serError] = useState(false);
 
 

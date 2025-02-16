@@ -1,29 +1,63 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsStack, BsTranslate, BsTrash } from "react-icons/bs";
-import { I18N_LANGS } from "../i18n";
-import { Pack } from '../hooks/useFetchPacks';
-import { MCCard } from '../hooks/useCards';
-import { PackStatus } from '../hooks/usePackStatusList';
+import { getLanguage, I18N_LANGS } from "../i18n";
+//import { Pack } from '../hooks/useFetchPacks';
+import { MCCard } from '../hooks/useCardsQuery';
+// import { PackStatus } from '../hooks/usePackStatusList';
 import { FaFileImport, FaFileExport, FaArrowRotateLeft } from "react-icons/fa6";
+import usePacksQuery, { PackStatus } from '../hooks/usePacksQuery';
+import useCardsQuery from '../hooks/useCardsQuery';
+import LoadingSpinner from './LoadingSpinner';
+//import { useQueries, useQuery } from '@tanstack/react-query';
 
+/*
 type Props = {
-  cards: MCCard[],
-  setCards: React.Dispatch<React.SetStateAction<MCCard[]>>,
-  packs: Pack[],
-  packsError: string,
-  packsAreLoading: boolean,
-  packStatusList: PackStatus[],
+  cards?: MCCard[],
+  setCards?: React.Dispatch<React.SetStateAction<MCCard[]>>,
+  packs?: Pack[],
+  packsError?: string,
+  packsAreLoading?: boolean,
+  packStatusList?: PackStatus[],
   setPackStatusList: React.Dispatch<React.SetStateAction<PackStatus[]>>,
 }
+*/
 
-const DownloadManager = (
-  { cards, setCards, packs, packsError, packsAreLoading, packStatusList, setPackStatusList }: Props
-) => {
+
+const DownloadManager = () => {
   const { t, i18n } = useTranslation('global');
-  const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
-  const [showPackList, setShowPackList] = useState<boolean>(cards.length === 0);
+  const { 
+    packs,
+    packsError,
+    arePacksLoading, 
+    arePacksFetching 
+  } = usePacksQuery();
+  
+
+  const { 
+    cards,
+    packStatusDict,
+    downloadedPacks,
+    addPackCardsMutation, 
+    removePackCardsMutation, 
+    removeAllCardsMutation,
+    addMultiplePackCardsMutation,
+    addCardsMutation
+  } = useCardsQuery();
+
+  console.debug("PackStatusDict", packStatusDict);
+
+  const packsInCardsQuery: Set<string> = useMemo(() => {
+    const packCodesSet = new Set<string>();
+    if(cards) 
+      cards.forEach((card) => packCodesSet.add(card.pack_code));
+    return packCodesSet;
+  }, [cards]);
+
+
+  //const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
+  const [showPackList, setShowPackList] = useState<boolean>(!cards || cards.length === 0);
 
   const exportCardsToJSONFile = () => {
     const element = document.createElement("a");
@@ -49,16 +83,17 @@ const DownloadManager = (
       fileReader.onload = e => {
         const result = (e.target as FileReader).result as string;
         const loadedCards: MCCard[] = JSON.parse(result) as MCCard[];
-        setCards((prev) => [...prev, ...loadedCards]);
+        addCardsMutation(loadedCards);
+        //setCards((prev) => [...prev, ...loadedCards]);
 
         // ToDo: update pack status list from cards
-        const newPackStatusList: PackStatus[] = getPackStatusListFromCars(loadedCards);
-        setPackStatusList([...newPackStatusList])
+        //const newPackStatusList: PackStatus[] = getPackStatusListFromCars(loadedCards);
+        //setPackStatusList([...newPackStatusList])
       }
     }
   }
 
-  const getPackStatusListFromCars = (cards: MCCard[]): PackStatus[] => {
+  /*const getPackStatusListFromCars = (cards: MCCard[]): PackStatus[] => {
     const newPackStatusList: PackStatus[] = [...packStatusList.map(
       (packStatus) => { return { ...packStatus } }
     )];
@@ -78,10 +113,10 @@ const DownloadManager = (
       }
     }
     return newPackStatusList;
-  }
+  }*/
 
 
-  const downloadPackCards = async (packCode: string) => {
+  /*const downloadPackCards = async (packCode: string) => {
     setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
     setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
     setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
@@ -107,6 +142,7 @@ const DownloadManager = (
   }
 
   const removePack = (packCode: string) => {
+    removePackCardsMutation(packCode);
     removePackStatus(packCode);
     setCards((prevCards) => prevCards.filter((card) => card.pack_code !== packCode));
   }
@@ -114,15 +150,24 @@ const DownloadManager = (
   const removePackStatus = (packCode: string) => {
     setPackStatusList((prevState) => prevState.filter((packStatus) => packStatus.code !== packCode));
 
-  }
+  }*/
 
-  const removeAllCards = () => {
-    setCards([]);
-    setPackStatusList([]);
-  }
+  // const removeAllCards = () => {
+  //   setCards([]);
+  //   setPackStatusList([]);
+  // }
+
+  /*const getPackStatusColor = () => {
+    const packStatusRatio = packStatusList.length / packs.length;
+    if (packStatusRatio === 1) return "success";
+    if (packStatusRatio < 0.25) return "danger";
+    return "warning";
+  }*/
 
   const getPackStatusColor = () => {
-    const packStatusRatio = packStatusList.length / packs.length;
+    const packNumber = packs?.length || 0;
+    const packStatusRatio = downloadedPacks||0 / packNumber;
+    if( arePacksLoading || arePacksFetching ) return "warning";
     if (packStatusRatio === 1) return "success";
     if (packStatusRatio < 0.25) return "danger";
     return "warning";
@@ -131,23 +176,29 @@ const DownloadManager = (
   return (
     <>
       <section id="download-manager" className='p-3 bg-dark shadow'>
-        {packsError &&
+        {packsError && 
+          <div className="alert alert-danger" role="alert">
+            {packsError.message}
+          </div>
+        }
+        {/*packsError &&
           <div className="alert alert-danger" role="alert">
             {packsError}
           </div>
-        }
+        */}
         <div id="pack-data"
           className='d-flex flex-column align-items-center justify-content-center gap-1 mb-4'
         >
           <span>
             <b>{t('downloaded_packs')}</b>
             &nbsp;
-            <span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>
+            {/*<span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>*/}
+            <span className={`badge bg-${getPackStatusColor()}`}>{packsInCardsQuery.size}</span>
             /
-            <span className='badge bg-light text-dark'>{packs.length}</span>
+            <span className='badge bg-light text-dark'>{packs?.length || "?"}</span>
           </span>
           <span>
-            <span className='badge bg-info'>{cards.length}</span>
+            <span className='badge bg-info'>{cards?.length || "?"}</span>
             &nbsp;
             <b>{t('downloaded_cards')}</b>
           </span>
@@ -170,7 +221,8 @@ const DownloadManager = (
               key="lang-select"
               id="langSelect"
               onChange={(event) => i18n.changeLanguage(event.target.value)}
-              value={I18N_LANGS.includes(i18n.language) ? i18n.language : I18N_LANGS[0]}>
+              value={getLanguage(i18n)}
+            >
               {I18N_LANGS.map((lang) => <option
                 key={`lang-select-option-${lang}`}
                 title={`lang-select-option-${lang}`}
@@ -208,66 +260,52 @@ const DownloadManager = (
             {showPackList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
             &nbsp;
             {t("pack_list")}
-            <span className={`badge bg-${getPackStatusColor()} ms-1`}>{packStatusList.length}/{packs.length}</span>
+            <span className={`badge bg-${getPackStatusColor()} ms-1`}>{packsInCardsQuery.size}/{packs?.length || "?"}</span>
           </button>
           {showPackList && <>
-            {!packsAreLoading ?
+            {/* new */}
+            {arePacksLoading || arePacksFetching ?
+              <LoadingSpinner /> :
               <div className='d-flex justify-content-center'>
                 <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
-                  {packs.map((pack, index) => {
-                    const id = "download-manager-" + index;
-                    const packStatus = packStatusList.find((packStatusItem: PackStatus) => packStatusItem.code === pack.code);
+                  {packs?.map((pack, index) => {;
+                    const id = "download-manager-pack-" + index;
                     return <React.Fragment key={id}>
                       <input
                         type="checkbox"
                         className="btn-check"
                         id={id}
-                        checked={packStatus !== undefined}
+                        checked={packsInCardsQuery.has(pack.code)}
                         onChange={async (event) => {
-                          if (event.currentTarget.checked) await downloadPackCards(pack.code)
-                          else removePack(pack.code)
-                        }}
-                        key={`${id}-input`} />
+                          if (event.currentTarget.checked) await addPackCardsMutation(pack.code);
+                          else await removePackCardsMutation(pack.code);
+                        }}/>
                       <label
                         className="btn btn-outline-primary d-flex justify-content-between align-items-center"
-                        htmlFor={id}
-                        key={`${id}-label`} >
+                        htmlFor={id}>
                         <span style={{ textAlign: "left" }}>
                           <BsStack />
                           &nbsp;
                           {pack.name}
                         </span>
-
-                        {loadingPacks.includes(pack.code) ?
-                          <div className="spinner-border" role="status" key={`${id}-spinner`}>
-                            <span className="visually-hidden">{t('loading')}</span>
-                          </div> :
-                          <>
-                            {packStatus && <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
-                              <span
-                                className='badge bg-light text-dark d-flex flex-column'
-                                title={t('title.download_date')}>
-                                <span>{new Date(packStatus.lastDownload).toLocaleDateString('es-ES')}</span>
-                                <span>{new Date(packStatus.lastDownload).toLocaleTimeString('es-ES')}</span>
-                              </span>
-                              <span
-                                className='badge bg-dark mx-1'
-                                title={t('title.number_of_cards')}>
-                                {packStatus.numberOfCards}
-                              </span>
-                              <button className='btn btn-danger' onClick={async () => await downloadPackCards(pack.code)}>
-                                <BsDownload title={t('title.redownload')} />
-                              </button>
-                            </span>}
-                          </>
-                        }
+                        <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
+                        {/*packStatus &&
+                          <span
+                            className='badge bg-dark mx-1'
+                            title={t('title.number_of_cards')}>
+                            {packStatus.numberOfCards}
+                          </span>*/}
+                          <button className='btn btn-danger' onClick={async () => {
+                            await removePackCardsMutation(pack.code);
+                            await addPackCardsMutation(pack.code)
+                          }}>
+                            <BsDownload title={t('title.redownload')} />
+                          </button>
+                        </span>
                       </label>
                     </React.Fragment>;
                   })}
                 </div>
-              </div> :
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">{t('loading')}</span>
               </div>
             }
           </>}
@@ -307,16 +345,23 @@ const DownloadManager = (
       < Modal
         title={t(`modal.delete_all_packs.title`)}
         modal_id='modal-remove-all'
-        onAccept={() => { removeAllCards(); }} >
+        onAccept={() => { 
+          //removeAllCards(); 
+          removeAllCardsMutation();
+        }} >
         <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
       </Modal >
       <Modal
         title={t(`modal.download_all_packs.title`)}
         modal_id='modal-select-all'
         onAccept={async () => {
-          removeAllCards();
-          for (const pack of packs)
-            downloadPackCards(pack.code);
+          //removeAllCards();
+          removeAllCardsMutation();
+          if (packs) addMultiplePackCardsMutation(packs.map((pack) => pack.code));
+          // for (const pack of packs){
+          //   downloadPackCards(pack.code);
+          // }
+
         }}>
         <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
       </Modal>

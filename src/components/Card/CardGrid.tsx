@@ -1,6 +1,6 @@
-import { MCCard } from '../hooks/useCards';
-import { Card } from './Card';
-
+import { MCCard } from '../../hooks/useCardsQuery';
+import { Card } from '.';
+import { t } from 'i18next';
 
 type Props = {
   cards: MCCard[],
@@ -9,9 +9,11 @@ type Props = {
 }
 const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false }: Props) => {
 
+  if (!cards) return (<div>{t('no_cards')}</div>);
+
   return (
     <div className="mc-card-grid">
-      {cards.map((card: MCCard) =>
+      {cards?.map((card: MCCard) =>
         <Card
           showCardData={showAllCardData}
           flipAllCards={flipAllCards}
