@@ -63,7 +63,6 @@ const usePaginationStatusQuery = <T>(typeQueryKey: string[]) => {
     }
   }
   const initializePaginationStatus = (elements: T[]): PaginationStatus => {
-    console.log("initializePaginationStatus", elements);
     const localStoragePaginationStatusString = localStorage.getItem(`${statusQueryKey.join("-")}`);
 
     if (localStoragePaginationStatusString == null) {
@@ -73,7 +72,6 @@ const usePaginationStatusQuery = <T>(typeQueryKey: string[]) => {
   }
 
   const savePaginationStatus = (paginationStatus: PaginationStatus) => {
-    console.debug("savePaginationStatus", paginationStatus);
     try{
       localStorage.setItem(`${statusQueryKey.join("-")}`, JSON.stringify(paginationStatus));
     }
@@ -98,7 +96,6 @@ const usePaginationStatusQuery = <T>(typeQueryKey: string[]) => {
 
   const { mutateAsync: setElementsPerPageMutation} = useMutation<PaginationStatus, Error, number>({
     mutationFn: async (newElementsPerPage: number) => {
-      console.debug("setElementsPerPageMutation", newElementsPerPage);
       if(!paginationStatus) throw new Error("Pagination status not loaded");
       const elementsLength = elements?.length || 0;
       const newTotalPages = Math.ceil(elementsLength / newElementsPerPage);

@@ -79,9 +79,7 @@ const useCardsQuery = () => {
       const jsonString = JSON.stringify(cards);
       const compressed = LZString.compressToUTF16(jsonString);
   
-      // Print the difference in size of both strings
-      console.debug(`Cards size: ${jsonString.length} -> ${compressed.length}`);
-  
+      // Print the difference in size of both strings  
       localStorage.setItem(`cards-${lang}`, compressed);
     }
     catch (e) {
@@ -136,7 +134,6 @@ const useCardsQuery = () => {
   const { data: packStatusDict } = useQuery<PackStatusDict, Error>({
     queryKey: ["pack_status", language],
     queryFn: async () => {
-      console.debug("init pack_status", packs, cards);
       let pack_status_dict = {} as PackStatusDict;
       if (!packs || !cards) return {} as PackStatusDict;
       cards.forEach((card) => {
@@ -148,7 +145,6 @@ const useCardsQuery = () => {
         }
         pack_status_dict[card.pack_code].numberOfCards += 1;
       });
-      console.log("pack_status_dict", pack_status_dict);
       return pack_status_dict;
     },
   });
@@ -157,7 +153,6 @@ const useCardsQuery = () => {
   const { mutateAsync: addPackCardsMutation } = useMutation<MCCard[], Error, string>({
     mutationFn: async (pack_code: string) => {
       // Get the cards from the API
-      console.debug(`Fetching cards for pack ${pack_code}`);
       const url = `${t('base_path')}/api/public/cards/${pack_code}`;
       const res = await fetch(url);
       if(!res.ok) {
@@ -189,7 +184,6 @@ const useCardsQuery = () => {
         return filteredCards;
     },
     onSuccess: (filteredCards, pack_code) => {
-        console.debug(`${pack_code} pack cards removed`);
         saveCardsToLocalStorage(filteredCards);
     },
     onError: (error, pack_code) => {
@@ -202,7 +196,6 @@ const useCardsQuery = () => {
         return [];
     },
     onSuccess: (emptyCards) => {
-        console.debug("All cards removed");
         I18N_LANGS.forEach((lang: string) => {
           saveCardsToLocalStorage(emptyCards, lang);
         });
@@ -228,7 +221,6 @@ const useCardsQuery = () => {
         return newCards;
     },
     onSuccess: (newCards) => {
-        console.debug("Multiple pack cards added");
         saveCardsToLocalStorage(newCards);
     },
     onError: (error) => {
@@ -241,7 +233,6 @@ const useCardsQuery = () => {
         return newCards;
     },
     onSuccess: (newCards) => {
-        console.debug("Cards set");
         saveCardsToLocalStorage(newCards);
     },
     onError: (error) => {
@@ -256,7 +247,6 @@ const useCardsQuery = () => {
         return updatedCards;
     },
     onSuccess: (updatedCards) => {
-        console.debug("Card added");
         saveCardsToLocalStorage(updatedCards);
     },
     onError: (error) => {

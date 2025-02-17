@@ -38,7 +38,6 @@ i18n
 /*
 I18N_LANGS.map((lang) => 
   I18N_NAMESPACES.map((namespace) => {
-    console.log("addResourceBundle",lang, namespace);
     i18n.addResourceBundle(
       lang,
       namespace, 

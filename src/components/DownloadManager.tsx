@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useMemo, useState } from 'react';
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsStack, BsTranslate, BsTrash } from "react-icons/bs";
@@ -10,6 +10,9 @@ import { FaFileImport, FaFileExport, FaArrowRotateLeft } from "react-icons/fa6";
 import usePacksQuery, { PackStatus } from '../hooks/usePacksQuery';
 import useCardsQuery from '../hooks/useCardsQuery';
 import LoadingSpinner from './LoadingSpinner';
+import { useDispatch } from 'react-redux';
+import { numberOfPacksChanged } from '../store/packs';
+import { packCardsAdded, setCards } from '../store/cards';
 //import { useQueries, useQuery } from '@tanstack/react-query';
 
 /*
@@ -46,7 +49,30 @@ const DownloadManager = () => {
     addCardsMutation
   } = useCardsQuery();
 
-  console.debug("PackStatusDict", packStatusDict);
+
+  const dispatch = useDispatch();
+
+  // const numberOfDownloadedPacks = useSelector(
+    
+  //   /*
+  //   import { createSelector } from '@reduxjs/toolkit';
+  //   ...
+  //   createSelector(
+  //     (state: any) => state.entities.packStatusList,
+  //     (packStatusList) => packStatusList.list.filter(
+  //       (packStatus: any) => packStatus.downloaded
+  //     ).length
+  //   )*/
+  //   getNumberOfDownloadedPacks
+  // );
+
+  useEffect(() => {
+    dispatch(numberOfPacksChanged(packs?.length || 0));
+  }, [packs]);
+
+  useEffect(() => {
+    dispatch(setCards(cards || []));
+  }, [cards]);
 
   const packsInCardsQuery: Set<string> = useMemo(() => {
     const packCodesSet = new Set<string>();

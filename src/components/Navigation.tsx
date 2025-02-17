@@ -2,14 +2,13 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
-import { Pack } from '../hooks/usePacksQuery';
 import { MCCard } from '../hooks/useCardsQuery';
 import { useQuery } from '@tanstack/react-query';
 import { getLanguage } from '../i18n';
 import { PaginationStatus } from '../hooks/usePaginationStatusQuery';
+import { useSelector } from "react-redux";
 
 export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
-
 
 type Option = {
   key: NavigationOptionsKey,
@@ -23,44 +22,39 @@ type Props = {
   onClick: (newSelected: NavigationOptionsKey) => void
 }
 
+const navigationOptions: Option[] = [
+  {
+    key: "download_manager",
+    icon: <BsCloudArrowDown />,
+  },
+  {
+    key: "card_list",
+    icon: <BsPersonBadge />,
+  },
+  {
+    key: "filters",
+    icon: <BsFunnel />,
+  },
+]
+
 const Navigation = ({ selected, active, onClick }: Props) => {
   const { t, i18n } = useTranslation('global');
-  const { data: packs } = useQuery<Pack[], Error>({ queryKey: ["packs", getLanguage(i18n)] });
   const { data: downloaded_packs } = useQuery<number, Error>({ queryKey: ["downloaded_packs", getLanguage(i18n)] });
   const { data: cards } = useQuery<MCCard[], Error>({ queryKey: ["cards", getLanguage(i18n)] });
   const { data: paginationStatus } = useQuery<PaginationStatus, Error>({queryKey: ["cards", getLanguage(i18n), "pagination_status"]});
-  console.debug("Navigation paginationStatus", paginationStatus);
 
-
-  const navigationOptions: Option[] = [
-    {
-      key: "download_manager",
-      icon: <BsCloudArrowDown />,
-      additionalText: downloaded_packs&&packs ? `${downloaded_packs}/${packs.length}` : t('loading')
-    },
-    {
-      key: "card_list",
-      icon: <BsPersonBadge />,
-      additionalText: paginationStatus&&cards ? `${paginationStatus.visibleFirstElementIndex+1}-${paginationStatus.visibleLastElementIndex}/${cards.length}` : t('loading')
-    },
-    {
-      key: "filters",
-      icon: <BsFunnel />,
-    },
-  ]
+  const numberOfPacks = useSelector((state: any) => state.numberOfPacks);
 
   const getAdditionalText = (key: NavigationOptionsKey): string => {
-    console.debug("getAdditionalText", key, downloaded_packs, packs, cards);
     let additionalText: string = "";
     switch (key) {
       case "download_manager":
-        additionalText = downloaded_packs&&packs ? `${downloaded_packs}/${packs.length}` : t('loading');
+        additionalText = downloaded_packs&&numberOfPacks ? `${downloaded_packs}/${numberOfPacks}` : t('loading');
         break;
       case "card_list":
         additionalText = paginationStatus&&cards ? `${paginationStatus.visibleFirstElementIndex+1}-${paginationStatus.visibleLastElementIndex}/${cards.length}` : t('loading');
         break;
     }
-    console.debug("getAdditionalText", key, additionalText);
     return additionalText;
   }
 

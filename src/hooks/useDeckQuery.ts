@@ -79,11 +79,6 @@ const convertDeckToMarvelDeck = (deck: Deck, t: TFunction): MarvelDeck => {
     } catch (e) {
         console.error(`Error parsing meta for deck ${deck.id}`, e);
     }
-    console.log("original markdown", description_md);
-    console.log("converted markdown", description_md
-        .replace(/]\(\/card\/(\w+)\)/g, `](${t('base_path')}/card/$1)`)
-        .replace(/<img.*?src=['"](.*?)['"].*?>/gs, '![]($1)')
-        )
     return {
         ...rest, 
         hero_code: investigator_code, 
@@ -105,6 +100,9 @@ const useDeckQuery = (deckUrl: string) => {
     const endpoint = `/decklist/${deckId}`;
     const queryKey = ["decklist", getLanguage(i18n), `${deckId}`];
 
+    if (deckId === -1) {
+        return { deck: undefined, deckError: new Error("Invalid deck URL"), isDeckLoading: false, isDeckFetching: false };
+    }
     const {
         data,
         error: deckError,
@@ -118,8 +116,6 @@ const useDeckQuery = (deckUrl: string) => {
     );
 
     const deck = data ? convertDeckToMarvelDeck(data, t) : undefined;
-
-    console.log("useDeckQuery", deck, deckId);
 
     return { deck, deckError, isDeckLoading, isDeckFetching };
 }

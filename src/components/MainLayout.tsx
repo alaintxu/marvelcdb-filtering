@@ -13,6 +13,7 @@ import usePaginationStatusQuery from "../hooks/usePaginationStatusQuery";
 import { getLanguage } from "../i18n";
 import useDeckQuery from "../hooks/useDeckQuery";
 import DeckView from "./Deck/DeckView";
+import { useSelector } from "react-redux";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
@@ -27,7 +28,7 @@ const MainLayout = () => {
   //const { packStatusList, setPackStatusList } = usePackStatusList();
 
   // Cards and filters
-  const { data: cards } = useQuery<MCCard[], Error>({ queryKey: ["cards", getLanguage(i18n)] });
+  const cards = useSelector((state: any) => state.cards.list);
   const { data: packs } = useQuery<Pack[], Error>({ queryKey: ["packs", getLanguage(i18n)] });
   const { data: uniqueFilterOptions } = useQuery<UniqueFilterOptions[], Error>({ queryKey: ["uniqueFilterOptions", getLanguage(i18n)] });
   //const { cards, setCards, uniqueFilterOptions } = useCards();

@@ -53,7 +53,6 @@ const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers, paginatio
             step="1"
             value={field.value ?? paginationStatus?.elementsPerPage ?? defaultElementsPerPage}
             onChange = { async (e) => {
-              console.debug("elementsPerPage onChange", e.target.value);
               await setElementsPerPageMutation(parseInt(e.target.value));
               //await mutateAsync(parseInt(e.target.value));
             }}

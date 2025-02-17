@@ -94,7 +94,6 @@ const CardFiltersView = ({
 }: Props) => {
   
   const { t, i18n } = useTranslation("filters");
-  console.debug("SelectedFilters", selectedFilters);
   const { control, watch, reset } = useForm<MCCard>({
     mode: "onChange",
   });
@@ -102,7 +101,6 @@ const CardFiltersView = ({
   const filterFormValues = watch();
 
   useEffect(() => {
-    console.debug("filterFormValues", filterFormValues);
     let newSelectedFilters: SelectedFilters = {};
     for (const [key, value] of Object.entries(filterFormValues)) {
       if (value !== undefined) {
