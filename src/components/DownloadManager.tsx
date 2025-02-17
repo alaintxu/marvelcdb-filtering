@@ -1,31 +1,16 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Modal, ModalButton } from './Modal';
 import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsStack, BsTranslate, BsTrash } from "react-icons/bs";
 import { getLanguage, I18N_LANGS } from "../i18n";
-//import { Pack } from '../hooks/useFetchPacks';
-import { MCCard } from '../hooks/useCardsQuery';
-// import { PackStatus } from '../hooks/usePackStatusList';
+import { cardsAdded, MCCard, packCardsRemoved } from "../store/cards";
 import { FaFileImport, FaFileExport, FaArrowRotateLeft } from "react-icons/fa6";
-import usePacksQuery, { PackStatus } from '../hooks/usePacksQuery';
-import useCardsQuery from '../hooks/useCardsQuery';
+import usePacksQuery from '../hooks/usePacksQuery';
 import LoadingSpinner from './LoadingSpinner';
-import { useDispatch } from 'react-redux';
-import { numberOfPacksChanged } from '../store/packs';
+import { useDispatch, useSelector } from 'react-redux';
+import { numberOfPacksChanged, packDownloaded, packDownloading, packRemoved, PackStatus, PackStatusDict, packStatusDictChanged } from '../store/packs';
 import { packCardsAdded, setCards } from '../store/cards';
-//import { useQueries, useQuery } from '@tanstack/react-query';
-
-/*
-type Props = {
-  cards?: MCCard[],
-  setCards?: React.Dispatch<React.SetStateAction<MCCard[]>>,
-  packs?: Pack[],
-  packsError?: string,
-  packsAreLoading?: boolean,
-  packStatusList?: PackStatus[],
-  setPackStatusList: React.Dispatch<React.SetStateAction<PackStatus[]>>,
-}
-*/
+import { RootState } from '../store/configureStore';
 
 
 const DownloadManager = () => {
@@ -38,20 +23,29 @@ const DownloadManager = () => {
   } = usePacksQuery();
   
 
-  const { 
-    cards,
-    packStatusDict,
-    downloadedPacks,
-    addPackCardsMutation, 
-    removePackCardsMutation, 
-    removeAllCardsMutation,
-    addMultiplePackCardsMutation,
-    addCardsMutation
-  } = useCardsQuery();
+  // const { 
+  //   cards,
+  //   packStatusDict,
+  //   downloadedPacks,
+  //   addPackCardsMutation, 
+  //   removePackCardsMutation, 
+  //   removeAllCardsMutation,
+  //   addMultiplePackCardsMutation,
+  //   addCardsMutation
+  // } = useCardsQuery();
 
 
   const dispatch = useDispatch();
+  const cards: MCCard[] = useSelector((state: RootState) => state.cards);
+  const packStatusDict: PackStatusDict = useSelector((state: RootState) => state.packs.packStatusDict);
 
+  const [numberOfDownloadedPacks, setNumberOfDownloadedPacks] = useState<number>(0);
+  const [isAnyPackDownloading, setIsAnyPackDownloading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setNumberOfDownloadedPacks(Object.values(packStatusDict).filter((packStatus: PackStatus) => packStatus.download_status === "downloaded").length);
+    setIsAnyPackDownloading(Object.values(packStatusDict).some((packStatus: PackStatus) => packStatus.download_status === "downloading"));
+  }, [packStatusDict]);
   // const numberOfDownloadedPacks = useSelector(
     
   //   /*
@@ -67,19 +61,15 @@ const DownloadManager = () => {
   // );
 
   useEffect(() => {
-    dispatch(numberOfPacksChanged(packs?.length || 0));
+    dispatch(numberOfPacksChanged({ numberOfPacks: packs?.length || 0}));
   }, [packs]);
 
-  useEffect(() => {
-    dispatch(setCards(cards || []));
-  }, [cards]);
-
-  const packsInCardsQuery: Set<string> = useMemo(() => {
-    const packCodesSet = new Set<string>();
-    if(cards) 
-      cards.forEach((card) => packCodesSet.add(card.pack_code));
-    return packCodesSet;
-  }, [cards]);
+  // const packsInCardsQuery: Set<string> = useMemo(() => {
+  //   const packCodesSet = new Set<string>();
+  //   if(cards) 
+  //     cards.forEach((card) => packCodesSet.add(card.pack_code));
+  //   return packCodesSet;
+  // }, [cards]);
 
 
   //const [loadingPacks, setLoadingPacks] = useState<string[]>([]);
@@ -109,7 +99,7 @@ const DownloadManager = () => {
       fileReader.onload = e => {
         const result = (e.target as FileReader).result as string;
         const loadedCards: MCCard[] = JSON.parse(result) as MCCard[];
-        addCardsMutation(loadedCards);
+        dispatch(cardsAdded({ newCards: loadedCards }));
         //setCards((prev) => [...prev, ...loadedCards]);
 
         // ToDo: update pack status list from cards
@@ -142,15 +132,22 @@ const DownloadManager = () => {
   }*/
 
 
-  /*const downloadPackCards = async (packCode: string) => {
-    setLoadingPacks((prevLoadingPacks) => [...prevLoadingPacks, packCode]);  // Set pack loading
-    setPackStatusList((prevPackStatusList) => [...prevPackStatusList.filter((packStatus) => packStatus.code !== packCode)]);  // Remove pack status
-    setCards((previousCards) => [...previousCards.filter((card) => card.pack_code !== packCode)]);  // Remove cards
+  const downloadPackCards = async (packCode: string) => {
+    packCardsRemoved(packCode);
+    dispatch(packDownloading({ packCode: packCode }));
+    dispatch(packCardsRemoved({ packCode: packCode }));
 
     const response = await fetch(t('base_path') + '/api/public/cards/' + packCode + '.json');
-    const data = await response.json();
 
-    setCards((previousCards) => {
+    if (!response.ok) {
+      console.error(`Error fetching pack data (${packCode}`, response.status);
+      return;
+    }
+    const data = await response.json() as MCCard[];
+    dispatch(packCardsAdded({ packCode: packCode, newCards: data }));
+    dispatch(packDownloaded({ packCode: packCode, number_of_cards: data.length }));
+
+    /*setCards((previousCards) => {
       // Remove duplicated cards
       //const duplicateFilteredData = (data as MCCard[]).filter((card) => !card.duplicate_of_code);
       // sort by date
@@ -165,9 +162,10 @@ const DownloadManager = () => {
       numberOfCards: data.length,
     }])
     setLoadingPacks((prevLoadingPacks) => prevLoadingPacks.filter((code) => code !== packCode));
+    */
   }
 
-  const removePack = (packCode: string) => {
+  /*const removePack = (packCode: string) => {
     removePackCardsMutation(packCode);
     removePackStatus(packCode);
     setCards((prevCards) => prevCards.filter((card) => card.pack_code !== packCode));
@@ -192,8 +190,8 @@ const DownloadManager = () => {
 
   const getPackStatusColor = () => {
     const packNumber = packs?.length || 0;
-    const packStatusRatio = downloadedPacks||0 / packNumber;
-    if( arePacksLoading || arePacksFetching ) return "warning";
+    const packStatusRatio = numberOfDownloadedPacks / packNumber;
+    if( isAnyPackDownloading ) return "dark";
     if (packStatusRatio === 1) return "success";
     if (packStatusRatio < 0.25) return "danger";
     return "warning";
@@ -219,7 +217,7 @@ const DownloadManager = () => {
             <b>{t('downloaded_packs')}</b>
             &nbsp;
             {/*<span className={`badge bg-${getPackStatusColor()}`}>{packStatusList.length}</span>*/}
-            <span className={`badge bg-${getPackStatusColor()}`}>{packsInCardsQuery.size}</span>
+            <span className={`badge bg-${getPackStatusColor()}`}>{Object.values(packStatusDict).length}</span>
             /
             <span className='badge bg-light text-dark'>{packs?.length || "?"}</span>
           </span>
@@ -286,7 +284,7 @@ const DownloadManager = () => {
             {showPackList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
             &nbsp;
             {t("pack_list")}
-            <span className={`badge bg-${getPackStatusColor()} ms-1`}>{packsInCardsQuery.size}/{packs?.length || "?"}</span>
+            <span className={`badge bg-${getPackStatusColor()} ms-1`}>{numberOfDownloadedPacks}/{packs?.length || "?"}</span>
           </button>
           {showPackList && <>
             {/* new */}
@@ -301,10 +299,14 @@ const DownloadManager = () => {
                         type="checkbox"
                         className="btn-check"
                         id={id}
-                        checked={packsInCardsQuery.has(pack.code)}
+                        checked={packStatusDict[pack.code]?.download_status === "downloaded"}
                         onChange={async (event) => {
-                          if (event.currentTarget.checked) await addPackCardsMutation(pack.code);
-                          else await removePackCardsMutation(pack.code);
+                          if (event.currentTarget.checked){
+                            await downloadPackCards(pack.code); 
+                          } else {
+                            dispatch(packRemoved({ packCode: pack.code }));
+                            dispatch(packCardsRemoved({ packCode: pack.code }));
+                          }
                         }}/>
                       <label
                         className="btn btn-outline-primary d-flex justify-content-between align-items-center"
@@ -315,15 +317,8 @@ const DownloadManager = () => {
                           {pack.name}
                         </span>
                         <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
-                        {/*packStatus &&
-                          <span
-                            className='badge bg-dark mx-1'
-                            title={t('title.number_of_cards')}>
-                            {packStatus.numberOfCards}
-                          </span>*/}
-                          <button className='btn btn-danger' onClick={async () => {
-                            await removePackCardsMutation(pack.code);
-                            await addPackCardsMutation(pack.code)
+                          <button className='btn btn-danger' onClick={() => {
+                            // Everything in the checkbox onchange?
                           }}>
                             <BsDownload title={t('title.redownload')} />
                           </button>
@@ -372,8 +367,8 @@ const DownloadManager = () => {
         title={t(`modal.delete_all_packs.title`)}
         modal_id='modal-remove-all'
         onAccept={() => { 
-          //removeAllCards(); 
-          removeAllCardsMutation();
+          dispatch(setCards({ cards: [] }));
+          dispatch(packStatusDictChanged({ packStatusDict: {} }));
         }} >
         <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
       </Modal >
@@ -381,12 +376,14 @@ const DownloadManager = () => {
         title={t(`modal.download_all_packs.title`)}
         modal_id='modal-select-all'
         onAccept={async () => {
-          //removeAllCards();
-          removeAllCardsMutation();
-          if (packs) addMultiplePackCardsMutation(packs.map((pack) => pack.code));
-          // for (const pack of packs){
-          //   downloadPackCards(pack.code);
-          // }
+          dispatch(setCards({ cards: [] }));
+          dispatch(packStatusDictChanged({ packStatusDict: {} }));
+          // @ToDo: download all packs
+          if (!packs) return
+
+          for (const pack of packs){
+            downloadPackCards(pack.code);
+          }
 
         }}>
         <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />

@@ -3,7 +3,7 @@ import {
     Control,
   } from "react-hook-form";
   import { useTranslation } from "react-i18next";
-  import { MCCard } from "../../hooks/useCardsQuery";
+import { MCCard } from "../../store/cards";
   import { FaTrash } from "react-icons/fa6";
   
   interface Props {

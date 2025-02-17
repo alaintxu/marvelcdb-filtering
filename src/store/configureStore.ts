@@ -1,22 +1,18 @@
-import { combineReducers, createStore } from 'redux';
-// import { devToolsEnhancer } from 'redux-devtools-extension';
-import { devToolsEnhancer } from '@redux-devtools/extension';
+import { configureStore } from '@reduxjs/toolkit';
 import packsReducer from './packs';
 import cardsReducer from './cards';
+import paginationReducer from './pagination';
 
-const rootReducer = combineReducers({
-    packs: packsReducer,
-    cards: cardsReducer
+const store = configureStore({
+    reducer: {
+        packs: packsReducer,
+        cards: cardsReducer,
+        pagination: paginationReducer,
+    },
+    devTools: true
 });
 
-export default function configureStore() {
-    const store = createStore(
-        rootReducer,
-        // devToolsEnhancer()
-        //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-        devToolsEnhancer({
-            trace: true,
-        })
-    );
-    return store;
-}
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;

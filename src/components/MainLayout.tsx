@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MCCard } from "../hooks/useCardsQuery";
-import useFilters from "../hooks/useFilters";
-import { Pack } from "../hooks/usePacksQuery";
 import Instructions from "./Instructions";
 import CardFiltersView, { UniqueFilterOptions } from "./Filter/CardFiltersView";
 import Navigation, { NavigationOptionsKey } from "./Navigation";
 import CardsView from "./Card/CardsView";
 import DownloadManager from "./DownloadManager";
 import { useQuery } from "@tanstack/react-query";
-import usePaginationStatusQuery from "../hooks/usePaginationStatusQuery";
 import { getLanguage } from "../i18n";
 import useDeckQuery from "../hooks/useDeckQuery";
 import DeckView from "./Deck/DeckView";
 import { useSelector } from "react-redux";
+import { RootState } from "../store/configureStore";
+import { MCCard } from "../store/cards";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
@@ -28,16 +26,17 @@ const MainLayout = () => {
   //const { packStatusList, setPackStatusList } = usePackStatusList();
 
   // Cards and filters
-  const cards = useSelector((state: any) => state.cards.list);
-  const { data: packs } = useQuery<Pack[], Error>({ queryKey: ["packs", getLanguage(i18n)] });
+  const cards: MCCard[] = useSelector((state: RootState) => state.cards || []);
+  //const { data: packs } = useQuery<Pack[], Error>({ queryKey: ["packs", getLanguage(i18n)] });
   const { data: uniqueFilterOptions } = useQuery<UniqueFilterOptions[], Error>({ queryKey: ["uniqueFilterOptions", getLanguage(i18n)] });
   //const { cards, setCards, uniqueFilterOptions } = useCards();
-  const { /*filters, setFilters,*/ selectedFilters, setSelectedFilters, filteredCards } = useFilters(cards || []);
+  //const { /*filters, setFilters,*/ selectedFilters, setSelectedFilters, filteredCards } = useFilters(cards || []);
 
   // Pagination
   // const { paginationStatus, setPaginationStatus, paginatedCards } = usePaginationStatus(filteredCards);
-
-  const { paginationStatus } = usePaginationStatusQuery<MCCard>(["cards", getLanguage(i18n)]);
+  const numberOfPacks:number = useSelector((state: RootState) => state.packs.numberOfPacks);
+  const pagination = useSelector((state: RootState) => state.pagination);
+  const filteredCards: MCCard[] = cards; //cards ? [...cards] : []; // @ToDo: Apply filters
 
   //Navigation
   useEffect(() => {
@@ -49,11 +48,11 @@ const MainLayout = () => {
 
   navKeyAdditionalTextMap.set(
     "card_list",
-    `${paginationStatus?.visibleFirstElementIndex||0 + 1}-${Math.min(...[paginationStatus?.visibleLastElementIndex||0, filteredCards.length])}/${filteredCards.length}`
+    `${pagination.visibleFirstElementIndex + 1}-${Math.min(...[pagination.visibleLastElementIndex, filteredCards.length])}/${filteredCards.length}`
   );
   navKeyAdditionalTextMap.set(
     "download_manager",
-    `${"Not implemented yet"/*packStatusList.length*/}/${packs?.length || "?"}`
+    `${"Not implemented yet"/*packStatusList.length*/}/${numberOfPacks}`
   )
 
   // Other
@@ -83,8 +82,8 @@ const MainLayout = () => {
         }
         { !deck && (cards ?? []).length > 0 ? <CardsView /> : <Instructions />}
         <CardFiltersView
-          selectedFilters={selectedFilters} 
-          setSelectedFilters={setSelectedFilters}
+          selectedFilters={{}/*selectedFilters*/} 
+          setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
           uniqueFilterOptions={uniqueFilterOptions || []}
           />
       </main>

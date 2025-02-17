@@ -1,4 +1,4 @@
-import { MCCard } from '../../hooks/useCardsQuery';
+import { MCCard } from "../../store/cards";
 import { Card } from '.';
 import { t } from 'i18next';
 

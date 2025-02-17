@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
-import { MCCard } from '../hooks/useCardsQuery';
+import { MCCard } from "../store/cards";
 import { useQuery } from '@tanstack/react-query';
 import { getLanguage } from '../i18n';
 import { PaginationStatus } from '../hooks/usePaginationStatusQuery';

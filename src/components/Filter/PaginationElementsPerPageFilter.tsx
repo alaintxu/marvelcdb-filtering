@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
-import usePaginationStatusQuery, { defaultElementsPerPage } from "../../hooks/usePaginationStatusQuery";
 import { IconType } from "react-icons";
 import { MdNumbers } from "react-icons/md";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { elementsPerPageUpdated } from "../../store/pagination";
+import { RootState } from "../../store/configureStore";
 
 
 type Props = {
@@ -13,20 +14,16 @@ type Props = {
   paginationQueryKeys: string[],
 }
 
-const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers, paginationQueryKeys}: Props) => {
+const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers}: Props) => {
   //const queryClient = useQueryClient();
   const { t } = useTranslation('global');
   if(!title) title = t('elements_per_page');
-  const { paginationStatus, setElementsPerPageMutation } = usePaginationStatusQuery<any>(paginationQueryKeys);
 
-  const { data: elementsPerPage } = useQuery<number, Error>({ 
-    queryKey: ["pagination", "cards", "elementsPerPage"],
-    queryFn: () => {
-      const storedValue = localStorage.getItem("elementsPerPage");
-      return storedValue ? parseInt(storedValue) : defaultElementsPerPage;
-    },
-    staleTime: Infinity,
-  });
+  const elementsPerPage = useSelector((state: RootState) => state.pagination.elementsPerPage);
+
+  const dispatch = useDispatch();
+
+ 
 
   const { control } = useForm();
 
@@ -51,9 +48,10 @@ const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers, paginatio
             id="input-elements-per-page"
             min="1"
             step="1"
-            value={field.value ?? paginationStatus?.elementsPerPage ?? defaultElementsPerPage}
+            value={field.value ?? elementsPerPage}
             onChange = { async (e) => {
-              await setElementsPerPageMutation(parseInt(e.target.value));
+              dispatch(elementsPerPageUpdated(parseInt(e.target.value)));
+              // await setElementsPerPageMutation(parseInt(e.target.value));
               //await mutateAsync(parseInt(e.target.value));
             }}
           />

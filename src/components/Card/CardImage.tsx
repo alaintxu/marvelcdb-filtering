@@ -1,7 +1,7 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../assets/mc-lazy-vertical.webp';
-import { MCCard } from "../../hooks/useCardsQuery";
+import { MCCard } from "../../store/cards";
 import { useTranslation } from 'react-i18next';
 import { useState } from "react";
 import { getLanguage } from "../../i18n";

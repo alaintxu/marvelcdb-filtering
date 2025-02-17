@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
-import { MCCard } from "./useCards";
+import { MCCard } from "../store/cards";
 
 
 export type OptionType = {

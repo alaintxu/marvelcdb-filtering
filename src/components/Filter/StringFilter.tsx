@@ -3,7 +3,7 @@ import {
     Control,
   } from "react-hook-form";
   import { useTranslation } from "react-i18next";
-  import { MCCard } from "../../hooks/useCards";
+  import { MCCard } from "../../store/cards";
   
   interface Props {
     control: Control<MCCard>;

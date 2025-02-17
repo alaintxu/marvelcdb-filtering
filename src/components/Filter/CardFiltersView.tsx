@@ -1,6 +1,4 @@
-import {
-  MCCard,
-} from "../../hooks/useCardsQuery";
+import { MCCard } from "../../store/cards";
 import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
 import { useEffect } from "react";

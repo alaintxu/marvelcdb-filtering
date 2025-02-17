@@ -4,7 +4,7 @@ import { Modal } from "../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import { TbCards } from "react-icons/tb";
 import comicWebp from "../../assets/comic.webp";
-import { MCCard } from "../../hooks/useCardsQuery";
+import { MCCard } from "../../store/cards";
 import { useTranslation } from "react-i18next";
 import { getLanguage } from "../../i18n";
 
