@@ -2,50 +2,30 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
-import { useSelector } from "react-redux";
-import { PackStatus } from '../store/ui/packsStatus';
+import { useDispatch, useSelector } from "react-redux";
+import { selectNumberOfPackStatusByDownloadStatus } from '../store/ui/packsStatus';
 import { RootState } from '../store/configureStore';
+import { selectSelectedNavigationOptionKey, NavigationOptionsKey, selectedNavigationOptionKeySet } from '../store/ui/selectedNavigationOptionKey';
 
-export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
 
-type Option = {
-  key: NavigationOptionsKey,
-  icon: ReactNode,
-  additionalText?: string
+type IconDict = {
+  [optionKey: string]: ReactNode
 }
 
-type Props = {
-  selected: NavigationOptionsKey,
-  active: boolean,
-  onClick: (newSelected: NavigationOptionsKey) => void
-}
+const navigaitonIcons: IconDict = {
+  download_manager: <BsCloudArrowDown />,
+  card_list: <BsPersonBadge />,
+  filters: <BsFunnel />,
+};
 
-const navigationOptions: Option[] = [
-  {
-    key: "download_manager",
-    icon: <BsCloudArrowDown />,
-  },
-  {
-    key: "card_list",
-    icon: <BsPersonBadge />,
-  },
-  {
-    key: "filters",
-    icon: <BsFunnel />,
-  },
-]
-
-const Navigation = ({ selected, active, onClick }: Props) => {
+const Navigation = () => {
   const { t } = useTranslation('global');
-
+  const dispatch = useDispatch();
+  const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectSelectedNavigationOptionKey);
   const paginationStatus = useSelector((state: RootState) => state.ui.pagination);
   const numberOfCards: number = useSelector((state: RootState) => state.entities.cards.length);
   const numberOfPacks: number = useSelector((state: RootState) => state.entities.packs.length);
-  const downloadedPacks: number = useSelector((state: RootState) => {
-    return Object.values(state.ui.packStatusDict).filter(
-      (packStatus: PackStatus) => packStatus.download_status === "downloaded"
-    ).length;
-  });
+  const downloadedPacks: number = useSelector(selectNumberOfPackStatusByDownloadStatus("downloaded"));
 
   const getAdditionalText = (key: NavigationOptionsKey): string => {
     let additionalText: string = "";
@@ -63,22 +43,21 @@ const Navigation = ({ selected, active, onClick }: Props) => {
   return (
     <nav id="main-navigation">
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
-        {navigationOptions.map((navigationOption) => {
-          const additionalText = getAdditionalText(navigationOption.key);
-          const isActive: boolean = navigationOption.key == 'card_list' || navigationOption.key == selected;
+        {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
+          const additionalText = getAdditionalText(navigationOptionKey);
+          const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey;
           return <button
-            key={`navigation-${navigationOption.key}`}
+            key={`navigation-${navigationOptionKey}`}
             type="button"
             className={`
               btn 
               btn-${isActive ? '' : 'outline-'}light 
               ${isActive ? 'active' : ''}
             `}
-            disabled={!active}
             onClick={() => {
-              if (onClick) onClick(navigationOption.key)
+              dispatch(selectedNavigationOptionKeySet(navigationOptionKey));
             }}>
-            {navigationOption.icon} {t(navigationOption.key)}
+            {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
             {additionalText && <>
               &nbsp;
                 <span className='badge bg-secondary'>

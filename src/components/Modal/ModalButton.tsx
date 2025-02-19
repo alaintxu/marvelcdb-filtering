@@ -10,11 +10,11 @@ type Props = {
 const ModalButton = ({children, modal_id, className, title}:Props) => {
   return (
     <button
-    className={className}
-    title={title}
-    type="button"
-    data-bs-toggle="modal"
-    data-bs-target={`#${modal_id}`}>
+      className={className}
+      title={title}
+      type="button"
+      data-bs-toggle="modal"
+      data-bs-target={`#${modal_id}`}>
       {children}
     </button>
   )

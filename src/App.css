@@ -306,3 +306,7 @@ img {
         margin-block: .5em;
     }
 }
+
+.modal-backdrop {
+    z-index: 0;
+}

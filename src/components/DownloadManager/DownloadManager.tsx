@@ -1,17 +1,15 @@
 import { ChangeEvent, useEffect } from 'react';
-import { Modal, ModalButton } from '../Modal';
 import { useTranslation } from 'react-i18next';
-import { BsArrowsCollapse, BsArrowsExpand, BsDownload, BsExclamationTriangle, BsFiletypeJson, BsTrash } from "react-icons/bs";
-import { FaFileImport, FaFileExport, FaArrowRotateLeft } from "react-icons/fa6";
+import { BsArrowsCollapse, BsArrowsExpand, BsExclamationTriangle, BsFiletypeJson } from "react-icons/bs";
+import { FaFileImport, FaFileExport } from "react-icons/fa6";
 import usePacksQuery from '../../hooks/usePacksQuery';
 import LoadingSpinner from '../LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/configureStore';
-import { cardsAdded, MCCard, cardPackRemoved, cardsSet, cardPackAdded, selectAllCards } from "../../store/entities/cards";
+import { cardsAdded, MCCard, cardPackRemoved, cardPackAdded, selectAllCards } from "../../store/entities/cards";
 import { 
   PackStatus, 
-  PackStatusDict, 
-  packStatusDictSet, 
+  PackStatusDict,
   packStatusNewPacksAdded, 
   packStatusPackDownloadStatusSet,
   selectNumberOfPackStatusByDownloadStatus,
@@ -22,6 +20,9 @@ import { showPackListToggled } from '../../store/ui/showPackList';
 import PackListItem from './PackListItem';
 import LanguageSelect from './LanguageSelect';
 import PacksData from './PacksData';
+import RemoveAllButton from './RemoveAllButton';
+import DownloadAllButton from './DownloadAllButton';
+import ResetAppButton from './ResetAppButton';
 
 const DownloadManager = () => {
   const { t } = useTranslation('global');
@@ -63,11 +64,6 @@ const DownloadManager = () => {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-  }
-
-  const resetApp = () => {
-    localStorage.clear();
-    window.location.reload();
   }
 
   const importCardsFromJSONFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -125,17 +121,8 @@ const DownloadManager = () => {
           </div>
         </div>
         <div className='d-flex justify-content-center px-3 mb-3'>
-          <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
-            <BsDownload />
-            &nbsp;
-            {t('download_all')}
-          </ModalButton>
-
-          <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
-            <BsTrash />
-            &nbsp;
-            {t('remove_all')}
-          </ModalButton>
+          <DownloadAllButton downloadPackCards={downloadPackCards}/>
+          <RemoveAllButton />
         </div>
         <div id="packListAccordion" className='px-3 mb-3'>
           <button
@@ -184,50 +171,11 @@ const DownloadManager = () => {
             </button>
           </div>
           <div className="mb-3 px-3">
-            <ModalButton className='btn btn-danger' modal_id='modal-reset-app'>
-              <FaArrowRotateLeft />
-              &nbsp;
-              {t('reset_app')}
-            </ModalButton>
+            <ResetAppButton />
           </div>
         </div>
         <hr />
       </section >
-
-      < Modal
-        title={t(`modal.delete_all_packs.title`)}
-        modal_id='modal-remove-all'
-        onAccept={() => { 
-          dispatch(cardsSet([]));
-          dispatch(packStatusDictSet({}));
-        }} >
-        <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
-      </Modal >
-      <Modal
-        title={t(`modal.download_all_packs.title`)}
-        modal_id='modal-select-all'
-        onAccept={async () => {
-          dispatch(cardsSet([]));
-          dispatch(packStatusDictSet({}));
-          if (!packs) return
-
-          const batchSize = 10;
-          for (let i = 0; i < packs.length; i += batchSize) {
-            const batch = packs.slice(i, i + batchSize);
-            await Promise.all(batch.map(async (pack) => downloadPackCards(pack.code)));
-          }
-          //await Promise.all(packs.map(async (pack) => downloadPackCards(pack.code)));
-        }}>
-        <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
-      </Modal>
-      <Modal
-        title={t(`modal.reset_app.title`)}
-        modal_id='modal-reset-app'
-        onAccept={() => {
-          resetApp();
-        }}>
-        <div dangerouslySetInnerHTML={{ __html: t('modal.reset_app.content') }} />
-      </Modal>
     </>
   )
 }

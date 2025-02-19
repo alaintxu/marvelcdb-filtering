@@ -8,6 +8,7 @@ type Props = {
 }
 
 const LanguageSelect = ({onLanguageUpdated}: Props) => {
+  // @ToDo: Re-download cards from selected packs after language is updated.
   const { t, i18n } = useTranslation('global');
   useEffect(() => {
     const checkedLanguage = checkLanguageString(i18n.language);
