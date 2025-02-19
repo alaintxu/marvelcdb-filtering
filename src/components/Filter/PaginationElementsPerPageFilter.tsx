@@ -4,14 +4,13 @@ import { MdNumbers } from "react-icons/md";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { paginationElementsPerPageUpdated } from "../../store/pagination";
+import { paginationElementsPerPageUpdated } from "../../store/ui/pagination";
 import { RootState } from "../../store/configureStore";
 
 
 type Props = {
   title?: string,
-  iconType: IconType,
-  paginationQueryKeys: string[],
+  iconType: IconType
 }
 
 const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers}: Props) => {

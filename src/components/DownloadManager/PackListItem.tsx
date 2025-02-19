@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { PackStatus, packStatusPackDownloadStatusSet, packStatusPackRemoved, selectPackStatusById } from '../../store/packsStatus'
-import { Pack } from '../../store/packs'
+import { PackStatus, packStatusPackDownloadStatusSet, packStatusPackRemoved, selectPackStatusById } from '../../store/ui/packsStatus'
+import { Pack } from '../../store/entities/packs'
 import { MdDownloadForOffline, MdFileDownloadDone, MdOutlineFileDownloadOff } from 'react-icons/md'
 import LoadingSpinner from '../LoadingSpinner'
 import { BsStack } from 'react-icons/bs'
-import { cardPackRemoved } from '../../store/cards'
+import { cardPackRemoved } from '../../store/entities/cards'
 
 type Props = {
     pack: Pack,

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
-import { RootState } from "./configureStore";
+import { RootState } from "../configureStore";
 //import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
 
 export type MCCard = {
@@ -114,10 +114,14 @@ const slice = createSlice({
 });
 
 export const selectAllCards = (state: RootState) => state.entities.cards;
+export const selectNumberOfCards = createSelector(
+    (state: RootState) => state.entities.cards,
+    (cards) => cards.length
+)
 
-export const cardByIdSelector = (cardId: string) => createSelector(
+export const cardByCodeSelector = (cardCode: string) => createSelector(
     [(state: RootState) => state.entities.cards],
-    (cards) => cards.find(card => card.code === cardId)
+    (cards) => cards.find(card => card.code === cardCode)
 );
 
 export const cardsByPackSelector = (packCode: string) => createSelector(

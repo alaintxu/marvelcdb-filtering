@@ -6,14 +6,13 @@ import Navigation, { NavigationOptionsKey } from "./Navigation";
 import CardsView from "./Card/CardsView";
 import DownloadManager from "./DownloadManager/DownloadManager";
 import { useQuery } from "@tanstack/react-query";
-import { getLanguage } from "../i18n";
 import useDeckQuery from "../hooks/useDeckQuery";
 import DeckView from "./Deck/DeckView";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
-import { MCCard } from "../store/cards";
-import { Pack } from "../store/packs";
-import { PackStatusDict } from "../store/packsStatus";
+import { MCCard } from "../store/entities/cards";
+import { Pack } from "../store/entities/packs";
+import { PackStatusDict } from "../store/ui/packsStatus";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
@@ -36,7 +35,7 @@ const MainLayout = () => {
   const pagination = useSelector((state: RootState) => state.ui.pagination);
 
   // Filters
-  const { data: uniqueFilterOptions } = useQuery<UniqueFilterOptions[], Error>({ queryKey: ["uniqueFilterOptions", getLanguage(i18n)] });
+  const { data: uniqueFilterOptions } = useQuery<UniqueFilterOptions[], Error>({ queryKey: ["uniqueFilterOptions", i18n.language] });
   const filteredCards: MCCard[] = cards; //cards ? [...cards] : []; // @ToDo: Apply filters
 
   //Navigation

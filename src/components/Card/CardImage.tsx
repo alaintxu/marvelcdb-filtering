@@ -1,10 +1,9 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import lazyHorizontal from '../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../assets/mc-lazy-vertical.webp';
-import { MCCard } from "../../store/cards";
+import { MCCard } from "../../store/entities/cards";
 import { useTranslation } from 'react-i18next';
 import { useState } from "react";
-import { getLanguage } from "../../i18n";
 
 type Props = {
   card: MCCard,
@@ -65,7 +64,6 @@ export function getCardImage(card: MCCard, flipped: boolean, lang: string) {
 
 const CardImage = ({ card, horizontal }: Props) => {
   const { i18n } = useTranslation('global');
-  const lang = getLanguage(i18n);
   const [error, serError] = useState(false);
 
 
@@ -96,7 +94,7 @@ const CardImage = ({ card, horizontal }: Props) => {
   */
 
   const replaceImgSrcTranslation = (imgSrc: string) => {
-    if (!error && lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
+    if (!error && i18n.language == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
       const code = imgSrc.split("/").pop();
       const codeNoExt = code?.split(".").shift();
       return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + codeNoExt + ".webp";
@@ -105,12 +103,12 @@ const CardImage = ({ card, horizontal }: Props) => {
   }
 
   const getBackImageSrcTranslations = () => {
-    const imgSrc = getBackImageSrc(card, lang);
+    const imgSrc = getBackImageSrc(card, i18n.language);
     return replaceImgSrcTranslation(imgSrc);
   }
 
   const getFrontImageSrcTranslations = () => {
-    const imgSrc = getFrontImageSrc(card, lang);
+    const imgSrc = getFrontImageSrc(card, i18n.language);
     return replaceImgSrcTranslation(imgSrc);
   }
 

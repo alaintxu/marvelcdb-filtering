@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createSelector } from "reselect";
 
-import { RootState } from "./configureStore";
+import { RootState } from "../configureStore";
+import { selectNumberOfPacks } from '../entities/packs';
 // import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
 
 export type PackStatus = {
@@ -90,6 +91,19 @@ export const selectIsAnyPackDownloading = createSelector(
         packStatus => packStatus.download_status === "downloading"
     )
 );
+
+export const selectPackStatusBootstrapVariant = createSelector(
+    selectNumberOfPacks,
+    selectNumberOfPackStatusByDownloadStatus("downloaded"),
+    selectIsAnyPackDownloading,
+    (numberOfPacks: number, numberOfDownloadedPacks: number, isAnyPackDownloading: boolean) => {
+        const packStatusRatio = numberOfDownloadedPacks / numberOfPacks;
+        if( isAnyPackDownloading ) return "dark";
+        if (packStatusRatio === 1) return "success";
+        if (packStatusRatio < 0.25) return "danger";
+        return "warning";
+      }
+)
 
 export default slice.reducer;
 export const {

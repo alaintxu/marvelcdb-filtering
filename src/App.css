@@ -4,6 +4,25 @@
     box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+    width: .25rem;
+}
+  
+::-webkit-scrollbar-track {
+    background: #F2F2F2;
+    border-radius: 1000rem;
+}
+  
+::-webkit-scrollbar-thumb {
+    background: #BDBDBD;
+    border-radius: 1000rem;
+    margin: 1px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: #6E6E6E;
+}
+
 img {
     box-sizing: border-box;
     display: block;

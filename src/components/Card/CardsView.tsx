@@ -3,10 +3,10 @@ import CardGrid from "./CardGrid";
 import { BsFillEyeFill, BsFillEyeSlashFill, BsPhoneFlip } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import { ReactBSPagination } from "@draperez/react-components";
-import { MCCard } from "../../store/cards";
+import { MCCard } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { paginationCurrentPageUpdated, paginationElementsUpdated } from "../../store/pagination";
+import { paginationCurrentPageUpdated, paginationElementsUpdated } from "../../store/ui/pagination";
 
 
 const CardsView = () => {

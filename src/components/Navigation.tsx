@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 import { useSelector } from "react-redux";
-import { PackStatus } from '../store/packsStatus';
+import { PackStatus } from '../store/ui/packsStatus';
 import { RootState } from '../store/configureStore';
 
 export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";

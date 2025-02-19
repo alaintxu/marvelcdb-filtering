@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { getLanguage } from "../i18n";
 import useSingleElementQuery from "./useSingleElementQuery";
 import { TFunction } from "i18next";
-import { MarvelDeck } from "../store/decks";
+import { MarvelDeck } from "../store/entities/decks";
 
 export interface Deck {
     id: number,
@@ -77,7 +76,7 @@ const useDeckQuery = (deckUrl: string) => {
 
     const baseURL = `${t('base_path')}/api/public`;
     const endpoint = `/decklist/${deckId}`;
-    const queryKey = ["decklist", getLanguage(i18n), `${deckId}`];
+    const queryKey = ["decklist", i18n.language, `${deckId}`];
 
     if (deckId === -1) {
         return { deck: undefined, deckError: new Error("Invalid deck URL"), isDeckLoading: false, isDeckFetching: false };

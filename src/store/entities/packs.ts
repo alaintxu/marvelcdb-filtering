@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { RootState } from './configureStore';
+import { RootState } from '../configureStore';
 
 export type Pack = {
     name: string;
@@ -34,6 +34,15 @@ const slice = createSlice({
 });
 
 export const selectAllPacks = (state: RootState) => state.entities.packs;
+export const selectNumberOfPacks = createSelector(
+    (state: RootState) => state.entities.packs,
+    (packs: Pack[]) => packs.length
+);
+
+export const selectPackByCode = (packCode: string) => createSelector(
+    (state: RootState) => state.entities.packs,
+    (packs: Pack[]) => packs.find((pack: Pack) => pack.code === packCode)
+)
 
 export default slice.reducer;
 export const { 

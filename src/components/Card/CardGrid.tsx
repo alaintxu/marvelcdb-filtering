@@ -1,4 +1,4 @@
-import { MCCard } from "../../store/cards";
+import { MCCard } from "../../store/entities/cards";
 import { Card } from '.';
 import { t } from 'i18next';
 

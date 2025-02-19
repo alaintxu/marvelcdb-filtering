@@ -1,4 +1,4 @@
-import { MCCard } from "../../store/cards";
+import { MCCard } from "../../store/entities/cards";
 import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
 import { useEffect } from "react";
@@ -12,7 +12,6 @@ import { MdNumbers, MdCheckBox } from "react-icons/md";
 import { TbBracketsContain, TbCards } from "react-icons/tb";
 import { GoMultiSelect } from "react-icons/go";
 import MultiselectFilterNew from "./MultiselectFilterNew";
-import { getLanguage } from "../../i18n";
 import PaginationElementsPerPageFilter from "./PaginationElementsPerPageFilter";
 
 export type FiltrableFieldType = {
@@ -91,7 +90,7 @@ const CardFiltersView = ({
   uniqueFilterOptions
 }: Props) => {
   
-  const { t, i18n } = useTranslation("filters");
+  const { t } = useTranslation("filters");
   const { control, watch, reset } = useForm<MCCard>({
     mode: "onChange",
   });
@@ -158,7 +157,6 @@ const CardFiltersView = ({
       <PaginationElementsPerPageFilter
           title={t("cards_per_page")}
           iconType={TbCards}
-          paginationQueryKeys={["cards", getLanguage(i18n)]}
           />
       <form>
         <details>
