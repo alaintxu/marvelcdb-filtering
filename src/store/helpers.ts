@@ -1,4 +1,4 @@
-import LZString from "lz-string";
+/*import LZString from "lz-string";
 
 
 // Local Storage
@@ -29,3 +29,4 @@ export const saveToLocalStorageCompressed = <T>(itemName: string, elementToSave:
     }
     return false;
 };
+*/

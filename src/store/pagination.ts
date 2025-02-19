@@ -32,37 +32,41 @@ const slice = createSlice({
         visibleLastElementIndex: 1,
     },
     reducers: {
-        elementsUpdated: (state, action) => {
+        paginationElementsUpdated: (state, action) => {
             state.totalElements = action.payload.lenght;
             state.totalPages = Math.ceil(state.totalElements / state.elementsPerPage);
             return pageNumberUpdated(state, state.currentPage);
         },
-        elementsPerPageUpdated: (state, action) => {
+        paginationElementsPerPageUpdated: (state, action) => {
             state.elementsPerPage = action.payload;
             state.totalPages = Math.ceil(state.totalElements / state.elementsPerPage);
             return pageNumberUpdated(state, 1);
         },
-        currentPageUpdated: (state, action) => {
+        paginationCurrentPageUpdated: (state, action) => {
             const currentPage = action.payload;
             return pageNumberUpdated(state, currentPage);
         },
-        nextPageClicked: (state) => {
+        /*paginationNextPageClicked: (state) => {
             const currentPage = state.currentPage + 1;
             return pageNumberUpdated(state, currentPage);
         },
-        previousPageClicked: (state) => {
+        paginationPreviousPageClicked: (state) => {
             const currentPage = state.currentPage - 1;
             return pageNumberUpdated(state, currentPage);
         },
-        firstPageClicked: (state) => {
+        paginationFirstPageClicked: (state) => {
             return pageNumberUpdated(state, 1);
         },
-        lastPageClicked: (state) => {
+        paginationLastPageClicked: (state) => {
             return pageNumberUpdated(state, state.totalPages);
-        }
+        }*/
 
     }
 });
 
 export default slice.reducer;
-export const { elementsUpdated, elementsPerPageUpdated, currentPageUpdated, nextPageClicked, previousPageClicked, firstPageClicked, lastPageClicked } = slice.actions;
+export const { 
+    paginationElementsUpdated, 
+    paginationElementsPerPageUpdated, 
+    paginationCurrentPageUpdated 
+} = slice.actions;

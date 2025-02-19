@@ -2,11 +2,9 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
-import { MCCard } from "../store/cards";
-import { useQuery } from '@tanstack/react-query';
-import { getLanguage } from '../i18n';
-import { PaginationStatus } from '../hooks/usePaginationStatusQuery';
 import { useSelector } from "react-redux";
+import { PackStatus } from '../store/packsStatus';
+import { RootState } from '../store/configureStore';
 
 export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
 
@@ -38,21 +36,25 @@ const navigationOptions: Option[] = [
 ]
 
 const Navigation = ({ selected, active, onClick }: Props) => {
-  const { t, i18n } = useTranslation('global');
-  const { data: downloaded_packs } = useQuery<number, Error>({ queryKey: ["downloaded_packs", getLanguage(i18n)] });
-  const { data: cards } = useQuery<MCCard[], Error>({ queryKey: ["cards", getLanguage(i18n)] });
-  const { data: paginationStatus } = useQuery<PaginationStatus, Error>({queryKey: ["cards", getLanguage(i18n), "pagination_status"]});
+  const { t } = useTranslation('global');
 
-  const numberOfPacks = useSelector((state: any) => state.numberOfPacks);
+  const paginationStatus = useSelector((state: RootState) => state.ui.pagination);
+  const numberOfCards: number = useSelector((state: RootState) => state.entities.cards.length);
+  const numberOfPacks: number = useSelector((state: RootState) => state.entities.packs.length);
+  const downloadedPacks: number = useSelector((state: RootState) => {
+    return Object.values(state.ui.packStatusDict).filter(
+      (packStatus: PackStatus) => packStatus.download_status === "downloaded"
+    ).length;
+  });
 
   const getAdditionalText = (key: NavigationOptionsKey): string => {
     let additionalText: string = "";
     switch (key) {
       case "download_manager":
-        additionalText = downloaded_packs&&numberOfPacks ? `${downloaded_packs}/${numberOfPacks}` : t('loading');
+        additionalText = `${downloadedPacks}/${numberOfPacks}`;
         break;
       case "card_list":
-        additionalText = paginationStatus&&cards ? `${paginationStatus.visibleFirstElementIndex+1}-${paginationStatus.visibleLastElementIndex}/${cards.length}` : t('loading');
+        additionalText = `${paginationStatus.visibleFirstElementIndex+1}-${paginationStatus.visibleLastElementIndex}/${numberOfCards}`;
         break;
     }
     return additionalText;

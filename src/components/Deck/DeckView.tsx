@@ -1,4 +1,4 @@
-import { MarvelDeck } from '../../hooks/useDeckQuery'
+import { MarvelDeck } from "../../store/decks"
 import { FaTag, FaUser, FaChevronDown } from 'react-icons/fa6'
 import { MdCategory } from 'react-icons/md'
 import { TbCards } from 'react-icons/tb'

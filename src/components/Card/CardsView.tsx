@@ -6,7 +6,7 @@ import { ReactBSPagination } from "@draperez/react-components";
 import { MCCard } from "../../store/cards";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { currentPageUpdated, elementsUpdated } from "../../store/pagination";
+import { paginationCurrentPageUpdated, paginationElementsUpdated } from "../../store/pagination";
 
 
 const CardsView = () => {
@@ -17,8 +17,8 @@ const CardsView = () => {
   const [flipAllCards, setFlipAllCards] = useState(false);
   const [paginatedCards, setPaginatedCards] = useState<MCCard[]>([]);
 
-  const pagination = useSelector((state: RootState) => state.pagination);
-  const cards = useSelector((state: RootState) => state.cards);
+  const pagination = useSelector((state: RootState) => state.ui.pagination);
+  const cards = useSelector((state: RootState) => state.entities.cards);
 
   //const filters = useSelector((state: RootState) => state.filters);
   
@@ -26,7 +26,7 @@ const CardsView = () => {
 
   useEffect(() => {
     /* @ToDo: Change cards for filtered cards */
-    dispatch(elementsUpdated(cards));
+    dispatch(paginationElementsUpdated(cards));
   }, [cards]);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const CardsView = () => {
           totalPages={pagination.totalPages || 1}
           currentPage={pagination.currentPage || 1}
           buttonSize='sm'
-          onPageClick={(pageNumber: number) => dispatch(currentPageUpdated(pageNumber))}
+          onPageClick={(pageNumber: number) => dispatch(paginationCurrentPageUpdated(pageNumber))}
           />
       </div>
     </section>

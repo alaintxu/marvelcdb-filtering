@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
+import { createSelector } from "reselect";
+import { RootState } from "./configureStore";
+//import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
 
 export type MCCard = {
     attack?: number;
@@ -59,53 +61,80 @@ export type MCCard = {
     url?: string;
 };
 
-  
+/*  
 // Local Storage
 const getCardsFromLocalStorage = (): MCCard[] => {
     // @ToDo: Fix the issue with local storage
     return getFromLocalStorageCompressed<MCCard[]>(`cards`) || [];
     //return [];
 }
+*/
 
-const saveCardsToLocalStorage = (cards: MCCard[]) => {
-    return saveToLocalStorageCompressed<MCCard[]>(`cards`, cards);
-}
+// const saveCardsToLocalStorage = (cards: MCCard[]) => {
+//     return saveToLocalStorageCompressed<MCCard[]>(`cards`, cards);
+// }
 
 const slice = createSlice({
     name: 'cards',
-    initialState: getCardsFromLocalStorage(),
+    initialState: [] as MCCard[], //getCardsFromLocalStorage(),
     reducers: {
-        cardsAdded: (cards, action) => {
-            cards = [...cards, ...action.payload.newCards];
-            saveCardsToLocalStorage(cards);
+        cardsAdded: (cards: MCCard[], action) => {
+            const newCards: MCCard[] = action.payload;
+            cards = [...cards, ...newCards];
+            // saveCardsToLocalStorage(cards);
             return cards;
         },
-        packCardsRemoved: (cards, action) => {
+        cardPackRemoved: (cards: MCCard[], action) => {
+            const packCode = action.payload
             cards = cards.filter(
-                (card: MCCard) => card.pack_code !== action.payload
+                (card: MCCard) => card.pack_code !== packCode
             );
-            saveCardsToLocalStorage(cards);
+            // saveCardsToLocalStorage(cards);
             return cards;
         },
-        packCardsAdded: (cards, action) => {
+        cardPackAdded: (cards:MCCard[], action) => {
+            const packCode = action.payload.packCode;
+            const newCards: MCCard[] = action.payload.newCards;
             // Remove old cards of the pack
             cards = cards.filter(
-                (card: MCCard) => card.pack_code !== action.payload.packCode
+                (card: MCCard) => card.pack_code !== packCode
             );
-            cards = [...cards, ...action.payload.newCards];
-            saveCardsToLocalStorage(cards);
+            cards = [...cards, ...newCards];
+            // saveCardsToLocalStorage(cards);
             return cards;
         },
-        setCards: (cards, action) => {
-            cards = action.payload;
-            console.log(`setCards`, cards);
-            saveCardsToLocalStorage(cards);
+        cardsSet: (cards: MCCard[], action) => {
+            const newCards: MCCard[] = action.payload;
+            cards = newCards;
+            // saveCardsToLocalStorage(cards);
             return cards;
 
         }
     }
 });
 
+export const selectAllCards = (state: RootState) => state.entities.cards;
+
+export const cardByIdSelector = (cardId: string) => createSelector(
+    [(state: RootState) => state.entities.cards],
+    (cards) => cards.find(card => card.code === cardId)
+);
+
+export const cardsByPackSelector = (packCode: string) => createSelector(
+    (state: RootState) => state.entities.cards,
+    (cards) => cards.filter(card => card.pack_code === packCode)
+);
+
+export const totalNumberOfCardsSelector = createSelector(
+    (state: RootState) => state.entities.cards,
+    (cards) => cards.length
+);
+
 export default slice.reducer;
-export const { cardsAdded, packCardsRemoved, packCardsAdded, setCards } = slice.actions;
+export const { 
+    cardsAdded, 
+    cardPackRemoved,
+    cardPackAdded,
+    cardsSet
+} = slice.actions;
 

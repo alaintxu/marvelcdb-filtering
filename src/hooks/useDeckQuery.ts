@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { getLanguage } from "../i18n";
 import useSingleElementQuery from "./useSingleElementQuery";
 import { TFunction } from "i18next";
+import { MarvelDeck } from "../store/decks";
 
 export interface Deck {
     id: number,
@@ -21,28 +22,6 @@ export interface Deck {
     version: number,
     meta: string,
     tags: string,
-}
-
-export interface MarvelDeck {
-    id: number,
-    name: string,
-    date_creation: string,
-    date_update: string,
-    description_md: string,
-    user_id: 21328,
-    hero_code: string,
-    hero_name: string,
-    slots: {
-        [key: string]: number
-    },
-    ignoreDeckLimitSlots: {
-        [key: string]: number
-    },
-    version: number,
-    meta: string,
-    aspect: string | undefined,
-    tags_str: string,
-    tags: string[],
 }
 
 const extractIdFromDeckUrl = (deckUrl: string): number => {

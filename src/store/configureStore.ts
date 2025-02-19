@@ -1,14 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import packsReducer from './packs';
-import cardsReducer from './cards';
-import paginationReducer from './pagination';
+import reducer from './reducer';
 
 const store = configureStore({
-    reducer: {
-        packs: packsReducer,
-        cards: cardsReducer,
-        pagination: paginationReducer,
-    },
+    reducer: reducer,
     devTools: true
 });
 
