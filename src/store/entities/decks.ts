@@ -1,4 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../configureStore';
+
+// @ToDo: Use this to have a "favorite" deck list in the future?
 
 export interface MarvelDeck {
     id: number;
@@ -22,11 +25,15 @@ export interface MarvelDeck {
     tags: string[];
 }
 
+export type MarvelDecksDict = {
+    [deck_id: number]: MarvelDeck;
+}
+
 const slice = createSlice({
     name: 'decks',
     initialState: {
         selectedDeck: null as number | null,
-        decks: [] as MarvelDeck[],
+        decks: {} as MarvelDecksDict,
     },
     reducers: {
         deckUnselected: (state) => {
@@ -39,7 +46,7 @@ const slice = createSlice({
         },
         decksAdded: (state, action) => {
             const deck: MarvelDeck = action.payload;
-            state.decks.push(deck);
+            state.decks[deck.id] = deck;
             return state;
         },
         deckRemoved: (state, action) => {
@@ -47,11 +54,24 @@ const slice = createSlice({
             if(state.selectedDeck === deck_id) {
                 state.selectedDeck = null;
             }
-            state.decks = state.decks.filter((deck) => deck.id !== deck_id);
+            delete state.decks[deck_id];
             return state;
         }
     }
 });
+
+export const selectAllDecks = (state: RootState) => state.entities.decks.decks;
+export const selectSelectedDeck = createSelector(
+    (state: RootState) => state.entities.decks,
+    (deckState) => {
+        if(deckState.selectedDeck === null) return;
+        return deckState.decks[deckState.selectedDeck];
+    }
+);
+export const selectDeckById = (deck_id: number) => createSelector(
+    (state: RootState) => state.entities.decks,
+    (deckState) => deckState.decks[deck_id]
+);
 
 export default slice.reducer;
 export const { deckSelected, decksAdded, deckRemoved } = slice.actions;

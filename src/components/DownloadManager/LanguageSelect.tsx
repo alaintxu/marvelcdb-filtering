@@ -4,7 +4,7 @@ import { BsTranslate } from 'react-icons/bs'
 import { useEffect } from 'react'
 
 type Props = {
-    onLanguageUpdated?: (newLanguage: string) => void
+  onLanguageUpdated?: (newLanguage: string) => void
 }
 
 const LanguageSelect = ({onLanguageUpdated}: Props) => {
@@ -18,33 +18,33 @@ const LanguageSelect = ({onLanguageUpdated}: Props) => {
   }, [i18n.language]);
   return (
     <div className="input-group mb-1">
-            <label className="input-group-text" htmlFor="langSelect">
-              <BsTranslate />
-              &nbsp;
-              {t('language')}
-            </label>
-            <select
-              className="form-select"
-              key="lang-select"
-              id="langSelect"
-              onChange={(event) => {
-                    console.log("Language select changed", event.target.value);
-                    i18n.changeLanguage(event.target.value);
-                    if (onLanguageUpdated) onLanguageUpdated(event.target.value);
-                }
-              }
-              value={i18n.language}
-            >
-              {I18N_LANGS.map((lang) => <option
-                key={`lang-select-option-${lang}`}
-                title={`lang-select-option-${lang}`}
-                value={lang}
-              >
-                {t('lang.' + lang)}
-              </option>
-              )}
-            </select>
-          </div>
+      <label className="input-group-text" htmlFor="langSelect">
+        <BsTranslate />
+        &nbsp;
+        {t('language')}
+      </label>
+      <select
+        className="form-select"
+        key="lang-select"
+        id="langSelect"
+        onChange={(event) => {
+          console.debug("Language select changed", event.target.value);
+          i18n.changeLanguage(event.target.value);
+          if (onLanguageUpdated) onLanguageUpdated(event.target.value);
+          }
+        }
+        value={i18n.language}
+      >
+        {I18N_LANGS.map((lang) => <option
+          key={`lang-select-option-${lang}`}
+          title={`lang-select-option-${lang}`}
+          value={lang}
+        >
+          {t('lang.' + lang)}
+        </option>
+        )}
+      </select>
+      </div>
   )
 }
 

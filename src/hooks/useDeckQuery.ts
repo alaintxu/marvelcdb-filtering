@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useSingleElementQuery from "./useSingleElementQuery";
+import useDataQuery from "./useDataQuery";
 import { TFunction } from "i18next";
 import { MarvelDeck } from "../store/entities/decks";
 
@@ -86,7 +86,7 @@ const useDeckQuery = (deckUrl: string) => {
         error: deckError,
         isLoading: isDeckLoading,
         isFetching: isDeckFetching
-    } = useSingleElementQuery<Deck>(
+    } = useDataQuery<Deck>(
         baseURL,
         endpoint,
         queryKey,

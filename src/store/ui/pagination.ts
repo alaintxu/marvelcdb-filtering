@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../configureStore";
+import { getFromLocalStorage } from "../../LocalStorageHelpers";
 
-export const defaultElementsPerPage = 12;
+export const DEFAULT_ELEMENTS_PER_PAGE = 12;
 
 type PaginationState = {
     currentPage: number,
@@ -12,39 +14,47 @@ type PaginationState = {
 }
 
 
-const pageNumberUpdated = (state: PaginationState, currentPage:number) => {
-    if (currentPage < 1 || currentPage > state.totalPages) return state;
-    state.currentPage = currentPage;
-    state.visibleFirstElementIndex = (state.elementsPerPage * (state.currentPage - 1));
-    state.visibleLastElementIndex = Math.min(state.totalElements, state.elementsPerPage * state.currentPage);
+const recalculatePagination = (state: PaginationState) => {
+    if (state.currentPage < 1 || state.currentPage > state.totalPages) state.currentPage = 1;
+
+    state.totalPages = Math.ceil(state.totalElements / (state.elementsPerPage || DEFAULT_ELEMENTS_PER_PAGE));
+
+    state.visibleFirstElementIndex = state.elementsPerPage * (state.currentPage - 1);
+    state.visibleLastElementIndex = Math.min(
+        state.totalElements, 
+        state.elementsPerPage * state.currentPage
+    );
+
     return state;
 }
 
 
 const slice = createSlice({
-    name: 'cards',
+    name: 'pagination',
     initialState: {
         currentPage: 1,
-        elementsPerPage: defaultElementsPerPage,
+        elementsPerPage: getFromLocalStorage<number>("elements_per_page") || DEFAULT_ELEMENTS_PER_PAGE,
         totalElements: 0,
         totalPages: 1,
         visibleFirstElementIndex: 0,
         visibleLastElementIndex: 1,
-    },
+    } as PaginationState,
     reducers: {
-        paginationElementsUpdated: (state, action) => {
-            state.totalElements = action.payload.lenght;
-            state.totalPages = Math.ceil(state.totalElements / state.elementsPerPage);
-            return pageNumberUpdated(state, state.currentPage);
+        paginationTotalElementsUpdated: (state, action) => {
+            const newTotalElements: number = action.payload;
+            state.totalElements = newTotalElements;
+            return recalculatePagination(state);
         },
         paginationElementsPerPageUpdated: (state, action) => {
-            state.elementsPerPage = action.payload;
-            state.totalPages = Math.ceil(state.totalElements / state.elementsPerPage);
-            return pageNumberUpdated(state, 1);
+            const newElementsPerPage: number = action.payload;
+            state.elementsPerPage = newElementsPerPage;
+            state.currentPage = 1;
+            return recalculatePagination(state);
         },
         paginationCurrentPageUpdated: (state, action) => {
-            const currentPage = action.payload;
-            return pageNumberUpdated(state, currentPage);
+            const newCurrentPage: number = action.payload;
+            state.currentPage = newCurrentPage;
+            return recalculatePagination(state);
         },
         /*paginationNextPageClicked: (state) => {
             const currentPage = state.currentPage + 1;
@@ -64,9 +74,12 @@ const slice = createSlice({
     }
 });
 
+export const selectPagination = (state: RootState) => state.ui.pagination;
+export const selectPaginationElementsPerPage = (state: RootState) => state.ui.pagination.elementsPerPage;
+
 export default slice.reducer;
 export const { 
-    paginationElementsUpdated, 
+    paginationTotalElementsUpdated, 
     paginationElementsPerPageUpdated, 
     paginationCurrentPageUpdated 
 } = slice.actions;

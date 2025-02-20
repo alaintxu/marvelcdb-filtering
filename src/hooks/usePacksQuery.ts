@@ -14,7 +14,7 @@ const usePacksQuery = () => {
     error: packsError,
     isLoading: arePacksLoading,
     isFetching: arePacksFetching
-  } = useDataQuery<Pack>(
+  } = useDataQuery<Pack[]>(
     baseURL,
     endpoint,
     queryKey,

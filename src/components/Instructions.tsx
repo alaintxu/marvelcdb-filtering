@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import Markdown from 'react-markdown';
+import { BsExclamationOctagonFill, BsQuestionCircleFill } from 'react-icons/bs';
 
 const Instructions = () => {
   const { t } = useTranslation('instructions');
@@ -7,12 +9,33 @@ const Instructions = () => {
     <section id="mc-card-list" className='p-3 card bg-secondary'>
       <div className='card-body'>
         <h1 className='card-title'>
-          {t('instructions_title')}
+          {t('title')}
         </h1>
         <div className='card-text'>
-          <p>
-            {t('instructions_text')}
-          </p>
+          <div className="alert alert-warning d-flex align-items-center gap-3" role="alert">
+            <BsExclamationOctagonFill />
+            <div>
+              <Markdown>
+                {t('alert_md')}
+              </Markdown>
+            </div>
+          </div>
+          <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
+            <BsQuestionCircleFill />
+            <div>
+              <Markdown>
+                {t('instructions_md')}
+              </Markdown>
+            </div>
+          </div>
+          <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
+            <BsQuestionCircleFill />
+            <div>
+              <Markdown>
+                {t('reset_help_md')}
+              </Markdown>
+            </div>
+          </div>
         </div>
       </div>
     </section>

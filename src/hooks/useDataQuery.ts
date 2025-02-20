@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 const useDataQuery = <T>(baseURL: string, endpoint: string, queryKey: string[], requestConfig?: RequestInit) => {
-  const { data, error, isLoading, isFetching } = useQuery<T[], Error>({
+  const { data, error, isLoading, isFetching } = useQuery<T, Error>({
     queryKey: queryKey,
     queryFn: () => fetch(baseURL+endpoint, requestConfig)
       .then(async res => {
@@ -10,7 +10,7 @@ const useDataQuery = <T>(baseURL: string, endpoint: string, queryKey: string[], 
           console.error("Error fetching data", res.status);
           throw new Error("Error fetching data: " + res.status);
         }
-        return (await res.json()) as T[];
+        return (await res.json()) as T;
       })
       .finally(() => console.debug("useDataQuery fetching finished", endpoint)),
       //queryKeyHashFn: (queryKey) => `${queryKey.join("-")}-${baseURL}-${endpoint}`,

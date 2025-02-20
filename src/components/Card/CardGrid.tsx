@@ -8,7 +8,6 @@ type Props = {
   flipAllCards?: boolean
 }
 const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false }: Props) => {
-
   if (!cards) return (<div>{t('no_cards')}</div>);
 
   return (

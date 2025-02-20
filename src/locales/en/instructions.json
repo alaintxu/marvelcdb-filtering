@@ -1,4 +1,6 @@
 {
-  "instructions_title": "Instructions",
-  "instructions_text": "You don't have any cards yet. To start, go to the 'Download Manager', select the language and click on 'Download all'. If you don't have all the cards, you can drop down 'packs list' and download the packs you have."
+  "title": "Instructions",
+  "alert_md": "This message can appear for several reasons:\n\n1. If it's the **first time** you enter the application.\n2. If you **have deleted** or **there are no cards** downloaded in this browser.\n3. If you **have changed browser**.\n4. If there has been an **update** that needs to delete the old data.",
+  "instructions_md": "You don't have **any cards yet**. To start:\n\n1. Go to the **Download Manager**.\n1. Select the **language**.\n1. Drop down the **packs list** and select the packs you have. If you have all the packs or want to see all the cards, instead of that, you can click on **Download all**. ",
+  "reset_help_md": "If something goes wrong or you have problems with the application, you can try to **Restart the application**. To do this, go to **Download Manager** and click on **Restart application**."
 }

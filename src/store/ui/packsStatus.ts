@@ -3,7 +3,13 @@ import { createSelector } from "reselect";
 
 import { RootState } from "../configureStore";
 import { selectNumberOfPacks } from '../entities/packs';
-// import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
+import { getFromLocalStorage } from '../../LocalStorageHelpers';
+
+export type OldPackStatus = {
+    code: string,
+    lastDownload: string,
+    numberOfCards: number,
+}
 
 export type PackStatus = {
     pack_code: string,
@@ -16,19 +22,9 @@ export type PackStatusDict = {
     [pack_code: string]: PackStatus;
 }
 
-// const getPackStatusDictFromLocalStorage = ():PackStatusDict => {
-//     // @ToDo: Fix the issue with local storage
-//     return getFromLocalStorageCompressed<PackStatusDict>(`pack_status_list`) || {};
-//     //return {};
-// }
-
-// const savePackStatusDictToLocalStorage = (packStatusDict: PackStatusDict): boolean => {
-//     return saveToLocalStorageCompressed<PackStatusDict>(`pack_status_list`, packStatusDict);
-// }
-
 const slice = createSlice({
     name: 'packStatus',
-    initialState: {} as PackStatusDict, //getPackStatusDictFromLocalStorage(),
+    initialState: getFromLocalStorage<PackStatusDict>("pack_status_v2") || {},
     reducers: {
         packStatusDictSet: (packStatusDict, action) => {
             const newPackStatusDict: PackStatusDict = action.payload;
@@ -60,18 +56,38 @@ const slice = createSlice({
         packStatusPackDownloadStatusSet: (packStatusDict, action) => {
             const packCode: string = action.payload.packCode;
             const downloadStatus: "unselected" | "selected" | "downloading" | "downloaded" = action.payload.downloadStatus;
+            if (!packStatusDict[packCode]) {
+                packStatusDict[packCode] = {
+                    pack_code: packCode,
+                    download_date: 0,
+                    download_status: downloadStatus,
+                    number_of_cards: 0,
+                };
+                return packStatusDict;
+            }
             packStatusDict[packCode].download_status = downloadStatus;
-            //savePackStatusDictToLocalStorage(packStatusDict);
             return packStatusDict;
         },
         packStatusPackRemoved: (packStatusDict, action) => {
             const packCode: string = action.payload;
             delete packStatusDict[packCode];
-            //savePackStatusDictToLocalStorage(packStatusDict);
+            return packStatusDict;
+        },
+        packStatusPackCardsDownloaded: (packStatusDict, action) => {
+            const packCode: string = action.payload.packCode;
+            const numberOfCards: number = action.payload.numberOfCards;
+            packStatusDict[packCode] = {
+                pack_code: packCode,
+                download_date: Date.now(),
+                download_status: "downloaded",
+                number_of_cards: numberOfCards,
+            }
             return packStatusDict;
         }
     }
 });
+
+export const selectPackStatusDict = (state: RootState) => state.ui.packStatusDict;
 
 export const selectPackStatusById = (packCode: string) => createSelector(
     (state: RootState) => state.ui.packStatusDict,
@@ -79,14 +95,14 @@ export const selectPackStatusById = (packCode: string) => createSelector(
 );
 
 export const selectNumberOfPackStatusByDownloadStatus = (downloadStatus: "unselected" | "selected" | "downloading" | "downloaded") => createSelector(
-    (state: RootState) => state.ui.packStatusDict,
+    selectPackStatusDict,
     (packStatusDict) => Object.values(packStatusDict).filter(
         packStatus => packStatus.download_status === downloadStatus
     ).length
 );
 
 export const selectIsAnyPackDownloading = createSelector(
-    (state: RootState) => state.ui.packStatusDict,
+    selectPackStatusDict,
     (packStatusDict) => Object.values(packStatusDict).some(
         packStatus => packStatus.download_status === "downloading"
     )
@@ -97,10 +113,12 @@ export const selectPackStatusBootstrapVariant = createSelector(
     selectNumberOfPackStatusByDownloadStatus("downloaded"),
     selectIsAnyPackDownloading,
     (numberOfPacks: number, numberOfDownloadedPacks: number, isAnyPackDownloading: boolean) => {
-        const packStatusRatio = numberOfDownloadedPacks / numberOfPacks;
         if( isAnyPackDownloading ) return "dark";
+
+        const packStatusRatio = numberOfDownloadedPacks / numberOfPacks;
         if (packStatusRatio === 1) return "success";
         if (packStatusRatio < 0.25) return "danger";
+        
         return "warning";
       }
 )
@@ -111,5 +129,6 @@ export const {
     packStatusSet,
     packStatusPackDownloadStatusSet,
     packStatusPackRemoved,
+    packStatusPackCardsDownloaded,
     packStatusNewPacksAdded,
 } = slice.actions;

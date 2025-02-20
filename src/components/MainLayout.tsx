@@ -8,28 +8,51 @@ import DownloadManager from "./DownloadManager/DownloadManager";
 import { useQuery } from "@tanstack/react-query";
 import useDeckQuery from "../hooks/useDeckQuery";
 import DeckView from "./Deck/DeckView";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/configureStore";
-import { MCCard } from "../store/entities/cards";
-import { selectedNavigationOptionKeySet, selectSelectedNavigationOptionKey } from "../store/ui/selectedNavigationOptionKey";
+import { useSelector } from "react-redux";
+import { MCCard, selectAllCards } from "../store/entities/cards";
+import { selectSelectedNavigationOptionKey } from "../store/ui/selectedNavigationOptionKey";
+import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
+import { PackStatusDict, selectPackStatusDict } from "../store/ui/packsStatus";
+import { selectPaginationElementsPerPage } from "../store/ui/pagination";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
-  const dispatch = useDispatch();
   const deckId = new URLSearchParams(window.location.search).get("deckId");
   const selectedNavigationOptionKey = useSelector(selectSelectedNavigationOptionKey);
   const { deck } = useDeckQuery(deckId || "");
 
-  // Cards
-  const cards: MCCard[] = useSelector((state: RootState) => state.entities.cards || []);
+  // Redux values
+  const cards: MCCard[] = useSelector(selectAllCards);
+  const elementsPerPage: number = useSelector(selectPaginationElementsPerPage);
+  const packStatusDict: PackStatusDict = useSelector(selectPackStatusDict);
 
   // Filters
+  // @ToDo: move to Redux
   const { data: uniqueFilterOptions } = useQuery<UniqueFilterOptions[], Error>({ queryKey: ["uniqueFilterOptions", i18n.language] });
 
-  //Navigation
+  // Local storage
   useEffect(() => {
-    if (!cards || cards.length == 0) dispatch(selectedNavigationOptionKeySet("download_manager"));
+    removeOldLocalStorageItems();
+  }, []); // [] means this effect will run once after the first render
+
+  useEffect(() => {
+    if (cards) {
+      saveToLocalStorageCompressed("cards_compressed", cards);
+    }
+    //if (!cards || cards.length == 0) dispatch(selectedNavigationOptionKeySet("download_manager"));
+
   }, [cards]);
+
+  useEffect(() => {
+    if (packStatusDict) {
+      saveToLocalStorage("pack_status_v2", packStatusDict);
+    }
+  }, [packStatusDict]);
+
+  useEffect(() => {
+    saveToLocalStorage("elements_per_page", elementsPerPage);
+  }, [elementsPerPage]);
+
 
 
   // Other

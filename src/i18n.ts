@@ -7,7 +7,6 @@ export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
 export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions', 'filters'];
 
 export const checkLanguageString = (language: string): string => {
-  console.log("checkLanguageString", language);
   if (!I18N_LANGS.includes(language)) {
     return I18N_LANGS[0];
   }

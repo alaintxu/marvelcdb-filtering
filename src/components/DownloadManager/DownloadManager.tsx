@@ -6,11 +6,12 @@ import usePacksQuery from '../../hooks/usePacksQuery';
 import LoadingSpinner from '../LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/configureStore';
-import { cardsAdded, MCCard, cardPackRemoved, cardPackAdded, selectAllCards } from "../../store/entities/cards";
+import { cardsAdded, MCCard, cardPackRemoved, cardPackAdded, selectAllCards, cardsSorted } from "../../store/entities/cards";
 import { 
   PackStatus, 
   PackStatusDict,
   packStatusNewPacksAdded, 
+  packStatusPackCardsDownloaded, 
   packStatusPackDownloadStatusSet,
   selectNumberOfPackStatusByDownloadStatus,
   selectPackStatusBootstrapVariant
@@ -46,7 +47,7 @@ const DownloadManager = () => {
     // @ToDo: Is React query needed?
     if(downloadedPacks){
       dispatch(packsSet(downloadedPacks));
-      dispatch(packStatusNewPacksAdded(downloadedPacks));
+      dispatch(packStatusNewPacksAdded(downloadedPacks.map(pack => pack.code)));
     }
   }, [downloadedPacks]);
 
@@ -82,8 +83,8 @@ const DownloadManager = () => {
   
   const downloadPackCards = async (packCode: string) => {
       cardPackRemoved(packCode);
-      dispatch(packStatusPackDownloadStatusSet({packCode: packCode, downloadStatus: "downloading"}));
       dispatch(cardPackRemoved(packCode));
+      dispatch(packStatusPackDownloadStatusSet({packCode: packCode, downloadStatus: "downloading"}));
   
       const response = await fetch(t('base_path') + '/api/public/cards/' + packCode + '.json');
   
@@ -93,7 +94,8 @@ const DownloadManager = () => {
       }
       const data = await response.json() as MCCard[];
       dispatch(cardPackAdded({ packCode: packCode, newCards: data }));
-      dispatch(packStatusPackDownloadStatusSet({packCode: packCode, downloadStatus: "downloaded"}));
+      dispatch(packStatusPackCardsDownloaded({packCode: packCode, numberOfCards: data.length}));
+      dispatch(cardsSorted("code"));
     }
 
   return (

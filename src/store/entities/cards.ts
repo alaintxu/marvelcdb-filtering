@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
-//import { getFromLocalStorageCompressed, saveToLocalStorageCompressed } from './helpers';
+import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 
 export type MCCard = {
     attack?: number;
@@ -61,22 +61,9 @@ export type MCCard = {
     url?: string;
 };
 
-/*  
-// Local Storage
-const getCardsFromLocalStorage = (): MCCard[] => {
-    // @ToDo: Fix the issue with local storage
-    return getFromLocalStorageCompressed<MCCard[]>(`cards`) || [];
-    //return [];
-}
-*/
-
-// const saveCardsToLocalStorage = (cards: MCCard[]) => {
-//     return saveToLocalStorageCompressed<MCCard[]>(`cards`, cards);
-// }
-
 const slice = createSlice({
     name: 'cards',
-    initialState: [] as MCCard[], //getCardsFromLocalStorage(),
+    initialState: getFromLocalStorageCompressed<MCCard[]>("cards_compressed") || [], //getCardsFromLocalStorage(),
     reducers: {
         cardsAdded: (cards: MCCard[], action) => {
             const newCards: MCCard[] = action.payload;
@@ -109,29 +96,50 @@ const slice = createSlice({
             // saveCardsToLocalStorage(cards);
             return cards;
 
+        },
+        cardsSorted: (cards: MCCard[], action) => {
+            const fieldName: keyof MCCard = action.payload;
+            cards = cards.sort((a, b) => {
+                const aValue = a[fieldName];
+                const bValue = b[fieldName];
+                if (typeof aValue === "string" && typeof bValue === "string") {
+                    return aValue.localeCompare(bValue);
+                } else if (typeof aValue === "number" && typeof bValue === "number") {
+                    return aValue - bValue;
+                } else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+                    return aValue ? 1 : -1;
+                } else if (aValue == null && bValue == null) {
+                    return 0;
+                } else if (aValue == null) {
+                    return -1;
+                } else if (bValue == null) {
+                    return 1;
+                }
+                return 0;
+            })
         }
     }
 });
 
 export const selectAllCards = (state: RootState) => state.entities.cards;
 export const selectNumberOfCards = createSelector(
-    (state: RootState) => state.entities.cards,
+    selectAllCards,
     (cards) => cards.length
 )
 
 export const cardByCodeSelector = (cardCode: string) => createSelector(
-    [(state: RootState) => state.entities.cards],
+    selectAllCards,
     (cards) => cards.find(card => card.code === cardCode)
 );
 
-export const cardsByPackSelector = (packCode: string) => createSelector(
-    (state: RootState) => state.entities.cards,
-    (cards) => cards.filter(card => card.pack_code === packCode)
+export const cardsByCodeSelector = (cardCodes: string[]) => createSelector(
+    selectAllCards,
+    (cards) => cards.filter(card => cardCodes.includes(card.code))
 );
 
-export const totalNumberOfCardsSelector = createSelector(
-    (state: RootState) => state.entities.cards,
-    (cards) => cards.length
+export const cardsByPackSelector = (packCode: string) => createSelector(
+    selectAllCards,
+    (cards) => cards.filter(card => card.pack_code === packCode)
 );
 
 export default slice.reducer;
@@ -139,6 +147,7 @@ export const {
     cardsAdded, 
     cardPackRemoved,
     cardPackAdded,
-    cardsSet
+    cardsSet,
+    cardsSorted
 } = slice.actions;
 

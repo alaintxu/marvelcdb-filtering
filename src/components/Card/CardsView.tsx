@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import CardGrid from "./CardGrid";
-import { BsFillEyeFill, BsFillEyeSlashFill, BsPhoneFlip } from 'react-icons/bs';
+import { BsFillEyeFill, BsFillEyeSlashFill, BsPersonBadge, BsPhoneFlip } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import { ReactBSPagination } from "@draperez/react-components";
-import { MCCard } from "../../store/entities/cards";
+import { MCCard, selectAllCards } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
-import { paginationCurrentPageUpdated, paginationElementsUpdated } from "../../store/ui/pagination";
-
+import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 
 const CardsView = () => {
   const { t } = useTranslation('global');
@@ -15,33 +13,36 @@ const CardsView = () => {
   // Status
   const [showAllCardData, setShowAllCardData] = useState(false);
   const [flipAllCards, setFlipAllCards] = useState(false);
+  const [filteredCards, setFilteredCards] = useState<MCCard[]>([]);
   const [paginatedCards, setPaginatedCards] = useState<MCCard[]>([]);
 
-  const pagination = useSelector((state: RootState) => state.ui.pagination);
-  const cards = useSelector((state: RootState) => state.entities.cards);
+  const pagination = useSelector(selectPagination);
+  const cards = useSelector(selectAllCards);
 
   //const filters = useSelector((state: RootState) => state.filters);
   
   const dispatch = useDispatch();
 
   useEffect(() => {
-    /* @ToDo: Change cards for filtered cards */
-    dispatch(paginationElementsUpdated(cards));
-  }, [cards]);
+    /* @ToDo: Do filter the cards */
+    console.warn('Filtering cards is not implemented yet');
+    setFilteredCards(cards);
+  }, [cards /*, filters*/]);
+  useEffect(() => {
+    dispatch(paginationTotalElementsUpdated(filteredCards?.length || 0));
+  }, [filteredCards]);
 
   useEffect(() => {
-    /* @ToDo: Change cards for filtered cards */
-    setPaginatedCards(cards.slice(
+    setPaginatedCards(filteredCards.slice(
       pagination.visibleFirstElementIndex,
       pagination.visibleLastElementIndex
     ));
-  }, [cards, pagination]);
+  }, [pagination, filteredCards]);
 
   return (
 
-    <section id="mc-card-list" className='p-3'>
+    <section id="mc-card-list" className='p-3 pb-0'>
       <span id="mc-card-list-actions">
-        <span>{pagination.elementsPerPage || "?"}</span>
         <button
           className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
           onClick={() => setShowAllCardData((prev) => !prev)}>
@@ -57,17 +58,21 @@ const CardsView = () => {
           <BsPhoneFlip />
         </button>
       </span>
-      <h1>
+      <h1 id="page-title">
+        <BsPersonBadge className="me-2"/>
         {t('card_list')}
       </h1>
       <CardGrid cards={paginatedCards} showAllCardData={showAllCardData} flipAllCards={flipAllCards} />
 
-      <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center">
+      <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center mt-3">
         <ReactBSPagination
           totalPages={pagination.totalPages || 1}
           currentPage={pagination.currentPage || 1}
           buttonSize='sm'
-          onPageClick={(pageNumber: number) => dispatch(paginationCurrentPageUpdated(pageNumber))}
+          onPageClick={(pageNumber: number) => {
+            document.getElementById('page-title')?.scrollIntoView({ behavior: 'instant' });
+            dispatch(paginationCurrentPageUpdated(pageNumber));
+          }}
           />
       </div>
     </section>
