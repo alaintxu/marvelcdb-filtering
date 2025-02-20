@@ -17,7 +17,7 @@ const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false }: Prop
           showCardData={showAllCardData}
           flipAllCards={flipAllCards}
           card={card}
-          key={`card-${card.code}`} />
+          key={`card-${card.key || card.code}`} />
       )}
     </div>
   )

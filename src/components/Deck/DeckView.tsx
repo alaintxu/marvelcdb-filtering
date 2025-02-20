@@ -1,9 +1,10 @@
 import { MarvelDeck } from "../../store/entities/decks"
-import { FaTag, FaUser, FaChevronDown } from 'react-icons/fa6'
-import { MdCategory } from 'react-icons/md'
-import { TbCards } from 'react-icons/tb'
-import { useTranslation } from 'react-i18next'
-import Markdown from 'react-markdown'
+import DeckDataCard from "./DeckDataCard"
+import { useEffect, useState } from "react"
+import { MCCard, selectCardsByCodes } from "../../store/entities/cards"
+import CardGrid from "../Card/CardGrid"
+import { useSelector } from "react-redux"
+import { t } from "i18next"
 
 
 
@@ -11,62 +12,97 @@ type Props = {
     deck: MarvelDeck
 }
 
-const aspectColorMap: { [key: string]: string } = {
-    "aggression": "danger",
-    "justice": "warning",
-    "leadership": "info",
-    "protection": "success",
+function getFactionCodeWeight(factionCode: string): number {
+  switch (factionCode) {
+    case "hero":
+      return 2;
+    case "basic":
+      return 0;
+    default:
+      return 1;
+  }
 }
 
 const DeckView = ({ deck }: Props) => {
-  const { t } = useTranslation('global');
-  const aspectColor = deck.aspect ? aspectColorMap[deck.aspect] : 'dark';
+  console.log("deck", deck);
+  const deckCardsUnique: MCCard[] = useSelector(selectCardsByCodes(Object.keys(deck.slots)));
+  const [deckCards, setDeckCards] = useState<{[typeCode: string]: MCCard[]}>({});
+  const [notFoundCardCodes, setNotFoundCardCodes] = useState<string[]>([]);
 
+  useEffect(() => {
+    console.log("Filter deck cards", Object.keys(deck.slots), deckCardsUnique)
+    const cardsTmp: {[typeCode: string]: MCCard[]} = {};
+    const notFoundCardCodesTmp: string[] = [];
+
+    // Get cards
+    Object.keys(deck.slots).forEach((cardCode) => {
+      for (let i = 0; i < deck.slots[cardCode]; i++) {
+        const card = deckCardsUnique.find((card: MCCard) => card.code === cardCode);
+        if (card) {
+          if (!cardsTmp[card.type_name]) cardsTmp[card.type_name] = [];
+          cardsTmp[card.type_name].push({ key: `${card.code}-${i}`,...card });
+        } else {
+          if (!notFoundCardCodesTmp.includes(cardCode))
+            notFoundCardCodesTmp.push(cardCode);
+        }
+      }
+    });
+    setNotFoundCardCodes(notFoundCardCodesTmp);
+
+    // Sort cards
+    const orderedCardsTmp: {[typeCode: string]: MCCard[]} = {};
+    Object.keys(cardsTmp).forEach((typeName) => {
+      orderedCardsTmp[typeName] = [...cardsTmp[typeName]].sort((a, b) => {
+        const aFactionCodeWeight = getFactionCodeWeight(a.faction_code);
+        const bFactionCodeWeight = getFactionCodeWeight(b.faction_code);
+        return bFactionCodeWeight - aFactionCodeWeight;
+      });
+    });
+    // Set cards
+    setDeckCards(orderedCardsTmp);
+  }, [deck]);
+
+  // ToDo: Guardar como favorito
+  
   return (
     <section id="deck-view" className='p-3'>
-      <div className="card bg-dark text-light">
-        <div className='card-body'>
-          <h1 className='card-title'>
-            {deck.hero_name} - 
-            <a href={`${t('base_url')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
-              {deck.name} 
-            </a>
-          </h1>
-          <div id="deck-tags">
-            {deck.aspect && <span className={`badge bg-${aspectColor} me-1`}>
-              <MdCategory/> {t(`aspect.${deck.aspect}`)}
-            </span>}
-            {deck.tags && deck.tags.map((tag) => (
-              <span key={tag} className='badge bg-secondary me-1'>
-                <FaTag /> {t(`tag.${tag}`)}
-              </span>
-            ))}
-            <span className='badge bg-light text-dark me-1' title={t('user-id')}>
-              <FaUser /> {deck.user_id}
-            </span>
-            <span className='badge bg-light text-dark' title={t('deck-id')}>
-              <TbCards /> {deck.id}
-            </span>
-          </div>
-          <button className="mt-4 btn btn-primary" data-bs-toggle="collapse" data-bs-target="#deck-description" aria-expanded="false" aria-controls="deck-description">
-            <FaChevronDown /> {t('description')}
-          </button>
-          <div className="collapse" id="deck-description">
-            <div className="border border-light rounded p-2 my-2">
-              <Markdown>
-                {deck.description_md}
-              </Markdown>
-            </div>
-          </div>
-          <div className="d-flex flex-wrap align-items-center gap-1 mt-4">
-            {Object.entries(deck.slots).map(([cardId, quantity]) => (
-              <a className="badge bg-light text-dark" key={cardId} href={`${t('base_path')}/card/${cardId}`} target="_blank" rel="noreferrer">
-                {cardId} {quantity > 1 &&<span className='ms-1 badge bg-dark text-light'>x{quantity}</span>}
+      <DeckDataCard deck={deck} />
+      {/* @ToDo: separate in modules */}
+      {notFoundCardCodes.length > 0 && <div className="alert alert-warning">
+        <p>{t('deck_cards_not_found')} <span className="badge bg-danger text-light">{notFoundCardCodes.length}</span></p>
+
+        <div className="d-flex flex-wrap align-items-center gap-1 mt-4">
+            {notFoundCardCodes.map((cardCode) => (
+              <a  className="badge bg-light text-dark" 
+                  key={cardCode} 
+                  href={`${t('base_path')}/card/${cardCode}`} 
+                  target="_blank" rel="noreferrer">
+                {cardCode}
               </a>
             ))}
           </div>
+      </div>}
+      <section id="card-index" className="row mt-4">
+        <div className="list-group col-12 col-sm-8 col-md-6 col-lg-4 m-auto">
+        {Object.keys(deckCards).map((typeName) => (
+            <a  href={`#cards-${typeName.replace(/ /g, "-")}`} 
+                className="list-group-item list-group-item-dark list-group-item-action d-flex justify-content-between align-items-center"
+                key={typeName}>
+              {typeName}
+              <span className="ms-2 badge bg-primary rounded-pill">{deckCards[typeName].length}</span>
+            </a>
+        ))}
         </div>
-      </div>
+      </section>
+      {Object.keys(deckCards).map((typeName) => (
+        <section key={typeName} className="mt-4" id={`cards-${typeName.replace(/ /g, "-")}`}>
+          <h2 className="text-center m-4">
+            {typeName}
+            <span className="badge bg-info ms-2">{deckCards[typeName].length}</span>
+          </h2>
+          <CardGrid cards={deckCards[typeName]} />
+        </section>
+      ))}
     </section>
   )
 }

@@ -4,6 +4,7 @@ import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 
 export type MCCard = {
+    key?: string;
     attack?: number;
     attack_star?: boolean;
     back_flavor?: string;
@@ -127,17 +128,17 @@ export const selectNumberOfCards = createSelector(
     (cards) => cards.length
 )
 
-export const cardByCodeSelector = (cardCode: string) => createSelector(
+export const selectCardByCode = (cardCode: string) => createSelector(
     selectAllCards,
     (cards) => cards.find(card => card.code === cardCode)
 );
 
-export const cardsByCodeSelector = (cardCodes: string[]) => createSelector(
+export const selectCardsByCodes = (cardCodes: string[]) => createSelector(
     selectAllCards,
     (cards) => cards.filter(card => cardCodes.includes(card.code))
 );
 
-export const cardsByPackSelector = (packCode: string) => createSelector(
+export const selectCardsByPack = (packCode: string) => createSelector(
     selectAllCards,
     (cards) => cards.filter(card => card.pack_code === packCode)
 );

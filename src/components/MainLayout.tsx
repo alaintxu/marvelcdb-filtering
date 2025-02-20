@@ -14,12 +14,13 @@ import { selectSelectedNavigationOptionKey } from "../store/ui/selectedNavigatio
 import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
 import { PackStatusDict, selectPackStatusDict } from "../store/ui/packsStatus";
 import { selectPaginationElementsPerPage } from "../store/ui/pagination";
+import LoadingSpinner from "./LoadingSpinner";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
   const deckId = new URLSearchParams(window.location.search).get("deckId");
   const selectedNavigationOptionKey = useSelector(selectSelectedNavigationOptionKey);
-  const { deck } = useDeckQuery(deckId || "");
+  const { deck, isDeckLoading, isDeckFetching } = useDeckQuery(deckId || "43333");  // @ToDo: remove hardcoded deckId to ""
 
   // Redux values
   const cards: MCCard[] = useSelector(selectAllCards);
@@ -70,8 +71,13 @@ const MainLayout = () => {
       <main id="main-section" className={mainClassNames.join(" ")}>
         <DownloadManager
         />
-        {deck && <DeckView deck={deck} />}
-        { !deck && (cards ?? []).length > 0 ? <CardsView /> : <Instructions />}
+        {isDeckLoading || isDeckFetching ? <div className="d-flex justify-content-center mt-4">
+            <LoadingSpinner />
+          </div> : <>
+          {deck ? <DeckView deck={deck} /> : <>
+            <CardsView /> : <Instructions />
+          </>}
+        </>}
         <CardFiltersView
           selectedFilters={{}/*selectedFilters*/} 
           setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
