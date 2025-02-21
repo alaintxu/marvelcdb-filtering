@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
-import { selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVariant } from '../../store/ui/packsStatus'
-import { selectNumberOfCards } from '../../store/entities/cards';
-import { selectNumberOfPacks } from '../../store/entities/packs';
+import { selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVariant } from '../../../store/ui/packsStatus'
+import { selectNumberOfCards } from '../../../store/entities/cards';
+import { selectNumberOfPacks } from '../../../store/entities/packs';
 import { useTranslation } from 'react-i18next';
 
 const PacksData = () => {

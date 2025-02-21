@@ -5,6 +5,8 @@ import { RootState } from "../configureStore";
 import { selectNumberOfPacks } from '../entities/packs';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
 
+export const LOCAL_STORAGE_PACK_STATUS_KEY = "pack_status_v2";
+
 export type OldPackStatus = {
     code: string,
     lastDownload: string,
@@ -24,7 +26,7 @@ export type PackStatusDict = {
 
 const slice = createSlice({
     name: 'packStatus',
-    initialState: getFromLocalStorage<PackStatusDict>("pack_status_v2") || {},
+    initialState: getFromLocalStorage<PackStatusDict>(LOCAL_STORAGE_PACK_STATUS_KEY) || {},
     reducers: {
         packStatusDictSet: (packStatusDict, action) => {
             const newPackStatusDict: PackStatusDict = action.payload;

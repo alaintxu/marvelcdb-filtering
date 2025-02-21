@@ -3,6 +3,8 @@ import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 
+export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
+
 export type MCCard = {
     key?: string;
     attack?: number;
@@ -64,7 +66,7 @@ export type MCCard = {
 
 const slice = createSlice({
     name: 'cards',
-    initialState: getFromLocalStorageCompressed<MCCard[]>("cards_compressed") || [], //getCardsFromLocalStorage(),
+    initialState: getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [], //getCardsFromLocalStorage(),
     reducers: {
         cardsAdded: (cards: MCCard[], action) => {
             const newCards: MCCard[] = action.payload;

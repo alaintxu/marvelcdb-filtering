@@ -3,6 +3,7 @@ import { RootState } from "../configureStore";
 import { getFromLocalStorage } from "../../LocalStorageHelpers";
 
 export const DEFAULT_ELEMENTS_PER_PAGE = 12;
+export const LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY = "elements_per_page";
 
 type PaginationState = {
     currentPage: number,
@@ -33,7 +34,7 @@ const slice = createSlice({
     name: 'pagination',
     initialState: {
         currentPage: 1,
-        elementsPerPage: getFromLocalStorage<number>("elements_per_page") || DEFAULT_ELEMENTS_PER_PAGE,
+        elementsPerPage: getFromLocalStorage<number>(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY) || DEFAULT_ELEMENTS_PER_PAGE,
         totalElements: 0,
         totalPages: 1,
         visibleFirstElementIndex: 0,

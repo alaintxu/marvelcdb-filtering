@@ -7,9 +7,12 @@ import Markdown from 'react-markdown'
 import { selectCardByCode } from "../../store/entities/cards"
 import { useSelector } from "react-redux"
 import CardGrid from "../Card/CardGrid"
+import { BsBookmarkCheckFill, BsBookmarkX } from "react-icons/bs"
+import { useState } from "react"
+import DeckBookmarkAction from "./DeckBookmarkAction"
 
 type Props = {
-    deck: MarvelDeck
+    deck: MarvelDeck,
 }
 
 const aspectColorMap: { [key: string]: string } = {
@@ -28,6 +31,7 @@ const DeckDataCard = ({deck}: Props) => {
         <div className='card-body'>
           <h1 className='card-title'>
             {deck.hero_name}
+            <DeckBookmarkAction deck={deck} />        
           </h1>
           <h2 className="mb-4">
             <a href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">

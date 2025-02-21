@@ -1,8 +1,31 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
+import { getFromLocalStorage } from '../../LocalStorageHelpers';
 
-// @ToDo: Use this to have a "favorite" deck list in the future?
+export const LOCAL_STORAGE_DECKS_KEY = "decks_favourites";
 
+/* The one from MarvelCDB */
+export interface Deck {
+    id: number,
+    name: string,
+    date_creation: string,
+    date_update: string,
+    description_md: string,
+    user_id: 21328,
+    investigator_code: string,
+    investigator_name: string,
+    slots: {
+        [key: string]: number
+    },
+    ignoreDeckLimitSlots: {
+        [key: string]: number
+    },
+    version: number,
+    meta: string,
+    tags: string,
+}
+
+/* The one for local */
 export interface MarvelDeck {
     id: number;
     name: string;
@@ -29,49 +52,131 @@ export type MarvelDecksDict = {
     [deck_id: number]: MarvelDeck;
 }
 
+const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
+    // @ToDo: Think how to solve the issue with t
+    //const base_path = t('base_path');
+    const base_path = 'https://es.marvelcdb.com';
+    const { investigator_code, investigator_name, description_md, ...rest } = deck;
+    let aspect: string | undefined = undefined;
+    try {
+        const metaJson = JSON.parse(deck.meta);
+        aspect = metaJson.aspect;
+    } catch (e) {
+        console.error(`Error parsing meta for deck ${deck.id}`, e);
+    }
+    return {
+        ...rest, 
+        hero_code: investigator_code, 
+        hero_name: investigator_name,
+        description_md: description_md
+            .replace(/]\(\/card\/(\w+)\)/g, `](${base_path}/card/$1)`)
+            .replace(/<img.*?src=['"](.*?)['"].*?>/gs, '![]($1)'),
+        aspect: aspect, 
+        tags_str: deck.tags, 
+        tags: deck.tags.split(', ')
+    };
+}
+
 const slice = createSlice({
     name: 'decks',
     initialState: {
-        selectedDeck: null as number | null,
-        decks: {} as MarvelDecksDict,
+        currentDeck: null as MarvelDeck | null,
+        decks: getFromLocalStorage<MarvelDecksDict>(LOCAL_STORAGE_DECKS_KEY) || {} as MarvelDecksDict,
     },
     reducers: {
-        deckUnselected: (state) => {
-            state.selectedDeck = null;
-        },
-        deckSelected: (state, action) => {
-            const deck_id: number = action.payload;
-            state.selectedDeck = deck_id;
-            return state;
-        },
-        decksAdded: (state, action) => {
+        deckAdded: (state, action: PayloadAction<MarvelDeck>) => {
             const deck: MarvelDeck = action.payload;
+            slice.caseReducers.deckRemoved(state, {
+                type: slice.actions.deckRemoved.type,
+                payload: deck.id
+            });
             state.decks[deck.id] = deck;
             return state;
         },
-        deckRemoved: (state, action) => {
+        deckRemoved: (state, action: PayloadAction<number>) => {
             const deck_id: number = action.payload;
-            if(state.selectedDeck === deck_id) {
-                state.selectedDeck = null;
-            }
             delete state.decks[deck_id];
             return state;
-        }
+        },
+        /*deckCurrentAdded: (state, action: PayloadAction<MarvelDeck>) => {
+            const deck: MarvelDeck = action.payload;
+            slice.caseReducers.deckRemoved(state, {
+                type: slice.actions.deckRemoved.type,
+                payload: deck.id
+            })
+            slice.caseReducers.deckAdded(state, {
+                type: slice.actions.deckAdded.type,
+                payload: deck
+            });
+            slice.caseReducers.deckCurrentSet(state, {
+                type: slice.actions.deckCurrentSet.type,
+                payload: deck
+            });
+            return state;
+        },*/
+        deckCurrentRemoved: (state) => {
+            state.currentDeck = null;
+            return state;
+        },
+        deckCurrentSet: (state, action: PayloadAction<MarvelDeck>) => {
+            const deck: MarvelDeck = action.payload;
+            state.currentDeck = deck;
+            return state;
+        },
+        deckCurrentConvertAndSet: (state, action: PayloadAction<Deck>) => {
+            const marvelDeck: MarvelDeck = convertDeckToMarvelDeck(action.payload);
+            slice.caseReducers.deckCurrentSet(state, {
+                type: slice.actions.deckCurrentSet.type,
+                payload: marvelDeck,
+            });
+            return state;
+        },
+        deckCurrentSetFromList: (state, action: PayloadAction<number>) => {
+            const deck_id: number = action.payload;
+            state.currentDeck = state.decks[deck_id] || null;
+            return state;
+        },
     }
 });
 
-export const selectAllDecks = (state: RootState) => state.entities.decks.decks;
-export const selectSelectedDeck = createSelector(
-    (state: RootState) => state.entities.decks,
-    (deckState) => {
-        if(deckState.selectedDeck === null) return;
-        return deckState.decks[deckState.selectedDeck];
-    }
+export type DeckSliceState = ReturnType<typeof slice.reducer>;
+
+export const selectDeckSlice = (rootState: RootState) => rootState.entities.decks;
+
+
+export const selectCurrentDeck = createSelector(
+    selectDeckSlice,
+    (state) => state.currentDeck
 );
-export const selectDeckById = (deck_id: number) => createSelector(
-    (state: RootState) => state.entities.decks,
-    (deckState) => deckState.decks[deck_id]
+export const selectCurrentDeckId = createSelector(
+    selectCurrentDeck,
+    (currentDeck) => currentDeck?.id
+)
+
+export const selectAllDecks = createSelector(
+    selectDeckSlice,
+    (state) => state.decks
+);
+export const selectAllDeckIds = createSelector(
+    selectAllDecks,
+    (decks) => Object.keys(decks).map(Number)
 );
 
+export const selectDeckById = (deck_id: number) => createSelector(
+    selectAllDecks,
+    (decks) => decks[deck_id]
+);
+
+export const selectIsCurrentInList = createSelector(
+    selectCurrentDeckId,
+    selectAllDeckIds,
+    (currentDeckId, decks) => currentDeckId ? decks.includes(currentDeckId) : false
+);
+
+export const selectIsDeckInList = (deckId: number) => createSelector(
+    selectAllDeckIds,
+    (deckIds) => deckIds.includes(deckId)
+)
+
 export default slice.reducer;
-export const { deckSelected, decksAdded, deckRemoved } = slice.actions;
+export const { deckAdded, deckRemoved, deckCurrentRemoved, deckCurrentSet, deckCurrentConvertAndSet, deckCurrentSetFromList } = slice.actions;

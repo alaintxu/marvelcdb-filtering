@@ -1,9 +1,9 @@
 
 import { BsTrash } from 'react-icons/bs';
-import { Modal, ModalButton } from '../Modal';
+import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { cardsSet } from '../../store/entities/cards';
-import { packStatusDictSet } from '../../store/ui/packsStatus';
+import { cardsSet } from '../../../store/entities/cards';
+import { packStatusDictSet } from '../../../store/ui/packsStatus';
 import { useDispatch } from 'react-redux';
 
 const RemoveAllButton = () => {
