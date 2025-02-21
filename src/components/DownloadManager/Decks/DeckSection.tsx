@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { deckCurrentConvertAndSet, deckCurrentRemoved, deckCurrentSet, selectAllDecks, selectCurrentDeck, selectIsCurrentInList } from "../../../store/entities/decks"
 import DeckBookmarkAction from "../../Deck/DeckBookmarkAction";
 import { useTranslation } from "react-i18next";
-import { BsCheckSquare, BsCheckSquareFill, BsSquare } from "react-icons/bs";
+import { BsCheckSquareFill, BsSquare } from "react-icons/bs";
+import * as apiActions from "../../../store/api";
 
 const NUMBER_REGEX = /^\d+$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -44,14 +45,18 @@ const DeckSection = () => {
             e.preventDefault();
             const deckId: number = extractIdFromDeckUrl(e.currentTarget["deck-id-or-url"].value);
             if (deckId !== -1) {
-                dispatch({
+                dispatch(apiActions.apiCallBegan({
+                    url: `${t('base_path')}/api/public/decklist/${deckId}`,
+                    onSuccess: deckCurrentConvertAndSet.type,
+                }));
+                    /*{
                     type: 'apiCallBegan',
                     payload: {
                         url: `${t('base_path')}/api/public/decklist/${deckId}`,
                         onSuccess: deckCurrentConvertAndSet.type,
                         onError: 'apiRequestFailed',
                     }
-                })
+                })*/
             }
         }
         }>

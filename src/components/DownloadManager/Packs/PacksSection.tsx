@@ -9,10 +9,8 @@ import {
   PackStatusDict,
   packStatusPackCardsDownloaded, 
   packStatusPackDownloadStatusSet,
-  selectNumberOfPackStatusByDownloadStatus,
-  selectPackStatusBootstrapVariant
 } from '../../../store/ui/packsStatus';
-import { Pack, packsDownloading, packsSet, selectAllPacks } from '../../../store/entities/packs';
+import { Pack, packsDownloaded, packsDownloadError, packsDownloading, selectAllPacks, selectArePacksLoading, selectPacksError } from '../../../store/entities/packs';
 import { showPackListToggled } from '../../../store/ui/showPackList';
 import PackListItem from '../Packs/PackListItem';
 import LanguageSelect from '../LanguageSelect';
@@ -20,31 +18,30 @@ import PacksData from '../Packs/PacksData';
 import RemoveAllButton from '../Packs/RemoveAllButton';
 import DownloadAllButton from '../Packs/DownloadAllButton';
 import { useEffect } from 'react';
+import * as apiActions from '../../../store/api';
+import PackStatusCountBadge from './PackStatusCountBadge';
 
 const PacksSection = () => {
-    const { t } = useTranslation('global');
-    const arePacksLoading = false;
-    const arePacksFetching = false;
+    const { t, i18n } = useTranslation('global');
     const dispatch = useDispatch();
+
     const packs: Pack[] = useSelector(selectAllPacks);
+    const arePacksLoading = useSelector(selectArePacksLoading);
+    const packsError = useSelector(selectPacksError);
+
     const packStatusDict: PackStatusDict = useSelector((state: RootState) => state.ui.packStatusDict);
-    const numberOfDownloadedPacks: number = useSelector(selectNumberOfPackStatusByDownloadStatus("downloaded"));
     const showPackList = useSelector((state: RootState) => state.ui.showPackList);
-    const packStatusVariant = useSelector(selectPackStatusBootstrapVariant);
 
 
 
     useEffect(() => {
-        dispatch({
-        type: 'apiCallBegan',
-        payload: {
+        dispatch(apiActions.apiCallBegan({
             url: `${t('base_path')}/api/public/packs/`,
-            onSuccess: packsSet.type,
-            onError: 'apiRequestFailed',
+            onSuccess: packsDownloaded.type,
             onStart: packsDownloading.type,
-        }
-        })
-    }, []);
+            onError: packsDownloadError.type
+        }));
+    }, [i18n.language]);
      
     const downloadPackCards = async (packCode: string) => {
         // @ToDo: Change to redux api.ts middleware
@@ -66,6 +63,11 @@ const PacksSection = () => {
   return (
     <section id="pack-section">
         <PacksData />
+        {packsError && <div className="alert alert-danger text-center" role="alert">
+          <BsExclamationTriangle />
+          &nbsp;
+          {packsError}
+        </div>}
         <hr />
         <h3 className='fs-4 mb-4'>
           <img style={{ filter: "invert(1)", height: "1em", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
@@ -97,10 +99,10 @@ const PacksSection = () => {
               ([_, packStatus]: [string, PackStatus]) => packStatus.download_status === "downloading") && <>
               <LoadingSpinner small className='mx-2'/>
             </>}
-            <span className={`badge bg-${packStatusVariant} ms-1`}>{numberOfDownloadedPacks}/{packs?.length || "?"}</span>
+            <PackStatusCountBadge />
           </button>
           {showPackList && <>
-            {arePacksLoading || arePacksFetching ?
+            {arePacksLoading ?
               <LoadingSpinner /> :
               <div className='d-flex justify-content-center'>
                 <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">

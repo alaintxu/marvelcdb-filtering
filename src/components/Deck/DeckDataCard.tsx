@@ -7,8 +7,7 @@ import Markdown from 'react-markdown'
 import { selectCardByCode } from "../../store/entities/cards"
 import { useSelector } from "react-redux"
 import CardGrid from "../Card/CardGrid"
-import { BsBookmarkCheckFill, BsBookmarkX } from "react-icons/bs"
-import { useState } from "react"
+import { useMemo } from "react"
 import DeckBookmarkAction from "./DeckBookmarkAction"
 
 type Props = {
@@ -26,6 +25,7 @@ const DeckDataCard = ({deck}: Props) => {
   const { t } = useTranslation('global');
   const aspectColor = deck.aspect ? aspectColorMap[deck.aspect] : 'dark';
   const heroCard = useSelector(selectCardByCode(deck.hero_code));
+  const numberOfCards = useMemo(() => Object.values(deck.slots).reduce((acc, val) => acc + val, 0), [deck.slots]);
   return (
     <div className="card bg-dark text-light">
         <div className='card-body'>
@@ -39,12 +39,12 @@ const DeckDataCard = ({deck}: Props) => {
             </a>
           </h2>
 
-          <div id="deck-tags">
-            {deck.aspect && <span className={`badge bg-${aspectColor} me-1`}>
+          <div id="deck-tags" className="d-flex flex-wrap align-items-center gap-2">
+            {deck.aspect && <span className={`badge bg-${aspectColor}`}>
               <MdCategory/> {t(`aspect.${deck.aspect}`)}
             </span>}
             {deck.tags && deck.tags.map((tag) => (
-              <span key={tag} className='badge bg-secondary me-1'>
+              <span key={tag} className='badge bg-secondary'>
                 <FaTag /> {t(`tag.${tag}`)}
               </span>
             ))}
@@ -55,6 +55,9 @@ const DeckDataCard = ({deck}: Props) => {
               <a href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
                 <TbCards /> {deck.id}
               </a>
+            </span>
+            <span className='badge bg-light text-dark' title={t('number-of-cards')}>
+              <TbCards /> {numberOfCards}
             </span>
           </div>
 

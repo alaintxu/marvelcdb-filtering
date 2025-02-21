@@ -1,4 +1,4 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
 
 export type Pack = {
@@ -12,40 +12,83 @@ export type Pack = {
     id: number;
 }
 
-/*export type PackDict = {
-    [pack_code: string]: Pack;
-}*/
+export type PackSliceState = {
+    list: Pack[];
+    loading: boolean;
+    lastFetch: Date | null;
+    error: string | null;
+}
+
+const initialState: PackSliceState = {
+    list: [],
+    loading: false,
+    lastFetch: null,
+    error: null
+}
 
 
 const slice = createSlice({
     name: 'packs',
-    initialState: [] as Pack[],
+    initialState: {
+        list: [],
+        loading: false,
+        lastFetch: null,
+        error: null
+    } as PackSliceState,
     reducers: {
-        packsDownloading(packs: Pack[]) {
-            packs = [];
-            return packs;
+        packsDownloading(state) {
+            state = {...initialState, loading: true};
+            return state;
         },
-        packsSet(packs: Pack[], action) {
-            const newPacks: Pack[] = action.payload;
-            packs = newPacks;
-            return packs;
+        packsDownloaded(state, action: PayloadAction<Pack[]>) {
+            state.list = action.payload;
+            state.loading = false;
+            state.lastFetch = new Date();
+            state.error = null;
+            return state;
+        },
+        packsDownloadError(state, action: PayloadAction<Error>) {
+            state.loading = false;
+            state.error = action.payload.message;
+            return state;
         }
     }
 });
 
-export const selectAllPacks = (state: RootState) => state.entities.packs;
+export const selectPackState = (state: RootState) => state.entities.packs;
+export const selectAllPacks = createSelector(
+    selectPackState,
+    (packState: PackSliceState) => packState.list
+);
+
 export const selectNumberOfPacks = createSelector(
-    (state: RootState) => state.entities.packs,
+    selectAllPacks,
     (packs: Pack[]) => packs.length
 );
 
 export const selectPackByCode = (packCode: string) => createSelector(
-    (state: RootState) => state.entities.packs,
+    selectAllPacks,
     (packs: Pack[]) => packs.find((pack: Pack) => pack.code === packCode)
-)
+);
+
+export const selectArePacksLoading = createSelector(
+    selectPackState,
+    (packState: PackSliceState) => packState.loading
+);
+
+export const selectLastFetch = createSelector(
+    selectPackState,
+    (packState: PackSliceState) => packState.lastFetch
+);
+
+export const selectPacksError = createSelector(
+    selectPackState,
+    (packState: PackSliceState) => packState.error
+);
 
 export default slice.reducer;
 export const { 
     packsDownloading,
-    packsSet
+    packsDownloaded,
+    packsDownloadError
 } = slice.actions;

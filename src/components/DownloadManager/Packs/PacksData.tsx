@@ -3,6 +3,7 @@ import { selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVari
 import { selectNumberOfCards } from '../../../store/entities/cards';
 import { selectNumberOfPacks } from '../../../store/entities/packs';
 import { useTranslation } from 'react-i18next';
+import IconForConcept from '../../IconForConcept';
 
 const PacksData = () => {
     const {t} = useTranslation("global");
@@ -14,17 +15,17 @@ const PacksData = () => {
     <div id="pack-data"
           className='d-flex flex-column align-items-center justify-content-center gap-1 mb-4'
         >
-          <span>
+          <span className="d-flex align-items-center gap-2">
+            <IconForConcept concept="packFill"/>
             <b>{t('downloaded_packs')}</b>
-            &nbsp;
             <span className={`badge bg-${packStatusVariant}`}>{numberOfDownloadedPacks}</span>
             /
             <span className='badge bg-light text-dark'>{numberOfPacks}</span>
           </span>
-          <span>
-            <span className='badge bg-info'>{numberOfCards}</span>
-            &nbsp;
+          <span className="d-flex align-items-center gap-2">
+            <IconForConcept concept="cardFill"/>
             <b>{t('downloaded_cards')}</b>
+            <span className='badge bg-info'>{numberOfCards}</span>
           </span>
         </div>
   )

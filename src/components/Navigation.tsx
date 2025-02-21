@@ -1,12 +1,14 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
+//import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 import { useDispatch, useSelector } from "react-redux";
-import { selectIsAnyPackDownloading, selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVariant } from '../store/ui/packsStatus';
-import { RootState } from '../store/configureStore';
+import { selectIsAnyPackDownloading } from '../store/ui/packsStatus';
 import { selectSelectedNavigationOptionKey, NavigationOptionsKey, selectedNavigationOptionKeySet } from '../store/ui/selectedNavigationOptionKey';
 import LoadingSpinner from './LoadingSpinner';
+import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
+import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
+import IconForConcept from './IconForConcept';
 
 
 type IconDict = {
@@ -14,33 +16,28 @@ type IconDict = {
 }
 
 const navigaitonIcons: IconDict = {
-  download_manager: <BsCloudArrowDown />,
-  card_list: <BsPersonBadge />,
-  filters: <BsFunnel />,
+  download_manager: <IconForConcept concept="downloadManager" />,
+  card_list: <IconForConcept concept="cardList" />,
+  filters: <IconForConcept concept="filter" />,
 };
 
 const Navigation = () => {
   const { t } = useTranslation('global');
   const dispatch = useDispatch();
   const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectSelectedNavigationOptionKey);
-  const paginationStatus = useSelector((state: RootState) => state.ui.pagination);
-  const numberOfCards: number = useSelector((state: RootState) => state.entities.cards.length);
-  const numberOfPacks: number = useSelector((state: RootState) => state.entities.packs.length);
-  const downloadedPacks: number = useSelector(selectNumberOfPackStatusByDownloadStatus("downloaded"));
-  const packStatusBootstrapVariant: string = useSelector(selectPackStatusBootstrapVariant);
   const isAnyPackDownloading: boolean = useSelector(selectIsAnyPackDownloading);
 
-  const getAdditionalText = (key: NavigationOptionsKey): string => {
-    let additionalText: string = "";
+  const getAdditionalElement = (key: NavigationOptionsKey): ReactNode => {
+    let additionalElement: ReactNode;
     switch (key) {
       case "download_manager":
-        additionalText = `${downloadedPacks}/${numberOfPacks}`;
+        additionalElement = <PackStatusCountBadge />;
         break;
       case "card_list":
-        additionalText = `${paginationStatus.visibleFirstElementIndex+1}-${paginationStatus.visibleLastElementIndex}/${numberOfCards}`;
+        additionalElement = <CardPaginationNumberBadge />;
         break;
     }
-    return additionalText;
+    return additionalElement;
   }
   
 
@@ -48,9 +45,8 @@ const Navigation = () => {
     <nav id="main-navigation">
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
         {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
-          const additionalText = getAdditionalText(navigationOptionKey);
+          const additionalText = getAdditionalElement(navigationOptionKey);
           const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
-          const badgeBackgroundVariant: string = navigationOptionKey === "download_manager" ? packStatusBootstrapVariant : "secondary";
           return <button
             key={`navigation-${navigationOptionKey}`}
             type="button"
@@ -73,9 +69,7 @@ const Navigation = () => {
             </>}
             {additionalText && <>
                 &nbsp;
-                <span className={`badge bg-${badgeBackgroundVariant}`}>
-                  {additionalText}
-                </span>
+                {getAdditionalElement(navigationOptionKey)}
             </>}
           </button>
         })}

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import CardGrid from "./CardGrid";
-import { BsFillEyeFill, BsFillEyeSlashFill, BsPersonBadge, BsPhoneFlip } from 'react-icons/bs';
+import { BsFillEyeFill, BsFillEyeSlashFill, BsPhoneFlip } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import { ReactBSPagination } from "@draperez/react-components";
 import { MCCard, selectAllCards } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
+import IconForConcept from "../IconForConcept";
 
 const CardsView = () => {
   const { t } = useTranslation('global');
@@ -59,7 +60,7 @@ const CardsView = () => {
         </button>
       </span>
       <h1 id="page-title">
-        <BsPersonBadge className="me-2"/>
+        <IconForConcept concept="cardList" className="me-2"/>
         {t('card_list')}
       </h1>
       <CardGrid cards={paginatedCards} showAllCardData={showAllCardData} flipAllCards={flipAllCards} />

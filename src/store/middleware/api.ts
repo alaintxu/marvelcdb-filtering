@@ -1,24 +1,21 @@
 import { Middleware, Dispatch } from "redux";
 import { RootState } from "../configureStore";
-// const action = {
-//     type: 'apiCallBegan',
-//     payload: {
-//         url: '/bugs',
-//         method: 'get',
-//         data: {},
-//         onSuccess: 'bugsReceived',
-//         onError: 'apiRequestFailed',
-//         requestConfig: {}
-//     }
-// }
+import * as apiActions from "../api";
+
 
 type ApiMiddlewareParams = {
     dispatch: Dispatch;
     getState: () => RootState;
 }
 
+const dispatchError = (dispatch: Dispatch, error: any, onError: string) => {
+    console.error("Error fetching data", error);
+    dispatch(apiActions.apiCallFailed(error));
+    if (onError) dispatch({ type: onError, payload: error });
+}
+
 const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (action: any) => {
-    if (action.type !== 'apiCallBegan') return next(action);
+    if (action.type !== apiActions.apiCallBegan.type) return next(action);
 
     next(action); // In order to show api action in redux dev tools
 
@@ -62,14 +59,15 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
     try{
         const response = await fetch(url as string, requestConfig);
         if (!response.ok) {
-            dispatch({ type: onError, payload: `${response.status}: ${response.statusText}` });
+            dispatchError(dispatch, `${response.status}: ${response.statusText}`, onError);
             return;
         }
         const responseData = await response.json();
-        dispatch({ type: onSuccess, payload: responseData });
+        dispatch(apiActions.apiCallSuccess(responseData));
+        if (onSuccess) dispatch({ type: onSuccess, payload: responseData });
     } catch (error) {
         console.error("Error fetching data", error);
-        dispatch({ type: onError, payload: error });
+        dispatchError(dispatch, error, onError);
     }
     if (onFinish) dispatch({ type: onFinish, payload: onFinishData });
 };
