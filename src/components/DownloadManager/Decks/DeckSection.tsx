@@ -1,11 +1,12 @@
-import { useDispatch, useSelector } from "react-redux"
-import { deckCurrentConvertAndSet, deckCurrentRemoved, deckCurrentSet, selectAllDecks, selectCurrentDeck, selectIsCurrentInList } from "../../../store/entities/decks"
-import DeckBookmarkAction from "../../Deck/DeckBookmarkAction";
+import { useDispatch, useSelector, } from "react-redux"
+import { deckCurrentConvertAndSet, selectCurrentDeck, selectIsCurrentInList } from "../../../store/entities/decks"
 import { useTranslation } from "react-i18next";
-import { BsCheckSquareFill, BsSquare } from "react-icons/bs";
 import * as apiActions from "../../../store/api";
+import IconForConcept from "../../IconForConcept";
+import DeckList from "./DeckList";
+import DeckListItem from "./DeckListItem";
 
-const NUMBER_REGEX = /^\d+$/;
+const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
 
 const extractIdFromDeckUrl = (deckUrl: string): number => {
@@ -32,74 +33,62 @@ const extractIdFromDeckUrl = (deckUrl: string): number => {
 
 const DeckSection = () => {
     // @ToDo: improve styling
-    const {t} = useTranslation("global");
+    const { t: globalT } = useTranslation('global');
+    const { t } = useTranslation("decks");
     const dispatch = useDispatch();
-    const decks = useSelector(selectAllDecks);
     const currentDeck = useSelector(selectCurrentDeck);
     const isCurrentDeckInList = useSelector(selectIsCurrentInList);
 
-  return (
-    <section id="deck-section">
-        <h2>{t('decks')}</h2>
-        <form onSubmit={(e) => {
-            e.preventDefault();
-            const deckId: number = extractIdFromDeckUrl(e.currentTarget["deck-id-or-url"].value);
+    const callApiForDeck = (value: string) => {
+        if (value.match(NUMBER_REGEX) || value.match(URL_REGEX)) {
+            const deckId: number = extractIdFromDeckUrl(value);
             if (deckId !== -1) {
                 dispatch(apiActions.apiCallBegan({
-                    url: `${t('base_path')}/api/public/decklist/${deckId}`,
+                    url: `${globalT('base_path')}/api/public/decklist/${deckId}`,
                     onSuccess: deckCurrentConvertAndSet.type,
                 }));
-                    /*{
-                    type: 'apiCallBegan',
-                    payload: {
-                        url: `${t('base_path')}/api/public/decklist/${deckId}`,
-                        onSuccess: deckCurrentConvertAndSet.type,
-                        onError: 'apiRequestFailed',
-                    }
-                })*/
             }
         }
-        }>
-            <input
-                type="text" 
-                placeholder={t('deck_id_or_url')} 
-                name="deck-id-or-url"
-                pattern={`(${NUMBER_REGEX.source})|(${URL_REGEX.source})`}
-            />
-            <button type="submit">{t('download_deck')}</button>
-        </form>
+    }
 
-        <h3>{t('decks_bookmarked')}</h3>
-        <ul>
-            {currentDeck && !isCurrentDeckInList && <>
-                <li className="d-flex gap-2 justify-content-between">
-                    <BsCheckSquareFill />
-                    &nbsp;
-                    {currentDeck.hero_name} - 
-                    &nbsp;
-                    {currentDeck.name}
-                    <DeckBookmarkAction deck={currentDeck} />
-                </li>
-            </>}
-            {Object.entries(decks).map(([deckCode, deck]) => (
-                <li key={deckCode} onClick={() => {
-                    if (deck.id === currentDeck?.id)
-                        dispatch(deckCurrentRemoved())
-                    else
-                        dispatch(deckCurrentSet(deck))
-                    }
-                } className="d-flex gap-2 justify-content-between">
-                    {deck.id === currentDeck?.id ? <BsCheckSquareFill /> : <BsSquare />}
-                    &nbsp;
-                    {deck.hero_name} - 
-                    &nbsp;
-                    {deck.name}
-                    <span>
-                    <DeckBookmarkAction deck={deck} />
-                    </span>
-                </li>
-            ))}
-        </ul>
+  return (
+    <section id="deck-section">
+        <h2>
+            <IconForConcept concept="deck" className="me-2" /> 
+            {t('decks')}
+        </h2>
+        <div className='alert alert-info'>
+            {t('find_decks')} <a href={`${globalT('base_path')}/decklists`} target="_blank" rel="noreferrer">MarvelCDB</a>
+        </div>
+        <div className="px-3">
+            <form className="input-group"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    callApiForDeck(e.currentTarget["deck-id-or-url"].value);
+                }
+            }>
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder={t('deck_id_or_url')} 
+                    name="deck-id-or-url"
+                    pattern={`(${NUMBER_REGEX.source})|(${URL_REGEX.source})`}
+                    onChange={(e) => {callApiForDeck(e.currentTarget.value)}}
+                />
+                <button type="submit" className="btn btn-primary">
+                    <IconForConcept concept="sendDownloadFill" title={t('download_deck')} />
+                </button>
+            </form>
+            {currentDeck && !isCurrentDeckInList && (
+            <div className="d-flex justify-content-center">
+                <div className="btn-group-vertical mt-3" role="group" aria-label="Current deck">
+                    <DeckListItem deck={currentDeck} />
+                </div>
+            </div>
+            )}
+        </div>
+
+        <DeckList />
     </section>
   )
 }

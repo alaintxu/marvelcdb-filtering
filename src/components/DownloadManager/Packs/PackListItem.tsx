@@ -1,10 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { PackStatus, packStatusPackDownloadStatusSet, packStatusPackRemoved, selectPackStatusById } from '../../../store/ui/packsStatus'
 import { Pack } from '../../../store/entities/packs'
-import { MdDownloadForOffline, MdFileDownloadDone, MdOutlineFileDownloadOff } from 'react-icons/md'
 import LoadingSpinner from '../../LoadingSpinner'
-import { BsStack } from 'react-icons/bs'
 import { cardPackRemoved } from '../../../store/entities/cards'
+import IconForConcept from '../../IconForConcept'
 
 type Props = {
     pack: Pack,
@@ -41,8 +40,7 @@ const PackListItem = ({pack, downloadPackCards}: Props) => {
                 }
             }}>
             <span style={{ textAlign: "left" }}>
-                <BsStack />
-                &nbsp;
+                <IconForConcept concept="packFill" className='me-2' />
                 {pack.name}
             </span>
             <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
@@ -50,11 +48,11 @@ const PackListItem = ({pack, downloadPackCards}: Props) => {
                 {packStatus?.download_status === "downloaded" && <>
                 <span className='badge bg-success me-2' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title={new Date(packStatus.download_date).toLocaleString()}>
                     {packStatus.number_of_cards}
-                    <MdFileDownloadDone />
+                    <IconForConcept concept="downloadDone" />
                 </span>
                 </>}
                 <span className='btn btn-danger'>
-                {packStatus?.download_status === "downloaded" ? <MdOutlineFileDownloadOff /> : <MdDownloadForOffline />}
+                {packStatus?.download_status === "downloaded" ? <IconForConcept concept="download" /> : <IconForConcept concept="downloadRemove" />}
                 </span>
             </span>
         </span>;

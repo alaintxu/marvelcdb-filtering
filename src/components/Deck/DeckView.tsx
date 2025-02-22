@@ -23,6 +23,31 @@ function getFactionCodeWeight(factionCode: string): number {
   }
 }
 
+const getTypeWeight = (type: string) => {
+  switch (type) {
+    case "ally":  // aliado
+      return 5;
+    case "event":  // evento
+      return 4;
+    case "player_side_scheme":  // plan secundario de jugador
+      return 4;
+    case "resource":
+      return 3;
+    case "support": // apoyo
+      return 2;
+    case "upgrade":  // mejora
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+const getSortedTypes = (deckCards: {[typeCode:string]: MCCard[]}): string[] => {
+  return Object.keys(deckCards).sort((a, b) => {
+    return getTypeWeight(b) - getTypeWeight(a);
+  });
+}
+
 const DeckView = ({ deck }: Props) => {
   console.log("deck", deck);
   const deckCardsUnique: MCCard[] = useSelector(selectCardsByCodes(Object.keys(deck.slots)));
@@ -39,8 +64,8 @@ const DeckView = ({ deck }: Props) => {
       for (let i = 0; i < deck.slots[cardCode]; i++) {
         const card = deckCardsUnique.find((card: MCCard) => card.code === cardCode);
         if (card) {
-          if (!cardsTmp[card.type_name]) cardsTmp[card.type_name] = [];
-          cardsTmp[card.type_name].push({ key: `${card.code}-${i}`,...card });
+          if (!cardsTmp[card.type_code]) cardsTmp[card.type_code] = [];
+          cardsTmp[card.type_code].push({ key: `${card.code}-${i}`,...card });
         } else {
           if (!notFoundCardCodesTmp.includes(cardCode))
             notFoundCardCodesTmp.push(cardCode);
@@ -51,8 +76,8 @@ const DeckView = ({ deck }: Props) => {
 
     // Sort cards
     const orderedCardsTmp: {[typeCode: string]: MCCard[]} = {};
-    Object.keys(cardsTmp).forEach((typeName) => {
-      orderedCardsTmp[typeName] = [...cardsTmp[typeName]].sort((a, b) => {
+    Object.keys(cardsTmp).forEach((typeCode) => {
+      orderedCardsTmp[typeCode] = [...cardsTmp[typeCode]].sort((a, b) => {
         const aFactionCodeWeight = getFactionCodeWeight(a.faction_code);
         const bFactionCodeWeight = getFactionCodeWeight(b.faction_code);
         return bFactionCodeWeight - aFactionCodeWeight;
@@ -61,13 +86,12 @@ const DeckView = ({ deck }: Props) => {
     // Set cards
     setDeckCards(orderedCardsTmp);
   }, [deck]);
-
-  // ToDo: Guardar como favorito
   
   return (
     <section id="deck-view" className='p-3'>
       <DeckDataCard deck={deck} />
       {/* @ToDo: separate in modules */}
+      {/* Not found cards */}
       {notFoundCardCodes.length > 0 && <div className="alert alert-warning">
         <p>{t('deck_cards_not_found')} <span className="badge bg-danger text-light">{notFoundCardCodes.length}</span></p>
 
@@ -82,25 +106,28 @@ const DeckView = ({ deck }: Props) => {
             ))}
           </div>
       </div>}
+
+      {/* Index */}
       <section id="card-index" className="row mt-4">
         <div className="list-group col-12 col-sm-8 col-md-6 col-lg-4 m-auto">
-        {Object.keys(deckCards).map((typeName) => (
-            <a  href={`#cards-${typeName.replace(/ /g, "-")}`} 
+        {getSortedTypes(deckCards).map((typeCode) => (
+            <a  href={`#cards-${typeCode.replace(/ /g, "-")}`} 
                 className="list-group-item list-group-item-dark list-group-item-action d-flex justify-content-between align-items-center"
-                key={typeName}>
-              {typeName}
-              <span className="ms-2 badge bg-primary rounded-pill">{deckCards[typeName].length}</span>
+                key={typeCode}>
+              {deckCards[typeCode][0].type_name}
+              <span className="ms-2 badge bg-primary rounded-pill">{deckCards[typeCode].length}</span>
             </a>
         ))}
         </div>
       </section>
-      {Object.keys(deckCards).map((typeName) => (
-        <section key={typeName} className="mt-4" id={`cards-${typeName.replace(/ /g, "-")}`}>
+      {/* Card grids by type */}
+      {getSortedTypes(deckCards).map((typeCode) => (
+        <section key={typeCode} className="mt-4" id={`cards-${typeCode.replace(/ /g, "-")}`}>
           <h2 className="text-center m-4">
-            {typeName}
-            <span className="badge bg-info ms-2">{deckCards[typeName].length}</span>
+            {deckCards[typeCode][0].type_name}
+            <span className="badge bg-info ms-2">{deckCards[typeCode].length}</span>
           </h2>
-          <CardGrid cards={deckCards[typeName]} />
+          <CardGrid cards={deckCards[typeCode]} />
         </section>
       ))}
     </section>

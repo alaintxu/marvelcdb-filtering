@@ -12,6 +12,8 @@ export interface Deck {
     date_update: string,
     description_md: string,
     user_id: 21328,
+    hero_code: string;
+    hero_name: string;
     investigator_code: string,
     investigator_name: string,
     slots: {
@@ -56,7 +58,7 @@ const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
     // @ToDo: Think how to solve the issue with t
     //const base_path = t('base_path');
     const base_path = 'https://es.marvelcdb.com';
-    const { investigator_code, investigator_name, description_md, ...rest } = deck;
+    const { investigator_code, investigator_name, description_md, hero_code, hero_name, ...rest } = deck;
     let aspect: string | undefined = undefined;
     try {
         const metaJson = JSON.parse(deck.meta);
@@ -66,8 +68,8 @@ const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
     }
     return {
         ...rest, 
-        hero_code: investigator_code, 
-        hero_name: investigator_name,
+        hero_code: hero_code || investigator_code, 
+        hero_name: hero_name || investigator_name,
         description_md: description_md
             .replace(/]\(\/card\/(\w+)\)/g, `](${base_path}/card/$1)`)
             .replace(/<img.*?src=['"](.*?)['"].*?>/gs, '![]($1)'),

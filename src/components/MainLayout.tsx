@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import DeckView from "./Deck/DeckView";
 import { useDispatch, useSelector } from "react-redux";
 import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
-import { cardCodeAllUnclicked, selectNavigationOptionKey } from "../store/ui/other";
+import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey } from "../store/ui/other";
 import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
 import { LOCAL_STORAGE_PACK_STATUS_KEY, PackStatusDict, selectPackStatusDict } from "../store/ui/packsStatus";
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
@@ -45,8 +45,20 @@ const MainLayout = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       console.log("handle click", event.target);
+
+      // Unselect card if clicked outside
       if (!hasClassInAncestors(event.target as HTMLElement /*, "mc-card"*/)) {
         dispatch(cardCodeAllUnclicked());
+      }
+
+      // Hide asides when clicked outside
+      if (
+        !hasClassInAncestors(event.target as HTMLElement, "download-manager-container")
+        &&
+        !hasClassInAncestors(event.target as HTMLElement, "filter-container")
+      ) {
+      
+        dispatch(navigationOptionKeySet("card_list"));
       }
     };
 
@@ -72,8 +84,7 @@ const MainLayout = () => {
   return (
     <>
       <main id="main-section" className={mainClassNames.join(" ")}>
-        <DownloadManager
-        />
+        <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
         {currentDeck ? <DeckView deck={currentDeck} /> : (
           cards.length < 1 ? <Instructions /> : <CardsView />
         )}
@@ -85,6 +96,8 @@ const MainLayout = () => {
           </>}
         </>*/}
         <CardFiltersView
+          id="filters" 
+          className="bg-dark shadow d-flex flex-column p-3 filter-container"
           selectedFilters={{}/*selectedFilters*/} 
           setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
           uniqueFilterOptions={uniqueFilterOptions || []}

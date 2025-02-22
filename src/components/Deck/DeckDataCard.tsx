@@ -9,16 +9,11 @@ import { useSelector } from "react-redux"
 import CardGrid from "../Card/CardGrid"
 import { useMemo } from "react"
 import DeckBookmarkAction from "./DeckBookmarkAction"
+import { aspectColorMap } from "../DownloadManager/Decks/DeckListItem"
+import IconForConcept from "../IconForConcept"
 
 type Props = {
     deck: MarvelDeck,
-}
-
-const aspectColorMap: { [key: string]: string } = {
-    "aggression": "danger",
-    "justice": "warning",
-    "leadership": "info",
-    "protection": "success",
 }
 
 const DeckDataCard = ({deck}: Props) => {
@@ -27,14 +22,14 @@ const DeckDataCard = ({deck}: Props) => {
   const heroCard = useSelector(selectCardByCode(deck.hero_code));
   const numberOfCards = useMemo(() => Object.values(deck.slots).reduce((acc, val) => acc + val, 0), [deck.slots]);
   return (
-    <div className="card bg-dark text-light">
+    <div className="card bg-secondary text-light">
         <div className='card-body'>
           <h1 className='card-title'>
             {deck.hero_name}
             <DeckBookmarkAction deck={deck} />        
           </h1>
           <h2 className="mb-4">
-            <a href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
+            <a className="text-dark" href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
               {deck.name} 
             </a>
           </h2>
@@ -44,7 +39,7 @@ const DeckDataCard = ({deck}: Props) => {
               <MdCategory/> {t(`aspect.${deck.aspect}`)}
             </span>}
             {deck.tags && deck.tags.map((tag) => (
-              <span key={tag} className='badge bg-secondary'>
+              <span key={tag} className='badge bg-dark'>
                 <FaTag /> {t(`tag.${tag}`)}
               </span>
             ))}
@@ -56,7 +51,7 @@ const DeckDataCard = ({deck}: Props) => {
                 <TbCards /> {deck.id}
               </a>
             </span>
-            <span className='badge bg-light text-dark' title={t('number-of-cards')}>
+            <span className='badge bg-light text-dark' title={t('number_of_cards')}>
               <TbCards /> {numberOfCards}
             </span>
           </div>
@@ -65,8 +60,9 @@ const DeckDataCard = ({deck}: Props) => {
             <div className="col-12 col-md-6 mb-4">
               {heroCard && <CardGrid cards={[heroCard]} />}
             </div>
+
             <div className="col-12 col-md-6">
-              <button className="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#deck-description" aria-expanded="false" aria-controls="deck-description">
+              <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-description" aria-expanded="false" aria-controls="deck-description">
                 <FaChevronDown /> {t('description')}
               </button>
               <div className="collapse" id="deck-description">
@@ -74,6 +70,19 @@ const DeckDataCard = ({deck}: Props) => {
                   <Markdown>
                     {deck.description_md}
                   </Markdown>
+                </div>
+              </div>
+            </div>
+            
+            <div className="col-12 col-md-6">
+              <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-json" aria-expanded="false" aria-controls="deck-json">
+                <FaChevronDown /> <IconForConcept concept='jsonFile' />
+              </button>
+              <div className="collapse" id="deck-json">
+                <div className="border border-light rounded p-2 my-2">
+                  <pre>
+                    {JSON.stringify(deck, null, 2)}
+                  </pre>
                 </div>
               </div>
             </div>

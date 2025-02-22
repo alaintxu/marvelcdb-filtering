@@ -4,11 +4,10 @@ import PacksSection from './Packs/PacksSection';
 import ImportExportSection from './ImportExport/ImportExportSection';
 import DeckSection from './Decks/DeckSection';
 
-const DownloadManager = () => {
+const DownloadManager = ({...rest}: React.HTMLAttributes<HTMLDivElement>) => {
 
   return (
-    <>
-      <section id="download-manager" className='p-3 bg-dark shadow'>
+      <section {...rest}>
         <PacksSection />
         <hr />
         <DeckSection />
@@ -18,8 +17,7 @@ const DownloadManager = () => {
         <div className="mb-3 px-3">
           <ResetAppButton />
         </div>
-      </section >
-    </>
+      </section>
   )
 }
 

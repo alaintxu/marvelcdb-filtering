@@ -1,7 +1,7 @@
 {
   "base_path": "https://es.marvelcdb.com",
-  "card_list": "Listado de cartas",
-  "pack_list": "Listado de packs",
+  "card_list": "Lista de cartas",
+  "pack_list": "Lista de packs",
   "cards_per_page": "Cartas por página",
   "close": "Cerrar",
   "continue": "Seguir",
@@ -71,6 +71,6 @@
     "heroic": "Heroico",
     "nightmare": "Pesadilla",
     "theme": "Temático"
-    
-  }
+  },
+  "number_of_cards": "Número de cartas"
 }

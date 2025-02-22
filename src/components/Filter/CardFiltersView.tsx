@@ -1,7 +1,7 @@
 import { MCCard } from "../../store/entities/cards";
 import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
-import { useEffect } from "react";
+import { useEffect, HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
 import BooleanFilter from "./BooleanFilter";
 import StringFilter from "./StringFilter";
@@ -83,11 +83,12 @@ type Props = {
   selectedFilters: SelectedFilters;
   setSelectedFilters: (newSelectedFilters: SelectedFilters) => void;
   uniqueFilterOptions: UniqueFilterOptions[]
-};
+} & HTMLAttributes<HTMLDivElement>;
 
 const CardFiltersView = ({
   selectedFilters, setSelectedFilters,
-  uniqueFilterOptions
+  uniqueFilterOptions,
+  ...rest
 }: Props) => {
   
   const { t } = useTranslation("filters");
@@ -152,7 +153,7 @@ const CardFiltersView = ({
 
 
   return (
-    <section id="filters" className="bg-dark shadow d-flex flex-column p-3">
+    <section {...rest}>
       <h3><FaFilter /> {t('filters')}</h3>
       <PaginationElementsPerPageFilter
           title={t("cards_per_page")}

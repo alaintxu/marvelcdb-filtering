@@ -312,3 +312,6 @@ img {
 .modal-backdrop {
     z-index: 0;
 }
+.markdown-no-margin > :last-child {
+    margin-bottom: 0;
+}

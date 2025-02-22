@@ -1,9 +1,9 @@
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BsFiletypeJson } from "react-icons/bs";
 import { FaFileImport, FaFileExport } from "react-icons/fa6";
 import { useDispatch, useSelector } from 'react-redux';
 import { cardsAdded, MCCard, selectAllCards } from "../../../store/entities/cards";
+import IconForConcept from '../../IconForConcept';
 
 const ImportExportSection = () => {
     const { t } = useTranslation('global');
@@ -37,7 +37,8 @@ const ImportExportSection = () => {
   return (
     <section className='d-flex flex-column mt-1 gap-1'>
         <h3 className='fs-4 mb-4'>
-        <BsFiletypeJson />&nbsp;{t(`import_export`)}
+          <IconForConcept concept="jsonFile" className='me-2' />
+          {t(`import_export`)}
         </h3>
         <div className="mb-3 px-3">
         <label htmlFor="importFileInput" className="form-label">

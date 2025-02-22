@@ -4,6 +4,7 @@ import { RootState } from "../configureStore";
 type OtherState = {
     navigationOptionKey: NavigationOptionsKey,
     showPackList: boolean,
+    showDeckList: boolean,
     showAllCardData: boolean,
     flipAllCards: boolean,
     clickedCardCodes: Set<string>
@@ -16,6 +17,7 @@ const slice = createSlice({
     initialState: {
         navigationOptionKey: "card_list" as NavigationOptionsKey,
         showPackList: false,
+        showDeckList: false,
         showAllCardData: false,
         flipAllCards: false,
         clickedCardCodes: new Set<string>()
@@ -27,6 +29,10 @@ const slice = createSlice({
         },
         showPackListToggled: (state: OtherState) => {
             state.showPackList = !state.showPackList;
+            return state;
+        },
+        showDeckListToggled: (state: OtherState) => {
+            state.showDeckList = !state.showDeckList;
             return state;
         },
         showAllCardDataToggled: (state: OtherState) => {
@@ -63,6 +69,10 @@ export const selectShowPackList = createSelector(
     selectOtherSlice,
     (other) => other.showPackList
 );
+export const selectShowDeckList = createSelector(
+    selectOtherSlice,
+    (other) => other.showDeckList
+);
 export const selectShowAllCardData = createSelector(
     selectOtherSlice,
     (other) => other.showAllCardData
@@ -88,6 +98,7 @@ export default slice.reducer;
 export const {
     navigationOptionKeySet,
     showPackListToggled,
+    showDeckListToggled,
     showAllCardDataToggled,
     flipAllCardsToggled,
     cardCodeClicked,

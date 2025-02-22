@@ -9,6 +9,7 @@ import LoadingSpinner from './LoadingSpinner';
 import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
 import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
 import IconForConcept from './IconForConcept';
+import { selectCurrentDeck } from '../store/entities/decks';
 
 
 type IconDict = {
@@ -26,6 +27,7 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectNavigationOptionKey);
   const isAnyPackDownloading: boolean = useSelector(selectIsAnyPackDownloading);
+  const currentDeck = useSelector(selectCurrentDeck);
 
   const getAdditionalElement = (key: NavigationOptionsKey): ReactNode => {
     let additionalElement: ReactNode;
@@ -34,7 +36,7 @@ const Navigation = () => {
         additionalElement = <PackStatusCountBadge />;
         break;
       case "card_list":
-        additionalElement = <CardPaginationNumberBadge />;
+        additionalElement = !currentDeck ? <CardPaginationNumberBadge /> : <></>;
         break;
     }
     return additionalElement;

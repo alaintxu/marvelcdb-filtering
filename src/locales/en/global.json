@@ -72,5 +72,6 @@
     "heroic": "Heroic",
     "nightmare": "Nightmare",
     "theme": "Theme"
-  }
+  },
+  "number_of_cards": "Number of cards"
 }
