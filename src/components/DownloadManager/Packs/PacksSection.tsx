@@ -2,16 +2,16 @@ import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsExclamationTriangle } from "react-icons/bs";
 import LoadingSpinner from '../../LoadingSpinner';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../store/configureStore';
 import { MCCard, cardPackRemoved, cardPackAdded, cardsSorted } from "../../../store/entities/cards";
 import { 
   PackStatus, 
   PackStatusDict,
   packStatusPackCardsDownloaded, 
   packStatusPackDownloadStatusSet,
+  selectPackStatusDict,
 } from '../../../store/ui/packsStatus';
 import { Pack, packsDownloaded, packsDownloadError, packsDownloading, selectAllPacks, selectArePacksLoading, selectPacksError } from '../../../store/entities/packs';
-import { showPackListToggled } from '../../../store/ui/showPackList';
+import { selectShowPackList, showPackListToggled } from '../../../store/ui/other';
 import PackListItem from '../Packs/PackListItem';
 import LanguageSelect from '../LanguageSelect';
 import PacksData from '../Packs/PacksData';
@@ -29,8 +29,8 @@ const PacksSection = () => {
     const arePacksLoading = useSelector(selectArePacksLoading);
     const packsError = useSelector(selectPacksError);
 
-    const packStatusDict: PackStatusDict = useSelector((state: RootState) => state.ui.packStatusDict);
-    const showPackList = useSelector((state: RootState) => state.ui.showPackList);
+    const packStatusDict: PackStatusDict = useSelector(selectPackStatusDict);
+    const showPackList = useSelector(selectShowPackList);
 
 
 

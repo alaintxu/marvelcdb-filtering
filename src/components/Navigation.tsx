@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 //import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 import { useDispatch, useSelector } from "react-redux";
 import { selectIsAnyPackDownloading } from '../store/ui/packsStatus';
-import { selectSelectedNavigationOptionKey, NavigationOptionsKey, selectedNavigationOptionKeySet } from '../store/ui/selectedNavigationOptionKey';
+import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
 import LoadingSpinner from './LoadingSpinner';
 import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
 import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
@@ -24,7 +24,7 @@ const navigaitonIcons: IconDict = {
 const Navigation = () => {
   const { t } = useTranslation('global');
   const dispatch = useDispatch();
-  const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectSelectedNavigationOptionKey);
+  const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectNavigationOptionKey);
   const isAnyPackDownloading: boolean = useSelector(selectIsAnyPackDownloading);
 
   const getAdditionalElement = (key: NavigationOptionsKey): ReactNode => {
@@ -57,9 +57,9 @@ const Navigation = () => {
             `}
             onClick={() => {
               if (navigationOptionKey !== selectedNavigationOptionKey)
-                dispatch(selectedNavigationOptionKeySet(navigationOptionKey));
+                dispatch(navigationOptionKeySet(navigationOptionKey));
               else
-                dispatch(selectedNavigationOptionKeySet("card_list"));
+                dispatch(navigationOptionKeySet("card_list"));
 
             }}>
             {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}

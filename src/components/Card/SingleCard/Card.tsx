@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import CardImage, { getCardImage } from "./CardImage"
-import { Modal } from "../Modal"
+import { Modal } from "../../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import { TbCards } from "react-icons/tb";
-import comicWebp from "../../assets/comic.webp";
-import { MCCard } from "../../store/entities/cards";
+import comicWebp from "../../../assets/comic.webp";
+import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/other";
 
 
 export type MCCardKeys = keyof MCCard;
@@ -16,11 +18,36 @@ type Props = {
   flipAllCards?: boolean,
 }
 
+export  const hasClassInAncestors = (element: HTMLElement | null, classToSearch: string="mc-card"): boolean => {
+  if (!element) {
+    // Guard clause
+    return false;
+  }
+
+  if (element.classList && element.classList.contains(classToSearch)) {
+    // class found
+    return true;
+  }
+
+  // Recursion (class not found, ask the parents)
+  return hasClassInAncestors(element.parentNode as HTMLElement, classToSearch);
+};
+
+
+const calculateFlipped = (manualFlipped: boolean | undefined, flipAllCards: boolean, isMainScheme: boolean) => {
+  const isFlipped = manualFlipped === undefined ? flipAllCards : manualFlipped
+  return isMainScheme ? !isFlipped : isFlipped;
+}
+
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
+  const dispatch = useDispatch();
   const { i18n } = useTranslation('global');
-  const [isClicked, setIsClicked] = useState<boolean>(false);
+  //const [isClicked, setIsClicked] = useState<boolean>(false);
+  const isClicked = useSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
-  const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
+  //const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
+  const isMainScheme = card.type_code === "main_scheme";
+  const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
 
   useEffect(() => {
     setManualFlipped(undefined);
@@ -44,6 +71,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
 
   const classNames = [
     "mc-card",
+    `mc-card-${card.code}`,
     flipped ? "mc-card--flipped" : "",
     isHorizontal ? "mc-card--horizontal" : "",
     showCardData ? "mc-card--show-data" : "",
@@ -56,7 +84,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
         className={classNames.join(" ")}
         title={`mc-card-div-${card.code}`}
         key={`mc-card-div-${card.code}`}
-        onClick={() => setIsClicked((prev) => !prev)}
+        onClick={() => dispatch(cardCodeClicked(card.code))/*setIsClicked((prev) => !prev)*/}
       >
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="mc-card__content">

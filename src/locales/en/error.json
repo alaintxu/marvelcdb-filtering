@@ -1,0 +1,4 @@
+{
+    "error_title": "Something went wrong:",
+    "error_instructions_md": "## What can you do?\n\n- Try reloading the page.\n- If the problem persists, restart the application (this will delete all saved data)."
+}

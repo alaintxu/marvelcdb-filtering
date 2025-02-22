@@ -1,24 +1,30 @@
 import { useEffect, useState } from "react";
 import CardGrid from "./CardGrid";
-import { BsFillEyeFill, BsFillEyeSlashFill, BsPhoneFlip } from 'react-icons/bs';
 import { useTranslation } from "react-i18next";
 import { ReactBSPagination } from "@draperez/react-components";
 import { MCCard, selectAllCards } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 import IconForConcept from "../IconForConcept";
+import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other";
+import { selectQuickFilter } from "../../store/ui/filters";
+import TopActions from "../TopActions";
+import { quickFilterCardList } from "../Filter/QuickSearchFilter";
 
 const CardsView = () => {
   const { t } = useTranslation('global');
 
   // Status
-  const [showAllCardData, setShowAllCardData] = useState(false);
-  const [flipAllCards, setFlipAllCards] = useState(false);
   const [filteredCards, setFilteredCards] = useState<MCCard[]>([]);
   const [paginatedCards, setPaginatedCards] = useState<MCCard[]>([]);
 
   const pagination = useSelector(selectPagination);
   const cards = useSelector(selectAllCards);
+
+  const showAllCardData = useSelector(selectShowAllCardData);
+  const flipAllCards = useSelector(selectFlipAllCards);
+  const quickFilter = useSelector(selectQuickFilter);
+
 
   //const filters = useSelector((state: RootState) => state.filters);
   
@@ -27,8 +33,9 @@ const CardsView = () => {
   useEffect(() => {
     /* @ToDo: Do filter the cards */
     console.warn('Filtering cards is not implemented yet');
-    setFilteredCards(cards);
-  }, [cards /*, filters*/]);
+    const quickFilteredCards = quickFilterCardList(cards, quickFilter);
+    setFilteredCards(quickFilteredCards);
+  }, [cards, quickFilter /*, filters*/]);
   useEffect(() => {
     dispatch(paginationTotalElementsUpdated(filteredCards?.length || 0));
   }, [filteredCards]);
@@ -41,29 +48,19 @@ const CardsView = () => {
   }, [pagination, filteredCards]);
 
   return (
-
-    <section id="mc-card-list" className='p-3 pb-0'>
-      <span id="mc-card-list-actions">
-        <button
-          className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
-          onClick={() => setShowAllCardData((prev) => !prev)}>
-          {showAllCardData ? <>
-            <BsFillEyeSlashFill title="Esconder datos" />
-          </> : <>
-            <BsFillEyeFill title="Mostrar datos" />
-          </>}
-        </button>
-        <button
-          className={`btn btn-${flipAllCards ? 'primary' : 'secondary'}`}
-          onClick={() => setFlipAllCards((prev) => !prev)}>
-          <BsPhoneFlip />
-        </button>
-      </span>
-      <h1 id="page-title">
+    <section id="mc-card-list" className='p-0 d-flex flex-column'>
+      <TopActions />
+      <h1 id="page-title" className="px-4 py-2">
         <IconForConcept concept="cardList" className="me-2"/>
         {t('card_list')}
       </h1>
-      <CardGrid cards={paginatedCards} showAllCardData={showAllCardData} flipAllCards={flipAllCards} />
+      <div className="flex-grow-1 p-4">
+        <CardGrid
+          cards={paginatedCards} 
+          showAllCardData={showAllCardData} 
+          flipAllCards={flipAllCards}
+      />
+      </div>
 
       <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center mt-3">
         <ReactBSPagination

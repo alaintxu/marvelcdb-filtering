@@ -1,6 +1,6 @@
 import { HTMLAttributes } from "react"
 import { IconType } from "react-icons"
-import { BsCloudArrowDown, BsFunnel, BsStack } from "react-icons/bs"
+import { BsCloudArrowDown, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFunnel, BsPhone, BsPhoneFill, BsPhoneFlip, BsSearch, BsStack, BsTrash } from "react-icons/bs"
 import { ImStack } from "react-icons/im"
 import { RiArchiveStackFill, RiArchiveStackLine, RiStackedView } from "react-icons/ri"
 import { TbPlayCardStar, TbPlayCardStarFilled } from "react-icons/tb"
@@ -13,26 +13,44 @@ export type Props = {
 
 export type Concepts = {
     card: IconType;
+    cardBack: IconType;
     cardFill: IconType;
+    cardFlip: IconType;
+    cardFront: IconType;
+    cardList: IconType;
     deck: IconType;
     deckFill: IconType;
-    pack: IconType;
-    packFill: IconType;
+    delete: IconType;
     downloadManager: IconType;
     filter: IconType;
-    cardList: IconType;
+    hide: IconType;
+    hideFill: IconType;
+    pack: IconType;
+    packFill: IconType;
+    search: IconType;
+    show: IconType;
+    showFill: IconType;
   };
 
 const conceptIcons: Concepts = {
     card: TbPlayCardStar,
+    cardBack: BsPhone,
     cardFill: TbPlayCardStarFilled,
+    cardFlip: BsPhoneFlip,
+    cardFront: BsPhoneFill,
+    cardList: RiStackedView,
     deck: ImStack,
     deckFill: BsStack,
-    pack: RiArchiveStackLine,
-    packFill: RiArchiveStackFill,
+    delete: BsTrash,
     downloadManager: BsCloudArrowDown,
     filter: BsFunnel,
-    cardList: RiStackedView,
+    hide: BsEyeSlash,
+    hideFill: BsEyeSlashFill,
+    pack: RiArchiveStackLine,
+    packFill: RiArchiveStackFill,
+    search: BsSearch,
+    show: BsEye,
+    showFill: BsEyeFill,
 }
 
 

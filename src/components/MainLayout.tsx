@@ -7,21 +7,23 @@ import CardsView from "./Card/CardsView";
 import DownloadManager from "./DownloadManager/DownloadManager";
 import { useQuery } from "@tanstack/react-query";
 import DeckView from "./Deck/DeckView";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
-import { selectSelectedNavigationOptionKey } from "../store/ui/selectedNavigationOptionKey";
+import { cardCodeAllUnclicked, selectNavigationOptionKey } from "../store/ui/other";
 import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
 import { LOCAL_STORAGE_PACK_STATUS_KEY, PackStatusDict, selectPackStatusDict } from "../store/ui/packsStatus";
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
-import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck, selectIsCurrentInList } from "../store/entities/decks";
+import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck } from "../store/entities/decks";
+import { hasClassInAncestors } from "./Card";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
+  const dispatch = useDispatch();
   //const deckId = new URLSearchParams(window.location.search).get("deckId");
   //const { deck, isDeckLoading, isDeckFetching } = useDeckQuery(deckId || "43333");  // @ToDo: remove hardcoded deckId to ""
 
   // Redux values
-  const selectedNavigationOptionKey = useSelector(selectSelectedNavigationOptionKey);
+  const selectedNavigationOptionKey = useSelector(selectNavigationOptionKey);
   const currentDeck: MarvelDeck | null = useSelector(selectCurrentDeck);
   const cards: MCCard[] = useSelector(selectAllCards);
   const decks: MarvelDecksDict = useSelector(selectAllDecks);
@@ -39,10 +41,26 @@ const MainLayout = () => {
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
   useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);             }, [cards]);
 
+  // Listener
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      console.log("handle click", event.target);
+      if (!hasClassInAncestors(event.target as HTMLElement /*, "mc-card"*/)) {
+        dispatch(cardCodeAllUnclicked());
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dispatch]);
 
 
   // Other
   const mainClassNames = [
+    "p-0",
     "container-fluid",
     "bg-dark",
     "text-light",

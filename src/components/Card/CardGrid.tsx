@@ -6,12 +6,12 @@ type Props = {
   cards: MCCard[],
   showAllCardData?: boolean,
   flipAllCards?: boolean
-}
-const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false }: Props) => {
+} & React.HTMLAttributes<HTMLDivElement>;
+const CardGrid = ({ cards, showAllCardData = false, flipAllCards = false, className, ...rest }: Props) => {
   if (!cards) return (<div>{t('no_cards')}</div>);
 
   return (
-    <div className="mc-card-grid">
+    <div className={`mc-card-grid ${className}`} {...rest}>
       {cards?.map((card: MCCard) =>
         <Card
           showCardData={showAllCardData}
