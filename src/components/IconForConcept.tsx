@@ -2,7 +2,7 @@ import { HTMLAttributes } from "react"
 import { IconType } from "react-icons"
 import { BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCloudArrowDown, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsPhone, BsPhoneFill, BsPhoneFlip, BsSearch, BsStack, BsTrash } from "react-icons/bs"
 import { ImStack } from "react-icons/im"
-import { MdDownloadForOffline, MdFileDownloadDone, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
+import { MdClose, MdDownloadForOffline, MdFileDownloadDone, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
 import { RiArchiveStackFill, RiArchiveStackLine, RiStackedView } from "react-icons/ri"
 import { TbPlayCardStar, TbPlayCardStarFilled } from "react-icons/tb"
 
@@ -24,6 +24,8 @@ export type Concepts = {
   cardFlip: IconType;
   cardFront: IconType;
   cardList: IconType;
+
+  close: IconType;
 
   deck: IconType;
   deckFill: IconType;
@@ -62,6 +64,8 @@ const conceptIcons: Concepts = {
     cardFlip: BsPhoneFlip,
     cardFront: BsPhoneFill,
     cardList: RiStackedView,
+
+    close: MdClose,
 
     deck: ImStack,
     deckFill: BsStack,
