@@ -10,7 +10,7 @@ import {
   packStatusPackDownloadStatusSet,
   selectPackStatusDict,
 } from '../../../store/ui/packsStatus';
-import { Pack, packsDownloaded, packsDownloadError, packsDownloading, selectAllPacks, selectArePacksLoading, selectPacksError } from '../../../store/entities/packs';
+import { loadPacks, Pack, selectAllPacks, selectArePacksLoading, selectPacksError } from '../../../store/entities/packs';
 import { selectShowPackList, showPackListToggled } from '../../../store/ui/other';
 import PackListItem from '../Packs/PackListItem';
 import LanguageSelect from '../LanguageSelect';
@@ -18,7 +18,6 @@ import PacksData from '../Packs/PacksData';
 import RemoveAllButton from '../Packs/RemoveAllButton';
 import DownloadAllButton from '../Packs/DownloadAllButton';
 import { useEffect } from 'react';
-import * as apiActions from '../../../store/api';
 import PackStatusCountBadge from './PackStatusCountBadge';
 
 const PacksSection = () => {
@@ -35,12 +34,7 @@ const PacksSection = () => {
 
 
     useEffect(() => {
-        dispatch(apiActions.apiCallBegan({
-            url: `${t('base_path')}/api/public/packs/`,
-            onSuccess: packsDownloaded.type,
-            onStart: packsDownloading.type,
-            onError: packsDownloadError.type
-        }));
+        dispatch(loadPacks());
     }, [i18n.language]);
      
     const downloadPackCards = async (packCode: string) => {

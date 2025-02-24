@@ -82,7 +82,15 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     <>
       <div
         className={classNames.join(" ")}
-        title={`mc-card-div-${card.code}`}
+        title={`${
+          card.name
+        }${
+          card.subname ? ` - ${card.subname}` :""
+        }${
+          card.linked_card?.name ? ` - ${card.linked_card.name}` :""
+        }${
+          card.linked_card?.subname ? ` - ${card.linked_card.subname}` :""
+        }`}
         key={`mc-card-div-${card.code}`}
         onClick={() => dispatch(cardCodeClicked(card.code))/*setIsClicked((prev) => !prev)*/}
       >

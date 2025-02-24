@@ -1,5 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
+import { apiCallBegan } from '../api';
+
+const PACK_URL = '/packs/';
 
 export type Pack = {
     name: string;
@@ -26,7 +29,7 @@ const initialState: PackSliceState = {
     error: null
 }
 
-
+/* Reducer */
 const slice = createSlice({
     name: 'packs',
     initialState: {
@@ -55,6 +58,25 @@ const slice = createSlice({
     }
 });
 
+/* Reducer exports */
+export default slice.reducer;
+export const { 
+    packsDownloading,
+    packsDownloaded,
+    packsDownloadError
+} = slice.actions;
+
+
+/* Action creators */
+export const loadPacks = () => apiCallBegan({
+    url: PACK_URL,
+    onStart: packsDownloading.type,
+    onSuccess: packsDownloaded.type,
+    onError: packsDownloadError.type
+});
+
+
+/* Selectors */
 export const selectPackState = (state: RootState) => state.entities.packs;
 export const selectAllPacks = createSelector(
     selectPackState,
@@ -85,10 +107,3 @@ export const selectPacksError = createSelector(
     selectPackState,
     (packState: PackSliceState) => packState.error
 );
-
-export default slice.reducer;
-export const { 
-    packsDownloading,
-    packsDownloaded,
-    packsDownloadError
-} = slice.actions;

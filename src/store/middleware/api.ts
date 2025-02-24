@@ -1,6 +1,7 @@
 import { Middleware, Dispatch } from "redux";
 import { RootState } from "../configureStore";
 import * as apiActions from "../api";
+import i18n from 'i18next';
 
 
 type ApiMiddlewareParams = {
@@ -31,6 +32,8 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         onFinishData
     } = action.payload;
 
+    const full_url = `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
+
     if (onStart) dispatch({ type: onStart, payload: onStartData });
 
     let requestConfig: { 
@@ -57,17 +60,18 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         requestConfig['body'] = JSON.stringify(data);
     }
     try{
-        const response = await fetch(url as string, requestConfig);
+        const response = await fetch(full_url, requestConfig);
         if (!response.ok) {
+            console.error("Error fetching data", response);
             dispatchError(dispatch, `${response.status}: ${response.statusText}`, onError);
             return;
         }
         const responseData = await response.json();
         dispatch(apiActions.apiCallSuccess(responseData));
         if (onSuccess) dispatch({ type: onSuccess, payload: responseData });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching data", error);
-        dispatchError(dispatch, error, onError);
+        dispatchError(dispatch, (error as Error).message || "?", onError);
     }
     if (onFinish) dispatch({ type: onFinish, payload: onFinishData });
 };

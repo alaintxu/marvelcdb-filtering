@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Instructions from "./Instructions";
-import CardFiltersView, { UniqueFilterOptions } from "./Filter/CardFiltersView";
+import CardFiltersView, { UniqueFilterOptions } from "./Filter/CardFiltersSection";
 import Navigation from "./Navigation";
 import CardsView from "./Card/CardsView";
 import DownloadManager from "./DownloadManager/DownloadManager";
@@ -44,8 +44,6 @@ const MainLayout = () => {
   // Listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      console.log("handle click", event.target);
-
       // Unselect card if clicked outside
       if (!hasClassInAncestors(event.target as HTMLElement /*, "mc-card"*/)) {
         dispatch(cardCodeAllUnclicked());
@@ -56,8 +54,10 @@ const MainLayout = () => {
         !hasClassInAncestors(event.target as HTMLElement, "download-manager-container")
         &&
         !hasClassInAncestors(event.target as HTMLElement, "filter-container")
+        &&
+        !hasClassInAncestors(event.target as HTMLElement, "main-navigation-item")  // se encarga nav
       ) {
-      
+        console.log('clicked outside');
         dispatch(navigationOptionKeySet("card_list"));
       }
     };
@@ -86,7 +86,7 @@ const MainLayout = () => {
       <main id="main-section" className={mainClassNames.join(" ")}>
         <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
         {currentDeck ? <DeckView deck={currentDeck} /> : (
-          cards.length < 1 ? <Instructions /> : <CardsView />
+          cards.length > 0 ? <CardsView /> : <Instructions />
         )}
         {/*isDeckLoading || isDeckFetching ? <div className="d-flex justify-content-center mt-4">
             <LoadingSpinner />

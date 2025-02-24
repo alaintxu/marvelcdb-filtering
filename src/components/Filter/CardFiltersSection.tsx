@@ -13,6 +13,7 @@ import { TbBracketsContain, TbCards } from "react-icons/tb";
 import { GoMultiSelect } from "react-icons/go";
 import MultiselectFilterNew from "./MultiselectFilterNew";
 import PaginationElementsPerPageFilter from "./PaginationElementsPerPageFilter";
+import MultiselectFilterRedux from "./MultiselectFilterRedux";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -85,6 +86,8 @@ type Props = {
   uniqueFilterOptions: UniqueFilterOptions[]
 } & HTMLAttributes<HTMLDivElement>;
 
+
+/* Component */
 const CardFiltersView = ({
   selectedFilters, setSelectedFilters,
   uniqueFilterOptions,
@@ -106,7 +109,7 @@ const CardFiltersView = ({
           (field) => field.name === key
         ) as FiltrableFieldType;
 
-        switch (filtrableField.type) {
+        switch (filtrableField?.type) {
           case "boolean":
             newSelectedFilters[key] = value ? ["true"] : ["false"];
             break;
@@ -161,6 +164,19 @@ const CardFiltersView = ({
           />
       <form>
         <details>
+            <summary>{t("multiselect_filters_title")} (redux) <GoMultiSelect /></summary>
+            {multiselectFields.map((field) => {
+              return (
+                <MultiselectFilterRedux
+                    key={`multiselect_filter_${field.name}`}
+                    control={control}
+                    fieldName={field.name as keyof MCCard}
+                />
+              );
+            })}
+        </details>
+
+        <details>
             <summary>{t("multiselect_filters_title")} <GoMultiSelect /></summary>
             {multiselectFields.map((field) => {
               const uniqueOptions: UniqueFilterOptions = uniqueFilterOptions.find(
@@ -173,7 +189,7 @@ const CardFiltersView = ({
                     uniqueFilterOptions={uniqueOptions}
                 />
               );
-    })}
+            })}
         </details>
         <details>
             <summary>{t("contains_filters_title")} <TbBracketsContain /></summary>

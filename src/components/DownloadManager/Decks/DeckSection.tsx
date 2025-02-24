@@ -1,10 +1,10 @@
 import { useDispatch, useSelector, } from "react-redux"
-import { deckCurrentConvertAndSet, selectCurrentDeck, selectIsCurrentInList } from "../../../store/entities/decks"
+import { loadDeck, selectCurrentDeck, selectDeckError, selectIsCurrentInList, selectIsDeckDownloading } from "../../../store/entities/decks"
 import { useTranslation } from "react-i18next";
-import * as apiActions from "../../../store/api";
 import IconForConcept from "../../IconForConcept";
 import DeckList from "./DeckList";
 import DeckListItem from "./DeckListItem";
+import LoadingSpinner from "../../LoadingSpinner";
 
 const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -36,6 +36,8 @@ const DeckSection = () => {
     const { t: globalT } = useTranslation('global');
     const { t } = useTranslation("decks");
     const dispatch = useDispatch();
+    const deckDownloading = useSelector(selectIsDeckDownloading);
+    const deckDownloadError = useSelector(selectDeckError);
     const currentDeck = useSelector(selectCurrentDeck);
     const isCurrentDeckInList = useSelector(selectIsCurrentInList);
 
@@ -43,10 +45,7 @@ const DeckSection = () => {
         if (value.match(NUMBER_REGEX) || value.match(URL_REGEX)) {
             const deckId: number = extractIdFromDeckUrl(value);
             if (deckId !== -1) {
-                dispatch(apiActions.apiCallBegan({
-                    url: `${globalT('base_path')}/api/public/decklist/${deckId}`,
-                    onSuccess: deckCurrentConvertAndSet.type,
-                }));
+                dispatch(loadDeck(deckId));
             }
         }
     }
@@ -75,6 +74,16 @@ const DeckSection = () => {
                     pattern={`(${NUMBER_REGEX.source})|(${URL_REGEX.source})`}
                     onChange={(e) => {callApiForDeck(e.currentTarget.value)}}
                 />
+                {deckDownloading && (
+                    <span className="input-group-text">
+                        <LoadingSpinner />
+                    </span>
+                )}
+                {deckDownloadError && (
+                <span className="input-group-text text-danger">
+                    <IconForConcept concept="error" title={deckDownloadError} />
+                    </span>
+                )}
                 <button type="submit" className="btn btn-primary">
                     <IconForConcept concept="sendDownloadFill" title={t('download_deck')} />
                 </button>

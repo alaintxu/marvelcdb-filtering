@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
+import { apiCallBegan } from '../api';
 
 export const LOCAL_STORAGE_DECKS_KEY = "decks_favourites";
 
@@ -79,10 +80,13 @@ const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
     };
 }
 
+/* Slice */
 const slice = createSlice({
     name: 'decks',
     initialState: {
         currentDeck: null as MarvelDeck | null,
+        deckError: "" as string,
+        isDeckLoading: false as boolean,
         decks: getFromLocalStorage<MarvelDecksDict>(LOCAL_STORAGE_DECKS_KEY) || {} as MarvelDecksDict,
     },
     reducers: {
@@ -98,6 +102,10 @@ const slice = createSlice({
         deckRemoved: (state, action: PayloadAction<number>) => {
             const deck_id: number = action.payload;
             delete state.decks[deck_id];
+            return state;
+        },
+        deckDownloading: (state) => {
+            state.isDeckLoading = true;
             return state;
         },
         /*deckCurrentAdded: (state, action: PayloadAction<MarvelDeck>) => {
@@ -125,12 +133,20 @@ const slice = createSlice({
             state.currentDeck = deck;
             return state;
         },
+        deckError: (state, action: PayloadAction<string>) => {
+            state.deckError = action.payload;
+            state.isDeckLoading = false;
+            return state;
+        },
         deckCurrentConvertAndSet: (state, action: PayloadAction<Deck>) => {
+            console.log("Converting deck", action.payload);
             const marvelDeck: MarvelDeck = convertDeckToMarvelDeck(action.payload);
             slice.caseReducers.deckCurrentSet(state, {
                 type: slice.actions.deckCurrentSet.type,
                 payload: marvelDeck,
             });
+            state.isDeckLoading = false;
+            state.deckError = "";
             return state;
         },
         deckCurrentSetFromList: (state, action: PayloadAction<number>) => {
@@ -141,10 +157,42 @@ const slice = createSlice({
     }
 });
 
+/* Export reducer */
+export default slice.reducer;
+export const { 
+    deckAdded, 
+    deckRemoved, 
+    deckCurrentRemoved, 
+    deckCurrentSet, 
+    deckCurrentConvertAndSet, 
+    deckCurrentSetFromList,
+    deckDownloading,
+    deckError,
+} = slice.actions;
+
+/* Actions */
+export const loadDeck = (deckId: number) => apiCallBegan({
+    url: `/decklist/${deckId}`,
+    onSuccess: deckCurrentConvertAndSet.type,
+    onError: deckError.type,
+    onStart: deckDownloading.type,
+})
+
+/* Selectors */
+
 export type DeckSliceState = ReturnType<typeof slice.reducer>;
 
 export const selectDeckSlice = (rootState: RootState) => rootState.entities.decks;
 
+export const selectIsDeckDownloading = createSelector(
+    selectDeckSlice,
+    (state) => state.isDeckLoading
+);
+
+export const selectDeckError = createSelector(
+    selectDeckSlice,
+    (state) => state.deckError
+);
 
 export const selectCurrentDeck = createSelector(
     selectDeckSlice,
@@ -178,7 +226,4 @@ export const selectIsCurrentInList = createSelector(
 export const selectIsDeckInList = (deckId: number) => createSelector(
     selectAllDeckIds,
     (deckIds) => deckIds.includes(deckId)
-)
-
-export default slice.reducer;
-export const { deckAdded, deckRemoved, deckCurrentRemoved, deckCurrentSet, deckCurrentConvertAndSet, deckCurrentSetFromList } = slice.actions;
+);

@@ -53,6 +53,7 @@ const Navigation = () => {
             key={`navigation-${navigationOptionKey}`}
             type="button"
             className={`
+              main-navigation-item
               btn 
               btn-${isActive ? '' : 'outline-'}light 
               ${isActive ? 'active' : ''}

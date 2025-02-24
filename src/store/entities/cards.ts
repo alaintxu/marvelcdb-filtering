@@ -145,6 +145,19 @@ export const selectCardsByPack = (packCode: string) => createSelector(
     (cards) => cards.filter(card => card.pack_code === packCode)
 );
 
+export const selectUniqueFieldValues = (fieldName: keyof MCCard) => createSelector(
+    selectAllCards,
+    (cards) => {
+        const values = new Set<string>();
+        cards.forEach(card => {
+            if (card[fieldName]) {
+                values.add(card[fieldName] as string);
+            }
+        });
+        return Array.from(values);
+    }
+);
+
 export default slice.reducer;
 export const { 
     cardsAdded, 
