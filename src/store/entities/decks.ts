@@ -104,7 +104,7 @@ const slice = createSlice({
             delete state.decks[deck_id];
             return state;
         },
-        deckDownloading: (state) => {
+        deckRequested: (state) => {
             state.isDeckLoading = true;
             return state;
         },
@@ -133,7 +133,7 @@ const slice = createSlice({
             state.currentDeck = deck;
             return state;
         },
-        deckError: (state, action: PayloadAction<string>) => {
+        deckRequestFailed: (state, action: PayloadAction<string>) => {
             state.deckError = action.payload;
             state.isDeckLoading = false;
             return state;
@@ -166,16 +166,16 @@ export const {
     deckCurrentSet, 
     deckCurrentConvertAndSet, 
     deckCurrentSetFromList,
-    deckDownloading,
-    deckError,
+    deckRequested,
+    deckRequestFailed,
 } = slice.actions;
 
 /* Actions */
 export const loadDeck = (deckId: number) => apiCallBegan({
     url: `/decklist/${deckId}`,
     onSuccess: deckCurrentConvertAndSet.type,
-    onError: deckError.type,
-    onStart: deckDownloading.type,
+    onError: deckRequestFailed.type,
+    onStart: deckRequested.type,
 })
 
 /* Selectors */

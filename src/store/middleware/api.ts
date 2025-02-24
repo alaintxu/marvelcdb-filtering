@@ -18,8 +18,6 @@ const dispatchError = (dispatch: Dispatch, error: any, onError: string) => {
 const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (action: any) => {
     if (action.type !== apiActions.apiCallBegan.type) return next(action);
 
-    next(action); // In order to show api action in redux dev tools
-
     const { 
         url, 
         method, 
@@ -35,6 +33,7 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
     const full_url = `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
 
     if (onStart) dispatch({ type: onStart, payload: onStartData });
+    next(action); // In order to show api action in redux dev tools
 
     let requestConfig: { 
         headers?: { 

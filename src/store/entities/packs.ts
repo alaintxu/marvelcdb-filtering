@@ -1,8 +1,11 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
 import { apiCallBegan } from '../api';
+import moment from 'moment';
+import { Dispatch } from '@reduxjs/toolkit';
 
-const PACK_URL = '/packs/';
+const PACKS_URL = '/packs/';
+const PACKS_CACHE_TIME_IN_MINUTES = 10;
 
 export type Pack = {
     name: string;
@@ -18,7 +21,7 @@ export type Pack = {
 export type PackSliceState = {
     list: Pack[];
     loading: boolean;
-    lastFetch: Date | null;
+    lastFetch: number | null;
     error: string | null;
 }
 
@@ -39,18 +42,22 @@ const slice = createSlice({
         error: null
     } as PackSliceState,
     reducers: {
-        packsDownloading(state) {
+        packsRequested(state) {
             state = {...initialState, loading: true};
             return state;
         },
-        packsDownloaded(state, action: PayloadAction<Pack[]>) {
+        packsReceived(state, action: PayloadAction<Pack[]>) {
             state.list = action.payload;
             state.loading = false;
-            state.lastFetch = new Date();
+            state.lastFetch = Date.now();
             state.error = null;
             return state;
         },
-        packsDownloadError(state, action: PayloadAction<Error>) {
+        packAdded(state, action: PayloadAction<Pack>) {
+            state.list.push(action.payload);
+            return state;
+        },
+        packsRequestFailed(state, action: PayloadAction<Error>) {
             state.loading = false;
             state.error = action.payload.message;
             return state;
@@ -61,18 +68,51 @@ const slice = createSlice({
 /* Reducer exports */
 export default slice.reducer;
 export const { 
-    packsDownloading,
-    packsDownloaded,
-    packsDownloadError
+    packsRequested,
+    packAdded,
+    packsReceived,
+    packsRequestFailed
 } = slice.actions;
 
 
 /* Action creators */
-export const loadPacks = () => apiCallBegan({
-    url: PACK_URL,
-    onStart: packsDownloading.type,
-    onSuccess: packsDownloaded.type,
-    onError: packsDownloadError.type
+// export const loadPacks = () => apiCallBegan({
+//     url: PACK_URL,
+//     onStart: packsDownloading.type,
+//     onSuccess: packsDownloaded.type,
+//     onError: packsDownloadError.type
+// });
+
+export const loadPacks = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
+    /*
+    ** Get list of packs from the server 
+    ** if the last fetch was more than 10 minutes ago
+    */
+    const { lastFetch } = getState().entities.packs;
+
+    const diffInMinutes = moment().diff(moment(lastFetch), 'minutes');
+    if (diffInMinutes < PACKS_CACHE_TIME_IN_MINUTES) return;
+    dispatch(
+        apiCallBegan({
+            url: PACKS_URL,
+            onStart: packsRequested.type,
+            onSuccess: packsReceived.type,
+            onError: packsRequestFailed.type
+        })
+    );
+}
+
+/*
+** POST pack and add it to the store if successful
+** addPack is a command (what has to be done),
+** while packAdded is an event (what has happened)
+*/
+export const addPack = (pack: Pack) => apiCallBegan({
+    url: PACKS_URL,
+    method: 'post',
+    data: pack,
+    onSuccess: packAdded.type,
+    onError: packsRequestFailed.type
 });
 
 
