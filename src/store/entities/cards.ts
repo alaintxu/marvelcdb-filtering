@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
+import cleanCards from "./cleanCards";
 
 export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
 
@@ -70,7 +71,7 @@ const slice = createSlice({
     reducers: {
         cardsAdded: (cards: MCCard[], action) => {
             const newCards: MCCard[] = action.payload;
-            cards = [...cards, ...newCards];
+            cards = [...cards, ...cleanCards(newCards)];
             // saveCardsToLocalStorage(cards);
             return cards;
         },
@@ -89,13 +90,13 @@ const slice = createSlice({
             cards = cards.filter(
                 (card: MCCard) => card.pack_code !== packCode
             );
-            cards = [...cards, ...newCards];
+            cards = [...cards, ...cleanCards(newCards)];
             // saveCardsToLocalStorage(cards);
             return cards;
         },
         cardsSet: (cards: MCCard[], action) => {
             const newCards: MCCard[] = action.payload;
-            cards = newCards;
+            cards = cleanCards(newCards);
             // saveCardsToLocalStorage(cards);
             return cards;
 

@@ -1,4 +1,4 @@
-import { deckCurrentRemoved, deckCurrentSet, MarvelDeck, selectCurrentDeckId } from '../../../store/entities/decks'
+import { removeCurrentDeck, setCurrentDeck, MarvelDeck, selectCurrentDeckId } from '../../../store/entities/decks'
 import { useDispatch, useSelector } from 'react-redux';
 import DeckBookmarkAction from '../../Deck/DeckBookmarkAction';
 import IconForConcept from '../../IconForConcept';
@@ -27,9 +27,9 @@ const DeckListItem = ({deck}: Props) => {
             className={`btn btn-${deckVariant} d-flex justify-content-between gap-4 align-items-center ${isCurrentDeck ? "z-2" : ""}`}
             onClick={() => {
                 if (isCurrentDeck) {
-                    dispatch(deckCurrentRemoved());
+                    dispatch(removeCurrentDeck());
                 } else {
-                    dispatch(deckCurrentSet(deck))
+                    dispatch(setCurrentDeck(deck.id))
                 }
             }}>
                 <IconForConcept concept="deck" />    

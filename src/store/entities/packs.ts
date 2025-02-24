@@ -67,22 +67,17 @@ const slice = createSlice({
 
 /* Reducer exports */
 export default slice.reducer;
-export const { 
+
+
+const {
     packsRequested,
     packAdded,
     packsReceived,
     packsRequestFailed
-} = slice.actions;
+} = slice.actions; // Do not export, as they are events and not commands. Events should be internal.
 
 
 /* Action creators */
-// export const loadPacks = () => apiCallBegan({
-//     url: PACK_URL,
-//     onStart: packsDownloading.type,
-//     onSuccess: packsDownloaded.type,
-//     onError: packsDownloadError.type
-// });
-
 export const loadPacks = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     /*
     ** Get list of packs from the server 

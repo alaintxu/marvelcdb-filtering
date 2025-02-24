@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../configureStore';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
+import i18n from 'i18next';
 import { apiCallBegan } from '../api';
 
 export const LOCAL_STORAGE_DECKS_KEY = "decks_favourites";
@@ -29,37 +30,21 @@ export interface Deck {
 }
 
 /* The one for local */
-export interface MarvelDeck {
-    id: number;
-    name: string;
-    date_creation: string;
-    date_update: string;
-    description_md: string;
-    user_id: 21328;
-    hero_code: string;
-    hero_name: string;
-    slots: {
-        [key: string]: number;
-    };
-    ignoreDeckLimitSlots: {
-        [key: string]: number;
-    };
-    version: number;
-    meta: string;
-    aspect: string | undefined;
-    tags_str: string;
-    tags: string[];
+export interface MarvelDeck extends Omit<Deck, 'investigator_code' | 'investigator_name' | 'tags'> {
+    aspect: string | undefined,
+    tags_str: string,
+    tags: string[],
 }
 
 export type MarvelDecksDict = {
     [deck_id: number]: MarvelDeck;
 }
 
-const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
-    // @ToDo: Think how to solve the issue with t
-    //const base_path = t('base_path');
-    const base_path = 'https://es.marvelcdb.com';
+const convertDeckToMarvelDeck = (deck: Deck): MarvelDeck => {
+    const base_path = i18n.t('base_path', {ns: 'global'});
+
     const { investigator_code, investigator_name, description_md, hero_code, hero_name, ...rest } = deck;
+
     let aspect: string | undefined = undefined;
     try {
         const metaJson = JSON.parse(deck.meta);
@@ -67,6 +52,7 @@ const convertDeckToMarvelDeck = (deck: Deck/*, t?: TFunction*/): MarvelDeck => {
     } catch (e) {
         console.error(`Error parsing meta for deck ${deck.id}`, e);
     }
+
     return {
         ...rest, 
         hero_code: hero_code || investigator_code, 
@@ -90,47 +76,33 @@ const slice = createSlice({
         decks: getFromLocalStorage<MarvelDecksDict>(LOCAL_STORAGE_DECKS_KEY) || {} as MarvelDecksDict,
     },
     reducers: {
-        deckAdded: (state, action: PayloadAction<MarvelDeck>) => {
-            const deck: MarvelDeck = action.payload;
-            slice.caseReducers.deckRemoved(state, {
-                type: slice.actions.deckRemoved.type,
-                payload: deck.id
-            });
-            state.decks[deck.id] = deck;
-            return state;
-        },
-        deckRemoved: (state, action: PayloadAction<number>) => {
-            const deck_id: number = action.payload;
-            delete state.decks[deck_id];
-            return state;
-        },
-        deckRequested: (state) => {
-            state.isDeckLoading = true;
-            return state;
-        },
-        /*deckCurrentAdded: (state, action: PayloadAction<MarvelDeck>) => {
-            const deck: MarvelDeck = action.payload;
-            slice.caseReducers.deckRemoved(state, {
-                type: slice.actions.deckRemoved.type,
-                payload: deck.id
-            })
-            slice.caseReducers.deckAdded(state, {
-                type: slice.actions.deckAdded.type,
-                payload: deck
-            });
-            slice.caseReducers.deckCurrentSet(state, {
-                type: slice.actions.deckCurrentSet.type,
-                payload: deck
-            });
-            return state;
-        },*/
-        deckCurrentRemoved: (state) => {
+        // Actions
+        removeCurrentDeck: (state) => {
             state.currentDeck = null;
             return state;
         },
-        deckCurrentSet: (state, action: PayloadAction<MarvelDeck>) => {
-            const deck: MarvelDeck = action.payload;
-            state.currentDeck = deck;
+        setCurrentDeck: (state, action: PayloadAction<number>) => {
+            const deck_id: number = action.payload;
+            state.currentDeck = state.decks[deck_id] || null;
+            return state;
+        },
+        bookmarkCurrentDeck: (state) => {
+            if (state.currentDeck) {
+                state.decks[state.currentDeck.id] = state.currentDeck;
+            }
+            return state;
+        },
+        unbookmarkDeck: (state, action: PayloadAction<number>) => {
+            const deck_id: number = action.payload;
+            if (state.decks[deck_id]) {
+                state.currentDeck = state.decks[deck_id] || null;
+                delete state.decks[deck_id];
+            }
+            return state;
+        },
+        // Events
+        deckRequested: (state) => {
+            state.isDeckLoading = true;
             return state;
         },
         deckRequestFailed: (state, action: PayloadAction<string>) => {
@@ -138,20 +110,12 @@ const slice = createSlice({
             state.isDeckLoading = false;
             return state;
         },
-        deckCurrentConvertAndSet: (state, action: PayloadAction<Deck>) => {
+        deckReceived: (state, action: PayloadAction<Deck>) => {
             console.log("Converting deck", action.payload);
             const marvelDeck: MarvelDeck = convertDeckToMarvelDeck(action.payload);
-            slice.caseReducers.deckCurrentSet(state, {
-                type: slice.actions.deckCurrentSet.type,
-                payload: marvelDeck,
-            });
+            state.currentDeck = marvelDeck;
             state.isDeckLoading = false;
             state.deckError = "";
-            return state;
-        },
-        deckCurrentSetFromList: (state, action: PayloadAction<number>) => {
-            const deck_id: number = action.payload;
-            state.currentDeck = state.decks[deck_id] || null;
             return state;
         },
     }
@@ -160,31 +124,30 @@ const slice = createSlice({
 /* Export reducer */
 export default slice.reducer;
 export const { 
-    deckAdded, 
-    deckRemoved, 
-    deckCurrentRemoved, 
-    deckCurrentSet, 
-    deckCurrentConvertAndSet, 
-    deckCurrentSetFromList,
+    removeCurrentDeck,
+    setCurrentDeck,
+    bookmarkCurrentDeck,
+    unbookmarkDeck,
+} = slice.actions;  // Export commands
+
+const {
+    deckReceived,
     deckRequested,
     deckRequestFailed,
-} = slice.actions;
+} = slice.actions;  // Do not export events
 
 /* Actions */
 export const loadDeck = (deckId: number) => apiCallBegan({
     url: `/decklist/${deckId}`,
-    onSuccess: deckCurrentConvertAndSet.type,
+    onSuccess: deckReceived.type,
     onError: deckRequestFailed.type,
     onStart: deckRequested.type,
-})
+}); // No cache
 
 /* Selectors */
-
-export type DeckSliceState = ReturnType<typeof slice.reducer>;
-
 export const selectDeckSlice = (rootState: RootState) => rootState.entities.decks;
 
-export const selectIsDeckDownloading = createSelector(
+export const selectIsDeckLoading = createSelector(
     selectDeckSlice,
     (state) => state.isDeckLoading
 );
@@ -217,13 +180,13 @@ export const selectDeckById = (deck_id: number) => createSelector(
     (decks) => decks[deck_id]
 );
 
+export const selectIsDeckInList = (deckId: number) => createSelector(
+    selectAllDeckIds,
+    (deckIds) => deckIds.includes(deckId)
+);
+
 export const selectIsCurrentInList = createSelector(
     selectCurrentDeckId,
     selectAllDeckIds,
     (currentDeckId, decks) => currentDeckId ? decks.includes(currentDeckId) : false
-);
-
-export const selectIsDeckInList = (deckId: number) => createSelector(
-    selectAllDeckIds,
-    (deckIds) => deckIds.includes(deckId)
 );

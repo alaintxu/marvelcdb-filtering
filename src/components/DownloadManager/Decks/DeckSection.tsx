@@ -1,5 +1,5 @@
 import { useDispatch, useSelector, } from "react-redux"
-import { loadDeck, selectCurrentDeck, selectDeckError, selectIsCurrentInList, selectIsDeckDownloading } from "../../../store/entities/decks"
+import { loadDeck, selectCurrentDeck, selectDeckError, selectIsCurrentInList, selectIsDeckLoading } from "../../../store/entities/decks"
 import { useTranslation } from "react-i18next";
 import IconForConcept from "../../IconForConcept";
 import DeckList from "./DeckList";
@@ -36,7 +36,7 @@ const DeckSection = () => {
     const { t: globalT } = useTranslation('global');
     const { t } = useTranslation("decks");
     const dispatch = useDispatch();
-    const deckDownloading = useSelector(selectIsDeckDownloading);
+    const deckDownloading = useSelector(selectIsDeckLoading);
     const deckDownloadError = useSelector(selectDeckError);
     const currentDeck = useSelector(selectCurrentDeck);
     const isCurrentDeckInList = useSelector(selectIsCurrentInList);

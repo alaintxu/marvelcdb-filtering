@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { deckAdded, deckRemoved, MarvelDeck, selectIsDeckInList } from '../../store/entities/decks'
+import { bookmarkCurrentDeck, unbookmarkDeck, MarvelDeck, selectIsDeckInList } from '../../store/entities/decks'
 import { useMemo, useState } from 'react';
 import { t } from 'i18next';
 import IconForConcept from '../IconForConcept';
@@ -26,8 +26,8 @@ const DeckBookmarkAction = ({deck}: Props) => {
             onMouseLeave={() => setIsHovering(false)}
             onClick={(e) => {
               e.stopPropagation();
-              if (deckInList) dispatch(deckRemoved(deck.id));
-              else            dispatch(deckAdded(deck));
+              if (deckInList) dispatch(unbookmarkDeck(deck.id));
+              else            dispatch(bookmarkCurrentDeck());
             }}
             title={deckInList ? t('deck_remove_from_bookmarks') : t('deck_add_to_bookmarks')}
             >

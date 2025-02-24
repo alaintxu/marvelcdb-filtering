@@ -1,4 +1,4 @@
-import { deckCurrentRemoved, MarvelDeck } from "../../store/entities/decks"
+import { removeCurrentDeck, MarvelDeck } from "../../store/entities/decks"
 import { FaTag, FaChevronDown } from 'react-icons/fa6'
 import { MdCategory } from 'react-icons/md'
 import { TbCards } from 'react-icons/tb'
@@ -29,7 +29,7 @@ const DeckDataCard = ({deck}: Props) => {
             {deck.hero_name}
             <DeckBookmarkAction deck={deck} />        
           </h1>
-          <button type="button" className="btn btn-outline-light" onClick={() => dispatch(deckCurrentRemoved())}>
+          <button type="button" className="btn btn-outline-light" onClick={() => dispatch(removeCurrentDeck())}>
           <IconForConcept concept='close' />
           </button>
         </div>

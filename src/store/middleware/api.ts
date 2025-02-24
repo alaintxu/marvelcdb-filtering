@@ -23,45 +23,28 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         method, 
         data,
         onStart,
-        onStartData,
         onSuccess, 
         onError,
-        onFinish,
-        onFinishData
     } = action.payload;
 
     const full_url = `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
 
-    if (onStart) dispatch({ type: onStart, payload: onStartData });
+    if (onStart) dispatch({ type: onStart });
     next(action); // In order to show api action in redux dev tools
 
-    let requestConfig: { 
-        headers?: { 
-            'Content-Type'?: string,
-            'Accept'?: string,
-
-        },
-        method?: string; 
-        body?: string 
-    } = {
-        headers: {
-            'Accept': 'application/json'
-        }
+    let requestConfig: RequestInit = {
+        headers: {'Accept': 'application/json'},
+        method: method || 'get',
     };
 
-
-    if (method) requestConfig.method = method;
     if (data) {
-        requestConfig.headers = { 
-            ...requestConfig.headers,
-            'Content-Type': 'application/json'
-        };
+        requestConfig.headers= {...requestConfig.headers, 'Content-Type': 'application/json'};
         requestConfig['body'] = JSON.stringify(data);
     }
+    
     try{
         const response = await fetch(full_url, requestConfig);
         if (!response.ok) {
-            console.error("Error fetching data", response);
             dispatchError(dispatch, `${response.status}: ${response.statusText}`, onError);
             return;
         }
@@ -69,10 +52,8 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         dispatch(apiActions.apiCallSuccess(responseData));
         if (onSuccess) dispatch({ type: onSuccess, payload: responseData });
     } catch (error: any) {
-        console.error("Error fetching data", error);
         dispatchError(dispatch, (error as Error).message || "?", onError);
     }
-    if (onFinish) dispatch({ type: onFinish, payload: onFinishData });
 };
 
 export default api;

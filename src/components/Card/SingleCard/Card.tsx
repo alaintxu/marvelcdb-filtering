@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CardImage, { getCardImage } from "./CardImage"
 import { Modal } from "../../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
-import { TbCards } from "react-icons/tb";
-import comicWebp from "../../../assets/comic.webp";
 import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/other";
+import CardTop from "./CardTop";
 
 
 export type MCCardKeys = keyof MCCard;
@@ -18,7 +17,7 @@ type Props = {
   flipAllCards?: boolean,
 }
 
-export  const hasClassInAncestors = (element: HTMLElement | null, classToSearch: string="mc-card"): boolean => {
+export const hasClassInAncestors = (element: HTMLElement | null, classToSearch: string = "mc-card"): boolean => {
   if (!element) {
     // Guard clause
     return false;
@@ -39,35 +38,50 @@ const calculateFlipped = (manualFlipped: boolean | undefined, flipAllCards: bool
   return isMainScheme ? !isFlipped : isFlipped;
 }
 
+const isCardHorizontal = (card: MCCard) => {
+  const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
+  const front_horizontal = horizontal_types.includes(card.type_code);
+  let back_horizontal = front_horizontal;
+
+  if (card.linked_card) {
+    back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
+  }
+
+  return front_horizontal || back_horizontal;
+}
+
+
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
   const dispatch = useDispatch();
   const { i18n } = useTranslation('global');
-  //const [isClicked, setIsClicked] = useState<boolean>(false);
   const isClicked = useSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
-  //const flipped = manualFlipped === undefined ? flipAllCards : manualFlipped;
   const isMainScheme = card.type_code === "main_scheme";
-  const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
+
+  const flipped = useMemo(
+    () => calculateFlipped(manualFlipped, flipAllCards, isMainScheme)
+    , [manualFlipped, flipAllCards, isMainScheme]
+  );
+  const isHorizontal = useMemo(() => isCardHorizontal(card), [card]);
 
   useEffect(() => {
     setManualFlipped(undefined);
   }, [flipAllCards]);
 
 
-  const isCardHorizontal = () => {
-    const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
-    const front_horizontal = horizontal_types.includes(card.type_code);
-    let back_horizontal = front_horizontal;
+  // const isCardHorizontal = () => {
+  //   const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
+  //   const front_horizontal = horizontal_types.includes(card.type_code);
+  //   let back_horizontal = front_horizontal;
 
-    if (card.linked_card) {
-      back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
-    }
+  //   if (card.linked_card) {
+  //     back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
+  //   }
 
 
-    return flipped ? back_horizontal : front_horizontal;
-  }
+  //   return flipped ? back_horizontal : front_horizontal;
+  // }
 
-  const isHorizontal = isCardHorizontal();
 
   const classNames = [
     "mc-card",
@@ -82,56 +96,25 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     <>
       <div
         className={classNames.join(" ")}
-        title={`${
-          card.name
-        }${
-          card.subname ? ` - ${card.subname}` :""
-        }${
-          card.linked_card?.name ? ` - ${card.linked_card.name}` :""
-        }${
-          card.linked_card?.subname ? ` - ${card.linked_card.subname}` :""
-        }`}
+        title={`${card.name
+          }${card.subname ? ` - ${card.subname}` : ""
+          }${card.linked_card?.name ? ` - ${card.linked_card.name}` : ""
+          }${card.linked_card?.subname ? ` - ${card.linked_card.subname}` : ""
+          }`}
         key={`mc-card-div-${card.code}`}
         onClick={() => dispatch(cardCodeClicked(card.code))/*setIsClicked((prev) => !prev)*/}
       >
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="mc-card__content">
           <header>
-            <div className="d-flex justify-content-between gap-1 mb-1">
-              {card.cost !== undefined &&
-                <span className="mc-card__cost shadowed">
-                  {card.cost}
-                </span>
-              }
-              {card.threat !== undefined && card.threat > 0 &&
-                <span className="mc-card__threat shadowed">
-                  {card.threat}
-                  {card.threat_fixed !== undefined && card.threat_fixed == false && <BsPersonFill title={`${card.threat} por jugador`} />}
-                </span>
-              }
-              <span className="mc-card__name shadowed flex-grow-1" style={{ backgroundImage: comicWebp }}>
-                <a
-                  href={card.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={`Abre '${card.name}' en MarvelCDB (pestaña nueva)`}>
-                  {card.name}
-                </a>
-              </span>
-
-              {(card.quantity ?? 1) > 1 && 
-              <span className="bg-light text-dark shadowed d-flex align-items-center rounded px-1" title="Número de copias">
-                <TbCards />x{card.quantity}
-              </span>
-              }
-            </div>
+            <CardTop card={!flipped ? card : card.linked_card}/>
             <span className="mc-card__actions d-flex justify-content-end gap-1">
               <a className="btn btn-secondary shadowed"
-                href={getCardImage(card, flipped || flipAllCards, i18n.language)}
+                href={getCardImage(card, flipped, i18n.language)}
                 target="_blank"
                 title={`Abre imagen de '${card.name}' (pestaña nueva)`}>
                 <BsImage />
-                </a>
+              </a>
               <button
                 className={`btn btn-secondary shadowed`}
                 title="Mostrar datos en crudo (JSON)"
