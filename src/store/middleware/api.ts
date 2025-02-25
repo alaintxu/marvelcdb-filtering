@@ -12,7 +12,16 @@ type ApiMiddlewareParams = {
 const dispatchError = (dispatch: Dispatch, error: any, onError: string) => {
     console.error("Error fetching data", error);
     dispatch(apiActions.apiCallFailed(error));
-    if (onError) dispatch({ type: onError, payload: error });
+    dispatchCheckingArray(onError, dispatch, error);
+}
+
+const dispatchCheckingArray = (onAction: string | string[], dispatch: Dispatch, payload?: any) => {
+    if (!onAction) return;
+    if (Array.isArray(onAction)){
+        onAction.forEach((actionType) => dispatch({ type: actionType, payload }));
+    } else {
+        dispatch({ type: onAction, payload });
+    }
 }
 
 const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (action: any) => {
@@ -29,7 +38,7 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
 
     const full_url = `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
 
-    if (onStart) dispatch({ type: onStart });
+    dispatchCheckingArray(onStart, dispatch);
     next(action); // In order to show api action in redux dev tools
 
     let requestConfig: RequestInit = {
@@ -50,7 +59,7 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         }
         const responseData = await response.json();
         dispatch(apiActions.apiCallSuccess(responseData));
-        if (onSuccess) dispatch({ type: onSuccess, payload: responseData });
+        dispatchCheckingArray(onSuccess, dispatch, responseData);
     } catch (error: any) {
         dispatchError(dispatch, (error as Error).message || "?", onError);
     }

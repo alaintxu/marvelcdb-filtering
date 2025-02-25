@@ -5,6 +5,7 @@ import IconForConcept from "../../IconForConcept";
 import DeckList from "./DeckList";
 import DeckListItem from "./DeckListItem";
 import LoadingSpinner from "../../LoadingSpinner";
+import { AppDispatch } from "../../../store/configureStore";
 
 const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -35,7 +36,7 @@ const DeckSection = () => {
     // @ToDo: improve styling
     const { t: globalT } = useTranslation('global');
     const { t } = useTranslation("decks");
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const deckDownloading = useSelector(selectIsDeckLoading);
     const deckDownloadError = useSelector(selectDeckError);
     const currentDeck = useSelector(selectCurrentDeck);

@@ -4,6 +4,7 @@ import { quickFilterSet, selectQuickFilter } from "../../store/ui/filters";
 import React, { useCallback, useState } from "react";
 import IconForConcept from "../IconForConcept";
 import { MCCard } from "../../store/entities/cards";
+import { AppDispatch } from "../../store/configureStore";
 
 
     /*
@@ -88,7 +89,7 @@ export const quickFilterCardList = (cards: MCCard[], quickFilter: string) => {
 
 const QuickSearchFilter = () => {
     const { t } = useTranslation("filters");
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const quickFilter = useSelector(selectQuickFilter);
     const timeoutRef = React.useRef<number | null>(null);
     const [quickFilterValue, setQuickFilterValue] = useState(quickFilter);

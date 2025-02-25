@@ -2,13 +2,15 @@
 import { BsTrash } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { cardsSet } from '../../../store/entities/cards';
-import { packStatusDictSet } from '../../../store/ui/packsStatus';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '../../../store/configureStore';
+import { selectAllPacks, unloadPackCards } from '../../../store/entities/packs';
+import { removeAllCards } from '../../../store/entities/cards';
 
 const RemoveAllButton = () => {
     const { t } = useTranslation('global');
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+    const packs = useSelector(selectAllPacks);
     return (
         <>
             <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
@@ -22,8 +24,12 @@ const RemoveAllButton = () => {
                 title={t(`modal.delete_all_packs.title`)}
                 modal_id='modal-remove-all'
                 onAccept={() => { 
-                    dispatch(cardsSet([]));
-                    dispatch(packStatusDictSet({}));
+                    //dispatch(cardsSet([]));
+                    for(const pack of packs){
+                        dispatch(unloadPackCards(pack.code));
+                        dispatch(removeAllCards())
+                    }
+                    //dispatch(packStatusDictSet({}));
                 }} >
                 <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
             </Modal >

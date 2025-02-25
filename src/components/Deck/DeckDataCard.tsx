@@ -11,13 +11,14 @@ import { useMemo } from "react"
 import DeckBookmarkAction from "./DeckBookmarkAction"
 import { aspectColorMap } from "../DownloadManager/Decks/DeckListItem"
 import IconForConcept from "../IconForConcept"
+import { AppDispatch } from "../../store/configureStore"
 
 type Props = {
     deck: MarvelDeck,
 }
 
 const DeckDataCard = ({deck}: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation('global');
   const aspectColor = deck.aspect ? aspectColorMap[deck.aspect] : 'dark';
   const heroCard = useSelector(selectCardByCode(deck.hero_code));

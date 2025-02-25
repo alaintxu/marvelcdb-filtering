@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/other";
 import CardTop from "./CardTop";
+import { AppDispatch } from "../../../store/configureStore";
 
 
 export type MCCardKeys = keyof MCCard;
@@ -52,7 +53,7 @@ const isCardHorizontal = (card: MCCard) => {
 
 
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { i18n } = useTranslation('global');
   const isClicked = useSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);

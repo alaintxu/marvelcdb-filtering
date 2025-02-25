@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
-import { selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVariant } from '../../../store/ui/packsStatus';
 import LoadingSpinner from '../../LoadingSpinner';
-import { Pack, selectAllPacks, selectArePacksLoading, selectPacksError } from '../../../store/entities/packs';
+import { Pack, selectAllPacks, selectArePacksLoading, selectNumberOfDownloadedPacks, selectPacksError, selectPackStatusBootstrapVariant } from '../../../store/entities/packs';
 import { BsExclamationCircle } from 'react-icons/bs';
 import IconForConcept from '../../IconForConcept';
 
@@ -9,7 +8,7 @@ const PackStatusCountBadge = () => {
     const packs: Pack[] = useSelector(selectAllPacks);
     const areLoading = useSelector(selectArePacksLoading);
     const packsError = useSelector(selectPacksError);
-    const numberOfDownloadedPacks: number = useSelector(selectNumberOfPackStatusByDownloadStatus("downloaded"));
+    const numberOfDownloadedPacks: number = useSelector(selectNumberOfDownloadedPacks)
     const packStatusVariant = useSelector(selectPackStatusBootstrapVariant);
   return (
     

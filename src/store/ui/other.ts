@@ -94,6 +94,11 @@ export const selectIsCardCodeClicked = (cardCode: string) => createSelector(
     (clickedCardCodes) => clickedCardCodes.has(cardCode)
 );
 
+export const selectIsAnyCardClicked = createSelector(
+    selectClickedCardCodes,
+    (clickedCardCodes) => clickedCardCodes.size > 0
+);
+
 export default slice.reducer;
 export const {
     navigationOptionKeySet,

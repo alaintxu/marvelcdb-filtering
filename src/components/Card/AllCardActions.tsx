@@ -4,10 +4,11 @@ import { flipAllCardsToggled, selectFlipAllCards, selectShowAllCardData, showAll
 import IconForConcept from "../IconForConcept";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
+import { AppDispatch } from "../../store/configureStore";
 
 const AllCardActions = () => {
   const { t } = useTranslation('global');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const showAllCardData = useSelector(selectShowAllCardData);
   const flipAllCards = useSelector(selectFlipAllCards);
   const [isShowHovering, setIsShowHovering] = useState<boolean>(false);

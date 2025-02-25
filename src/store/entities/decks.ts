@@ -111,7 +111,6 @@ const slice = createSlice({
             return state;
         },
         deckReceived: (state, action: PayloadAction<Deck>) => {
-            console.log("Converting deck", action.payload);
             const marvelDeck: MarvelDeck = convertDeckToMarvelDeck(action.payload);
             state.currentDeck = marvelDeck;
             state.isDeckLoading = false;

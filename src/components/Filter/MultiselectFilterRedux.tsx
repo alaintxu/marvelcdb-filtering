@@ -7,23 +7,18 @@ import { useTranslation } from "react-i18next";
 import { MCCard, selectUniqueFieldValues } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
 import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
+import { AppDispatch } from "../../store/configureStore";
 
 interface Props {
   control: Control<MCCard>;
   fieldName: keyof MCCard;
 }
 
-const getQueryParamStringValue = (fieldName: string): string => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const str = urlParams.get(fieldName);
-  return str ? str : "";
-}
-
 const MultiselectFilterNew = ({ control, fieldName }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   // @ToDo: selectUniqueFieldValues should return Map<string, string> (code, value), now it return code[]
   const uniqueFieldValues = useSelector(selectUniqueFieldValues(fieldName));
-  console.log("uniqueFieldValues", uniqueFieldValues);
+  //console.log("uniqueFieldValues", uniqueFieldValues);
   const defaultValue = useSelector(selectFilterValues("multiselect", fieldName)) as string[] ?? [];
   
   const { t } = useTranslation("filters");

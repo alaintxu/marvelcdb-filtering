@@ -5,15 +5,11 @@ export const apiCallBegan = createAction<{
     method?: string;
     data?: any;
     
-    onStart?: string;
-    onStartData?: any;
+    onStart?: string | string[];
 
-    onSuccess?: string;
+    onSuccess?: string | string[];
 
-    onError?: string;
-
-    onFinish?: string;
-    onFinishData?: any;
+    onError?: string | string[];
 }>('api/callBegan');
 export const apiCallSuccess = createAction<any>('api/callSuccess');
 export const apiCallFailed = createAction<any>('api/callFailed');

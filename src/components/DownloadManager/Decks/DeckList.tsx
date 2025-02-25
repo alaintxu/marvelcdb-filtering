@@ -5,10 +5,11 @@ import DeckListItem from "./DeckListItem";
 import IconForConcept from "../../IconForConcept";
 import { selectShowDeckList, showDeckListToggled } from '../../../store/ui/other';
 import { BsArrowsCollapse, BsArrowsExpand } from "react-icons/bs";
+import { AppDispatch } from "../../../store/configureStore";
 
 
 const DeckList = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const { t } = useTranslation('decks');
     const decks = useSelector(selectAllDecks);
     const showDeckList = useSelector(selectShowDeckList);

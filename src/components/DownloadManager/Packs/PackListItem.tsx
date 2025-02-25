@@ -1,42 +1,40 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { PackStatus, packStatusPackDownloadStatusSet, packStatusPackRemoved, selectPackStatusById } from '../../../store/ui/packsStatus'
-import { Pack } from '../../../store/entities/packs'
+import { useDispatch } from 'react-redux'
+import { loadPackCards, Pack, unloadPackCards } from '../../../store/entities/packs'
 import LoadingSpinner from '../../LoadingSpinner'
-import { cardPackRemoved } from '../../../store/entities/cards'
 import IconForConcept from '../../IconForConcept'
+import { AppDispatch } from '../../../store/configureStore'
 
 type Props = {
-    pack: Pack,
-    downloadPackCards: (packCode: string) => Promise<void>
+    pack: Pack
 }
 
-const packStatusVariant = (packStatus: PackStatus| undefined) => {
-    switch (packStatus?.download_status) {
+const packStatusVariant = (packStatus: "error" | "unselected" | "selected" | "downloading" | "downloaded" | undefined) => {
+    switch (packStatus) {
         case "selected":
             return "btn-outline-secondary";
         case "downloading":
             return "btn-secondary";
         case "downloaded":
             return "btn-primary";
+        case "error":
+            return "btn-danger";
     }
     return "btn-outline-primary";
 }
 
 
-const PackListItem = ({pack, downloadPackCards}: Props) => {
-    const dispatch = useDispatch();
-    const packStatus: PackStatus | undefined = useSelector(selectPackStatusById(pack.code))
+const PackListItem = ({pack}: Props) => {
+    const dispatch = useDispatch<AppDispatch>();
     const id:string = "download-manager-pack-list-item" + pack.code;
+
     return <span
-            className={`btn ${packStatusVariant(packStatus)} d-flex justify-content-between align-items-center`}
+            className={`btn ${packStatusVariant(pack.download_status)} d-flex justify-content-between align-items-center`}
             onClick={async (event) => {
                 event.preventDefault();
-                if (packStatus?.download_status === "downloaded"){
-                    dispatch(packStatusPackRemoved(pack.code));
-                    dispatch(cardPackRemoved(pack.code));
+                if (pack.download_status === "downloaded"){
+                    dispatch(unloadPackCards(pack.code));
                 } else {
-                    dispatch(packStatusPackDownloadStatusSet({packCode: pack.code, downloadStatus: "selected"}))
-                    await downloadPackCards(pack.code); 
+                    dispatch(loadPackCards(pack.code));
                 }
             }}>
             <span style={{ textAlign: "left" }}>
@@ -44,15 +42,16 @@ const PackListItem = ({pack, downloadPackCards}: Props) => {
                 {pack.name}
             </span>
             <span className='ms-3 d-flex align-items-center' key={`${id}-pack-status`}>
-                {packStatus?.download_status === "downloading" && <LoadingSpinner small className='me-2'/>}
-                {packStatus?.download_status === "downloaded" && <>
-                <span className='badge bg-success me-2' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title={new Date(packStatus.download_date).toLocaleString()}>
-                    {packStatus.number_of_cards}
+                {pack.download_status === "downloading" && <LoadingSpinner small className='me-2'/>}
+                {pack.download_status === "downloaded" && <>
+                <span   className='badge bg-success me-2'
+                        title={pack.download_date ? new Date(pack.download_date).toLocaleString() : ""}>
+                    {pack.total}
                     <IconForConcept concept="downloadDone" />
                 </span>
                 </>}
                 <span className='btn btn-danger'>
-                {packStatus?.download_status === "downloaded" ? <IconForConcept concept="download" /> : <IconForConcept concept="downloadRemove" />}
+                {pack.download_status === "downloaded" ? <IconForConcept concept="download" /> : <IconForConcept concept="downloadRemove" />}
                 </span>
             </span>
         </span>;

@@ -5,7 +5,7 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { paginationElementsPerPageUpdated } from "../../store/ui/pagination";
-import { RootState } from "../../store/configureStore";
+import { AppDispatch, RootState } from "../../store/configureStore";
 
 
 type Props = {
@@ -20,7 +20,7 @@ const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers}: Props) =
 
   const elementsPerPage = useSelector((state: RootState) => state.ui.pagination.elementsPerPage);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
  
 

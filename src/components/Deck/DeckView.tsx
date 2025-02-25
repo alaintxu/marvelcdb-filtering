@@ -49,7 +49,6 @@ const getSortedTypes = (deckCards: {[typeCode:string]: MCCard[]}): string[] => {
 }
 
 const DeckView = ({ deck }: Props) => {
-  console.log("deck", deck);
   const deckCardsUnique: MCCard[] = useSelector(selectCardsByCodes(Object.keys(deck.slots)));
   const [deckCards, setDeckCards] = useState<{[typeCode: string]: MCCard[]}>({});
   const [notFoundCardCodes, setNotFoundCardCodes] = useState<string[]>([]);

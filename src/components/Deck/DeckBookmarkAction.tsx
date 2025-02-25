@@ -3,13 +3,14 @@ import { bookmarkCurrentDeck, unbookmarkDeck, MarvelDeck, selectIsDeckInList } f
 import { useMemo, useState } from 'react';
 import { t } from 'i18next';
 import IconForConcept from '../IconForConcept';
+import { AppDispatch } from '../../store/configureStore';
 
 type Props = {
     deck: MarvelDeck
 }
 
 const DeckBookmarkAction = ({deck}: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const deckInList: boolean = useSelector(selectIsDeckInList(deck.id));
   const [isHovering, setIsHovering] = useState(false);
 

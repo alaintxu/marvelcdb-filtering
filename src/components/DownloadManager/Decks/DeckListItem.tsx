@@ -2,6 +2,7 @@ import { removeCurrentDeck, setCurrentDeck, MarvelDeck, selectCurrentDeckId } fr
 import { useDispatch, useSelector } from 'react-redux';
 import DeckBookmarkAction from '../../Deck/DeckBookmarkAction';
 import IconForConcept from '../../IconForConcept';
+import { AppDispatch } from '../../../store/configureStore';
 
 type Props = {
     deck: MarvelDeck,
@@ -18,7 +19,7 @@ export const aspectColorMap: { [key: string]: string } = {
 }
 
 const DeckListItem = ({deck}: Props) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const currentDeckId = useSelector(selectCurrentDeckId);
     const isCurrentDeck = deck.id === currentDeckId;
     const deckVariant = `${isCurrentDeck ? "" : "outline-"}${aspectColorMap[deck?.aspect||""]}`;

@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 
 //import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 import { useDispatch, useSelector } from "react-redux";
-import { selectIsAnyPackDownloading } from '../store/ui/packsStatus';
 import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
 import LoadingSpinner from './LoadingSpinner';
 import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
 import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
 import IconForConcept from './IconForConcept';
 import { selectCurrentDeck } from '../store/entities/decks';
+import { AppDispatch } from '../store/configureStore';
+import { selectIsAnyPackDownloading } from '../store/entities/packs';
 
 
 type IconDict = {
@@ -24,7 +25,7 @@ const navigaitonIcons: IconDict = {
 
 const Navigation = () => {
   const { t } = useTranslation('global');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectNavigationOptionKey);
   const isAnyPackDownloading: boolean = useSelector(selectIsAnyPackDownloading);
   const currentDeck = useSelector(selectCurrentDeck);

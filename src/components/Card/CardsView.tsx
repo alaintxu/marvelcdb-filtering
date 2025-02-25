@@ -10,6 +10,7 @@ import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other"
 import { selectQuickFilter } from "../../store/ui/filters";
 import TopActions from "../TopActions";
 import { quickFilterCardList } from "../Filter/QuickSearchFilter";
+import { AppDispatch } from "../../store/configureStore";
 
 const CardsView = () => {
   const { t } = useTranslation('global');
@@ -28,7 +29,7 @@ const CardsView = () => {
 
   //const filters = useSelector((state: RootState) => state.filters);
   
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     /* @ToDo: Do filter the cards */

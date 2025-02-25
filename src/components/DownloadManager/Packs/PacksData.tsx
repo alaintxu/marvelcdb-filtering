@@ -1,13 +1,12 @@
 import { useSelector } from 'react-redux'
-import { selectNumberOfPackStatusByDownloadStatus, selectPackStatusBootstrapVariant } from '../../../store/ui/packsStatus'
 import { selectNumberOfCards } from '../../../store/entities/cards';
-import { selectNumberOfPacks } from '../../../store/entities/packs';
+import { selectNumberOfDownloadedPacks, selectNumberOfPacks, selectPackStatusBootstrapVariant } from '../../../store/entities/packs';
 import { useTranslation } from 'react-i18next';
 import IconForConcept from '../../IconForConcept';
 
 const PacksData = () => {
     const {t} = useTranslation("global");
-    const numberOfDownloadedPacks = useSelector(selectNumberOfPackStatusByDownloadStatus("downloaded"));
+    const numberOfDownloadedPacks = useSelector(selectNumberOfDownloadedPacks);
     const numberOfPacks = useSelector(selectNumberOfPacks)
     const numberOfCards = useSelector(selectNumberOfCards);
     const packStatusVariant = useSelector(selectPackStatusBootstrapVariant)

@@ -9,16 +9,17 @@ import { useQuery } from "@tanstack/react-query";
 import DeckView from "./Deck/DeckView";
 import { useDispatch, useSelector } from "react-redux";
 import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
-import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey } from "../store/ui/other";
+import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey, selectIsAnyCardClicked } from "../store/ui/other";
 import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
-import { LOCAL_STORAGE_PACK_STATUS_KEY, PackStatusDict, selectPackStatusDict } from "../store/ui/packsStatus";
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
 import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck } from "../store/entities/decks";
 import { hasClassInAncestors } from "./Card";
+import { AppDispatch } from "../store/configureStore";
+import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState } from "../store/entities/packs";
 
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   //const deckId = new URLSearchParams(window.location.search).get("deckId");
   //const { deck, isDeckLoading, isDeckFetching } = useDeckQuery(deckId || "43333");  // @ToDo: remove hardcoded deckId to ""
 
@@ -28,7 +29,9 @@ const MainLayout = () => {
   const cards: MCCard[] = useSelector(selectAllCards);
   const decks: MarvelDecksDict = useSelector(selectAllDecks);
   const elementsPerPage: number = useSelector(selectPaginationElementsPerPage);
-  const packStatusDict: PackStatusDict = useSelector(selectPackStatusDict);
+  const packsState: PackSliceState = useSelector(selectPackState);
+  const isAnyCardClicked: boolean = useSelector(selectIsAnyCardClicked);
+  //const packStatusDict: PackStatusDict = useSelector(selectPackStatusDict);
 
   // Filters
   // @ToDo: move to Redux
@@ -36,7 +39,8 @@ const MainLayout = () => {
 
   // Manage local storage
   useEffect(() => { removeOldLocalStorageItems(); }, []); // [] means this effect will run once after the first render
-  useEffect(() => { if (packStatusDict) saveToLocalStorage(LOCAL_STORAGE_PACK_STATUS_KEY, packStatusDict);        }, [packStatusDict]);
+  //useEffect(() => { if (packStatusDict) saveToLocalStorage(LOCAL_STORAGE_PACK_STATUS_KEY, packStatusDict);        }, [packStatusDict]);
+  useEffect(() => { if (packsState)     saveToLocalStorage(LOCAL_STORAGE_PACKS_KEY, packsState);                  }, [packsState]);
   useEffect(() => {                     saveToLocalStorage(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, elementsPerPage); }, [elementsPerPage]);
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
   useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);             }, [cards]);
@@ -46,7 +50,10 @@ const MainLayout = () => {
     const handleClickOutside = (event: MouseEvent) => {
       // Unselect card if clicked outside
       if (!hasClassInAncestors(event.target as HTMLElement /*, "mc-card"*/)) {
-        dispatch(cardCodeAllUnclicked());
+        if(isAnyCardClicked){
+          console.log('unclick all cards');
+          dispatch(cardCodeAllUnclicked());
+        }
       }
 
       // Hide asides when clicked outside
@@ -57,8 +64,10 @@ const MainLayout = () => {
         &&
         !hasClassInAncestors(event.target as HTMLElement, "main-navigation-item")  // se encarga nav
       ) {
-        console.log('clicked outside');
-        dispatch(navigationOptionKeySet("card_list"));
+        if (selectedNavigationOptionKey !== "card_list"){
+          console.log('clicked outside');
+          dispatch(navigationOptionKeySet("card_list"));
+        }
       }
     };
 
@@ -67,7 +76,7 @@ const MainLayout = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dispatch]);
+  }, [dispatch, selectedNavigationOptionKey, isAnyCardClicked]);
 
 
   // Other

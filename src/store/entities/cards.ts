@@ -1,10 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
-import cleanCards from "./cleanCards";
+import {cleanCards, sortCards} from "./cardsModificationUtils";
 
 export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
+export const CARD_PACK_URL = '/cards/';
 
 export type MCCard = {
     key?: string;
@@ -65,17 +66,22 @@ export type MCCard = {
     url?: string;
 };
 
+/* Reducer */
 const slice = createSlice({
     name: 'cards',
     initialState: getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [], //getCardsFromLocalStorage(),
     reducers: {
-        cardsAdded: (cards: MCCard[], action) => {
-            const newCards: MCCard[] = action.payload;
-            cards = [...cards, ...cleanCards(newCards)];
-            // saveCardsToLocalStorage(cards);
+        // cardsAdded: (cards: MCCard[], action) => {
+        //     const newCards: MCCard[] = action.payload;
+        //     cards = [...cards, ...cleanCards(newCards)];
+        //     // saveCardsToLocalStorage(cards);
+        //     return cards;
+        // },
+        removeAllCards: (cards: MCCard[]) => {
+            cards = [];
             return cards;
         },
-        cardPackRemoved: (cards: MCCard[], action) => {
+        cardPackRemoved: (cards: MCCard[], action: PayloadAction<string>) => {
             const packCode = action.payload
             cards = cards.filter(
                 (card: MCCard) => card.pack_code !== packCode
@@ -83,24 +89,34 @@ const slice = createSlice({
             // saveCardsToLocalStorage(cards);
             return cards;
         },
-        cardPackAdded: (cards:MCCard[], action) => {
-            const packCode = action.payload.packCode;
-            const newCards: MCCard[] = action.payload.newCards;
-            // Remove old cards of the pack
+        cardsReceived: (cards: MCCard[], action: PayloadAction<MCCard[]>) => {
+            const newCards: MCCard[] = action.payload;
+            if (newCards.length === 0) return cards;
             cards = cards.filter(
-                (card: MCCard) => card.pack_code !== packCode
+                (card: MCCard) => card.pack_code !== newCards[0].pack_code
             );
             cards = [...cards, ...cleanCards(newCards)];
-            // saveCardsToLocalStorage(cards);
+            cards = [...sortCards(cards, "code")];
             return cards;
         },
-        cardsSet: (cards: MCCard[], action) => {
-            const newCards: MCCard[] = action.payload;
-            cards = cleanCards(newCards);
-            // saveCardsToLocalStorage(cards);
-            return cards;
+        // cardPackAdded: (cards:MCCard[], action) => {
+        //     const packCode = action.payload.packCode;
+        //     const newCards: MCCard[] = action.payload.newCards;
+        //     // Remove old cards of the pack
+        //     cards = cards.filter(
+        //         (card: MCCard) => card.pack_code !== packCode
+        //     );
+        //     cards = [...cards, ...cleanCards(newCards)];
+        //     // saveCardsToLocalStorage(cards);
+        //     return cards;
+        // },
+        // cardsSet: (cards: MCCard[], action) => {
+        //     const newCards: MCCard[] = action.payload;
+        //     cards = cleanCards(newCards);
+        //     // saveCardsToLocalStorage(cards);
+        //     return cards;
 
-        },
+        // },
         cardsSorted: (cards: MCCard[], action) => {
             const fieldName: keyof MCCard = action.payload;
             cards = cards.sort((a, b) => {
@@ -125,6 +141,20 @@ const slice = createSlice({
     }
 });
 
+/* Reducer exports */
+export default slice.reducer;
+export const { 
+    //cardsAdded, 
+    cardPackRemoved,
+    cardsReceived,
+    // cardPackAdded,
+    // cardsSet,
+    removeAllCards,
+    cardsSorted
+} = slice.actions;
+
+
+/* Selectors */
 export const selectAllCards = (state: RootState) => state.entities.cards;
 export const selectNumberOfCards = createSelector(
     selectAllCards,
@@ -158,13 +188,4 @@ export const selectUniqueFieldValues = (fieldName: keyof MCCard) => createSelect
         return Array.from(values);
     }
 );
-
-export default slice.reducer;
-export const { 
-    cardsAdded, 
-    cardPackRemoved,
-    cardPackAdded,
-    cardsSet,
-    cardsSorted
-} = slice.actions;
 
