@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../configureStore";
 import { MCCard } from "../entities/cards";
 
-const MULTISELEC_VALUE_MAPPING = {
+export const MULTISELEC_VALUE_MAPPING = {
     "faction_code": "faction_name",
     "card_set_code": "card_set_name",
     "code": "name",

@@ -9,6 +9,7 @@ const ReactCompilerConfig = {
 export default defineConfig({
   plugins: [react({
     babel: {
+      presets: ["@babel/preset-env", "@babel/preset-react"],
       plugins: [
         ["babel-plugin-react-compiler", ReactCompilerConfig]
       ]

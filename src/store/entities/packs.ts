@@ -143,7 +143,7 @@ export const {
 
 
 /* Action creators */
-export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootState*/) => {
+export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootState*/): Promise<any> => {
 
     /*
     ** Get list of packs from the server 
@@ -153,14 +153,14 @@ export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootS
 
     // const diffInMinutes = moment().diff(moment(lastFetch), 'minutes');
     // if (diffInMinutes < PACKS_CACHE_TIME_IN_MINUTES) return;
-    dispatch(
+    return dispatch(
         apiCallBegan({
             url: PACKS_URL,
             onStart: packsRequested.type,
             onSuccess: packsReceived.type,
             onError: packsRequestFailed.type
         })
-    );
+    ) as any;
 }
 
 export const loadPackCards = (packCode: string) => (dispatch: Dispatch<any>) => {
