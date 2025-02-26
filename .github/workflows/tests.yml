@@ -24,14 +24,25 @@ jobs:
             - name: jest test with Coverage
               continue-on-error: true
               run: npx jest --json --outputFile=jest-results.json --coverage
-            - name: Test Report
-              uses: dorny/test-reporter@v1
-              if: success() || failure()
+            - name: Test results artifact
+              uses: actions/upload-artifact@v4
               with:
-                name: Jest Test Report
+                name: jest-results.json
                 path: jest-results.json
-                reporter: jest-junit
-            - name: Coverage Report
-              uses: ArtiomTr/jest-coverage-report-action@v2
-              if: success() || failure()
+                compression-level: 9
+            - name: Test coverage artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage
+                path: coverage/
+                compression-level: 9
+
+            - name: Publish Test Summary Results
+              run: npx github-actions-ctrf ctrf/ctrf-report.json
+
+            - name: CTRF Report Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: ctrf-report.json
+                path: ctrf/ctrf-report.json
             - run: echo "🍏 This job's status is ${{ job.status }}."
