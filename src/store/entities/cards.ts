@@ -69,7 +69,7 @@ export type MCCard = {
 /* Reducer */
 const slice = createSlice({
     name: 'cards',
-    initialState: getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [], //getCardsFromLocalStorage(),
+    initialState: getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [] as MCCard[], //getCardsFromLocalStorage(),
     reducers: {
         // cardsAdded: (cards: MCCard[], action) => {
         //     const newCards: MCCard[] = action.payload;
@@ -163,24 +163,24 @@ export const selectNumberOfCards = createSelector(
 
 export const selectCardByCode = (cardCode: string) => createSelector(
     selectAllCards,
-    (cards) => cards.find(card => card.code === cardCode)
+    (cards) => cards.find((card: MCCard) => card.code === cardCode)
 );
 
 export const selectCardsByCodes = (cardCodes: string[]) => createSelector(
     selectAllCards,
-    (cards) => cards.filter(card => cardCodes.includes(card.code))
+    (cards) => cards.filter((card: MCCard) => cardCodes.includes(card.code))
 );
 
 export const selectCardsByPack = (packCode: string) => createSelector(
     selectAllCards,
-    (cards) => cards.filter(card => card.pack_code === packCode)
+    (cards) => cards.filter((card: MCCard) => card.pack_code === packCode)
 );
 
 export const selectUniqueFieldValues = (fieldName: keyof MCCard) => createSelector(
     selectAllCards,
     (cards) => {
         const values = new Set<string>();
-        cards.forEach(card => {
+        cards.forEach((card: MCCard) => {
             if (card[fieldName]) {
                 values.add(card[fieldName] as string);
             }

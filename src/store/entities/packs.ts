@@ -164,7 +164,7 @@ export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootS
 }
 
 export const loadPackCards = (packCode: string) => (dispatch: Dispatch<any>) => {
-    dispatch(
+    return dispatch(
         apiCallBegan({
             url: PACK_CARDS_URL + packCode + '.json',
             onStart: packCardsRequested(packCode).type,

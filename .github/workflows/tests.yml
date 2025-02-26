@@ -1,0 +1,25 @@
+name: Test npm
+run-name: ${{ github.actor }} is testing NPM package using GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - '*' # Run on all branches
+  pull_request:
+    branches:
+      - '*' # Run on all branches
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: '22.x'
+                registry-url: 'https://registry.npmjs.org'
+            - name: Install dependencies
+              run: npm i
+            - name: Test NPM
+              run: npm run test
+            - run: echo "🍏 This job's status is ${{ job.status }}."
