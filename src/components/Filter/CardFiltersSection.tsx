@@ -3,17 +3,20 @@ import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
 import { useEffect, HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
-import BooleanFilter from "./BooleanFilter";
 import StringFilter from "./StringFilter";
-import NumberFilter from "./NumberFilter";
 import { FaEraser, FaFilter } from "react-icons/fa6";
 import { VscSymbolString } from "react-icons/vsc";
 import { MdNumbers, MdCheckBox } from "react-icons/md";
 import { TbBracketsContain, TbCards } from "react-icons/tb";
 import { GoMultiSelect } from "react-icons/go";
-import MultiselectFilterNew from "./MultiselectFilterNew";
 import PaginationElementsPerPageFilter from "./PaginationElementsPerPageFilter";
 import MultiselectFilterRedux from "./MultiselectFilterRedux";
+import NumberFilterRedux from "./NumberFilterRedux";
+import StringFilterRedux from "./StringFilterRedux";
+import BooleanFilterRedux from "./BooleanFilterRedux";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../store/configureStore";
+import { resetFilters } from "../../store/ui/filters";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -93,9 +96,9 @@ const CardFiltersView = ({
   uniqueFilterOptions,
   ...rest
 }: Props) => {
-  
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation("filters");
-  const { control, watch, reset } = useForm<MCCard>({
+  const { control, watch } = useForm<MCCard>({
     mode: "onChange",
   });
 
@@ -154,7 +157,6 @@ const CardFiltersView = ({
     (field) => field.type === "number"
   );
 
-
   return (
     <section {...rest}>
       <h3><FaFilter /> {t('filters')}</h3>
@@ -175,36 +177,21 @@ const CardFiltersView = ({
               );
             })}
         </details>
-
         <details>
-            <summary>{t("multiselect_filters_title")} <GoMultiSelect /></summary>
-            {multiselectFields.map((field) => {
-              const uniqueOptions: UniqueFilterOptions = uniqueFilterOptions.find(
-                (filterOptions) => filterOptions.fieldName === field.name
-              ) || { fieldName: "wrong!" as keyof MCCard, fieldValueName: "wrong!" as keyof MCCard, options: new Map<string, string>() };
-              return (
-                <MultiselectFilterNew
-                    key={`multiselect_filter_${field.name}`}
-                    control={control}
-                    uniqueFilterOptions={uniqueOptions}
-                />
-              );
-            })}
-        </details>
-        <details>
-            <summary>{t("contains_filters_title")} <TbBracketsContain /></summary>
+            <summary>{t("contains_filters_title")} (redux) <TbBracketsContain /></summary>
             {containsFields.map((field) => (
-                <StringFilter
+                <StringFilterRedux
                     key={`contains_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
                 />
             ))}
         </details>
+
         <details>
-            <summary>{t("number_filters_title")} <MdNumbers /></summary>
+            <summary>{t("number_filters_title")} (redux) <MdNumbers /></summary>
             {numberFields.map((field) => (
-                <NumberFilter
+                <NumberFilterRedux
                     key={`number_filter_${field.name}`}
                     control={control}
                     fieldName={field.name as keyof MCCard}
@@ -212,16 +199,17 @@ const CardFiltersView = ({
             ))}
         </details>
         <details>
-            <summary>{t("boolean_filters_title")} <MdCheckBox /></summary>
+            <summary>{t("boolean_filters_title")} (redux) <MdCheckBox /></summary>
 
             {booleanFields.map((field) => (
-            <BooleanFilter
+            <BooleanFilterRedux
                 key={`boolean_filter_${field.name}`}
                 control={control}
                 fieldName={field.name as keyof MCCard}
             />
             ))}
         </details>
+
         <details>
             <summary>{t("string_filters_title")} <VscSymbolString /></summary>
             {stringFields.map((field) => (
@@ -236,7 +224,8 @@ const CardFiltersView = ({
           type="reset" 
           title={t("reset")}
           className="btn btn-outline-danger mt-3" onClick={() => {
-          reset({});
+            dispatch(resetFilters());
+          //reset({});
         }}>
           <FaEraser /> {t("reset_filters")}
         </button>

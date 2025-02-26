@@ -4,6 +4,6 @@ export default {
   transform: {
     "^.+\.tsx?$": ["ts-jest",{}],
   },
-  setupFiles: ["<rootDir>/src/store/tests/setupTests.ts"],
+  setupFiles: ["<rootDir>/src/tests/setupTests.ts"],
   setupFilesAfterEnv: ["jest-fetch-mock"],
 };

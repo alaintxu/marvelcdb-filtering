@@ -7,11 +7,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 import IconForConcept from "../IconForConcept";
 import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other";
-import { selectQuickFilter } from "../../store/ui/filters";
+import { FiltersByTypes, selectFilters, selectQuickFilter } from "../../store/ui/filters";
 import TopActions from "../TopActions";
-import { quickFilterCardList } from "../Filter/QuickSearchFilter";
+import { normalizeString, quickFilterCardList } from "../Filter/QuickSearchFilter";
 import { AppDispatch } from "../../store/configureStore";
+import { sortCards } from "../../store/entities/cardsModificationUtils";
 
+
+const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
+  // @ToDo: add multiselect filters
+  console.warn('multiselect filters not implemented yet');
+  return cards.filter((card) => {
+    for (const key of Object.keys(filters['number'])) {
+      const mcKey = key as keyof MCCard;
+      const value = filters['number'][mcKey];
+      if (value!==undefined && card[mcKey] !== value) {
+        return false;
+      }
+    }
+    for (const key of Object.keys(filters['string'])) {
+      const mcKey = key as keyof MCCard;
+      const value = normalizeString(filters['string'][mcKey]);
+      const cardValue = normalizeString(card[mcKey]);
+      if (value!==undefined && typeof cardValue === 'string' && cardValue.includes(value) === false) {
+        return false;
+      }
+    }
+    for (const key of Object.keys(filters['boolean'])) {
+      const mcKey = key as keyof MCCard;
+      const value = filters['boolean'][mcKey];
+      if (value!==undefined && card[mcKey] !== value) {
+        return false
+      }
+    }
+    return true;
+  });
+};
 const CardsView = () => {
   const { t } = useTranslation('global');
 
@@ -25,6 +56,7 @@ const CardsView = () => {
   const showAllCardData = useSelector(selectShowAllCardData);
   const flipAllCards = useSelector(selectFlipAllCards);
   const quickFilter = useSelector(selectQuickFilter);
+  const filters: FiltersByTypes = useSelector(selectFilters);
 
 
   //const filters = useSelector((state: RootState) => state.filters);
@@ -32,11 +64,12 @@ const CardsView = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    /* @ToDo: Do filter the cards */
-    console.warn('Filtering cards is not implemented yet');
-    const quickFilteredCards = quickFilterCardList(cards, quickFilter);
-    setFilteredCards(quickFilteredCards);
-  }, [cards, quickFilter /*, filters*/]);
+    const filteredCards = filterCards(cards, filters);
+    const quickFilteredCards = quickFilterCardList(filteredCards, quickFilter);
+    const sortedCards = sortCards(quickFilteredCards);
+    setFilteredCards(sortedCards);
+  }, [cards, quickFilter, filters]);
+
   useEffect(() => {
     dispatch(paginationTotalElementsUpdated(filteredCards?.length || 0));
   }, [filteredCards]);

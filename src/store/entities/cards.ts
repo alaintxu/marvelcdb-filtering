@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
-import {cleanCards, sortCards} from "./cardsModificationUtils";
+import {cleanCards} from "./cardsModificationUtils";
 
 export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
 export const CARD_PACK_URL = '/cards/';
@@ -66,6 +66,7 @@ export type MCCard = {
     url?: string;
 };
 
+
 /* Reducer */
 const slice = createSlice({
     name: 'cards',
@@ -96,7 +97,7 @@ const slice = createSlice({
                 (card: MCCard) => card.pack_code !== newCards[0].pack_code
             );
             cards = [...cards, ...cleanCards(newCards)];
-            cards = [...sortCards(cards, "code")];
+            //cards = [...sortCards(cards, "code")];
             return cards;
         },
         // cardPackAdded: (cards:MCCard[], action) => {
@@ -117,27 +118,27 @@ const slice = createSlice({
         //     return cards;
 
         // },
-        cardsSorted: (cards: MCCard[], action) => {
-            const fieldName: keyof MCCard = action.payload;
-            cards = cards.sort((a, b) => {
-                const aValue = a[fieldName];
-                const bValue = b[fieldName];
-                if (typeof aValue === "string" && typeof bValue === "string") {
-                    return aValue.localeCompare(bValue);
-                } else if (typeof aValue === "number" && typeof bValue === "number") {
-                    return aValue - bValue;
-                } else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-                    return aValue ? 1 : -1;
-                } else if (aValue == null && bValue == null) {
-                    return 0;
-                } else if (aValue == null) {
-                    return -1;
-                } else if (bValue == null) {
-                    return 1;
-                }
-                return 0;
-            })
-        }
+        // cardsSorted: (cards: MCCard[], action) => {
+        //     const fieldName: keyof MCCard = action.payload;
+        //     cards = cards.sort((a, b) => {
+        //         const aValue = a[fieldName];
+        //         const bValue = b[fieldName];
+        //         if (typeof aValue === "string" && typeof bValue === "string") {
+        //             return aValue.localeCompare(bValue);
+        //         } else if (typeof aValue === "number" && typeof bValue === "number") {
+        //             return aValue - bValue;
+        //         } else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+        //             return aValue ? 1 : -1;
+        //         } else if (aValue == null && bValue == null) {
+        //             return 0;
+        //         } else if (aValue == null) {
+        //             return -1;
+        //         } else if (bValue == null) {
+        //             return 1;
+        //         }
+        //         return 0;
+        //     })
+        // }
     }
 });
 
@@ -150,7 +151,7 @@ export const {
     // cardPackAdded,
     // cardsSet,
     removeAllCards,
-    cardsSorted
+    //cardsSorted
 } = slice.actions;
 
 

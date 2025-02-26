@@ -5,20 +5,18 @@ import {
 import { useTranslation } from "react-i18next";
 import { MCCard } from "../../store/entities/cards";
 import { MdCheckBox, MdIndeterminateCheckBox, MdCheckBoxOutlineBlank  } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../store/configureStore";
+import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
 
 interface Props {
   control: Control<MCCard>;
   fieldName: keyof MCCard;
 }
 
-const getQueryParamBooleanValue = (fieldName: string) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const value = urlParams.get(fieldName);
-  return value === "true" ? true : value === "false" ? false : undefined;
-}
-
-const BooleanFilter = ({ control, fieldName }: Props) => {
-  const defaultValue = getQueryParamBooleanValue(fieldName);
+const BooleanFilterRedux = ({ control, fieldName }: Props) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const storeValue = useSelector(selectFilterValues("boolean", fieldName)) as boolean | undefined;
   const { t } = useTranslation("filters");
   
   return (
@@ -32,24 +30,24 @@ const BooleanFilter = ({ control, fieldName }: Props) => {
         }}
       >
         {t(fieldName)}
-        {defaultValue === undefined ? <MdIndeterminateCheckBox className="mb-1 ms-2" /> : defaultValue ? <MdCheckBox  className="mb-1 ms-2" /> : <MdCheckBoxOutlineBlank  className="mb-1 ms-2" />}
+        {storeValue === undefined ? <MdIndeterminateCheckBox className="mb-1 ms-2" /> : storeValue ? <MdCheckBox  className="mb-1 ms-2" /> : <MdCheckBoxOutlineBlank  className="mb-1 ms-2" />}
       </label>
       <br />
       <div className="btn-group" role="group" aria-label={t(fieldName)}>
         <Controller
           name={fieldName}
           control={control}
-          defaultValue={defaultValue}
-          render={({ field }) => (
+          defaultValue={storeValue}
+          render={() => (
             <>
               <input
                 type="radio"
                 className="btn-check"
                 id={`filter_${fieldName}_disable`}
                 value="disabled"
-                checked={field.value === undefined}
+                checked={storeValue === undefined}
                 onChange={(e) => {
-                  if (e.target.checked) field.onChange(undefined);
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: undefined }));
                 }}
               />
               <label
@@ -64,9 +62,9 @@ const BooleanFilter = ({ control, fieldName }: Props) => {
                 className="btn-check"
                 id={`filter_${fieldName}_false`}
                 value="false"
-                checked={field.value === false}
+                checked={storeValue === false}
                 onChange={(e) => {
-                  if (e.target.checked) field.onChange(false);
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: false }));
                 }}
               />
               <label
@@ -82,9 +80,9 @@ const BooleanFilter = ({ control, fieldName }: Props) => {
                 className="btn-check"
                 id={`filter_${fieldName}_true`}
                 value="true"
-                checked={field.value === true}
+                checked={storeValue === true}
                 onChange={(e) => {
-                  if (e.target.checked) field.onChange(true);
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: true }));
                 }}
               />
               <label
@@ -102,4 +100,4 @@ const BooleanFilter = ({ control, fieldName }: Props) => {
   );
 };
 
-export default BooleanFilter;
+export default BooleanFilterRedux;

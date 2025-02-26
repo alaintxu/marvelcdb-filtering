@@ -1,5 +1,5 @@
-import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards, Pack } from "../entities/packs";
-import { createStore, RootState, StoreType } from "../configureStore";
+import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards, Pack } from "../store/entities/packs";
+import { createStore, RootState, StoreType } from "../store/configureStore";
 import fetchMock from "jest-fetch-mock";
 
 const MOCK_BASE_PATH = "http://localhost:3000";

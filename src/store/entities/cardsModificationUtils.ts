@@ -1,6 +1,6 @@
 import { MCCard } from "./cards";
 
-export const sortCards = (cards: MCCard[], fieldName: keyof MCCard) => {
+export const sortCards = (cards: MCCard[], fieldName: keyof MCCard="code"): MCCard[] => {
     return cards.sort((a, b) => {
         const aValue = a[fieldName];
         const bValue = b[fieldName];

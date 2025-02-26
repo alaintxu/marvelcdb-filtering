@@ -59,7 +59,13 @@ export const QUICK_SEARCH_FIELDS: Array<keyof MCCard> = [
     'thwart'
 ];
 
-const normalizeString = (value: string) => {
+export const normalizeString = (value?: any) => {
+    if (!value) {
+        return "";
+    }
+    if(typeof value !== 'string') {
+        value = value.toString();
+    }
     return value.normalize('NFD')
     .replace(/([aeio])\u0301|(u)[\u0301\u0308]/gi,"$1$2")
     .normalize()
@@ -91,7 +97,7 @@ const QuickSearchFilter = () => {
     const { t } = useTranslation("filters");
     const dispatch = useDispatch<AppDispatch>();
     const quickFilter = useSelector(selectQuickFilter);
-    const timeoutRef = React.useRef<number | null>(null);
+    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const [quickFilterValue, setQuickFilterValue] = useState(quickFilter);
 
     const delayedDispatch = useCallback((value: string) => {

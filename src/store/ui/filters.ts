@@ -11,23 +11,24 @@ export const MULTISELEC_VALUE_MAPPING = {
 }
 
 
+export type FiltersByTypes = {
+    "boolean": {
+        [key in keyof MCCard]?: boolean
+    },
+    "multiselect": {
+        [key in keyof MCCard]?: string[]
+    },
+    "number": {
+        [key in keyof MCCard]?: number
+    },
+    "string": {
+        [key in keyof MCCard]?: string
+    },
+}
 
 type FiltersState = {
     quickFilter: string,
-    filters: {
-        "boolean": {
-            [key in keyof MCCard]?: boolean
-        },
-        "multiselect": {
-            [key in keyof MCCard]?: string[]
-        },
-        "number": {
-            [key in keyof MCCard]?: number
-        },
-        "string": {
-            [key in keyof MCCard]?: string
-        },
-    },
+    filters: FiltersByTypes,
     traits: string[]
 }
 
@@ -40,21 +41,37 @@ const slice = createSlice({
             "multiselect": {},
             "number": {},
             "string": {},
-        },
-        traits: [],
+        } as FiltersByTypes,
+        traits: [] as string[],
     } as FiltersState,
     reducers: {
         quickFilterSet: (state: FiltersState, action: PayloadAction<string>) => {
             state.quickFilter = action.payload;
             return state;
         },
-        filterUpdated: (state: FiltersState, action: PayloadAction<{ filterType: keyof FiltersState["filters"], fieldName: keyof MCCard, values: any }>) => {
+        filterUpdated: (
+            state: FiltersState, 
+            action: PayloadAction<{ 
+                filterType: keyof FiltersState["filters"], 
+                fieldName: keyof MCCard, values: boolean | string[] | number | string | undefined
+            }>
+        ) => {
             const { filterType, fieldName, values } = action.payload;
             state.filters[filterType][fieldName] = values;
             return state;
         },
         filterTraitsUpdated: (state: FiltersState, action: PayloadAction<string[]>) => {
             state.traits = action.payload;
+            return state;
+        },
+        resetFilters: (state: FiltersState) => {
+            state.filters = {
+                "boolean": {},
+                "multiselect": {},
+                "number": {},
+                "string": {},
+            };
+            state.traits = [];
             return state;
         }
     }
@@ -84,5 +101,6 @@ export const selectTrait = createSelector(
 export default slice.reducer;
 export const {
     quickFilterSet,
-    filterUpdated
+    filterUpdated,
+    resetFilters,
 } = slice.actions;
