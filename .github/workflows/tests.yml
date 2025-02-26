@@ -2,15 +2,16 @@ name: Test npm
 run-name: ${{ github.actor }} is testing NPM package using GitHub Actions 🚀
 on:
   push:
-    branches:
-      - '*' # Run on all branches
   pull_request:
-    branches:
-      - '*' # Run on all branches
 
 jobs:
     test:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            checks: write
+            statuses: write
+            pull-requests: write
         steps:
             - name: Check out repository code
               uses: actions/checkout@v4
@@ -20,6 +21,17 @@ jobs:
                 registry-url: 'https://registry.npmjs.org'
             - name: Install dependencies
               run: npm i
-            - name: Test NPM
-              run: npm run test
+            - name: jest test with Coverage
+              continue-on-error: true
+              run: npx jest --json --outputFile=jest-results.json --coverage
+            - name: Test Report
+              uses: dorny/test-reporter@v1
+              if: success() || failure()
+              with:
+                name: Jest Test Report
+                path: jest-results.json
+                reporter: jest-junit
+            - name: Coverage Report
+              uses: ArtiomTr/jest-coverage-report-action@v2
+              if: success() || failure()
             - run: echo "🍏 This job's status is ${{ job.status }}."
