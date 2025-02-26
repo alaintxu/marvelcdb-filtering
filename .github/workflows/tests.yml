@@ -36,13 +36,4 @@ jobs:
                 name: coverage
                 path: coverage/
                 compression-level: 9
-
-            - name: Publish Test Summary Results
-              run: npx github-actions-ctrf ctrf/ctrf-report.json
-
-            - name: CTRF Report Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: ctrf-report.json
-                path: ctrf/ctrf-report.json
             - run: echo "🍏 This job's status is ${{ job.status }}."
