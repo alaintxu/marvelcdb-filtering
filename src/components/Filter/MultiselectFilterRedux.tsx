@@ -2,24 +2,30 @@ import {
   Controller,
   Control,
 } from "react-hook-form";
-import Select from 'react-select';
+import Select, { GroupBase, OptionsOrGroups } from 'react-select';
 import { useTranslation } from "react-i18next";
-import { MCCard, selectUniqueFieldValues } from "../../store/entities/cards";
+import { MCCard, selectUniqueFieldOptions } from "../../store/entities/cards";
 import { useDispatch, useSelector } from "react-redux";
-import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
+import { FieldOption, filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import { AppDispatch } from "../../store/configureStore";
 
 interface Props {
   control: Control<MCCard>;
-  fieldName: keyof MCCard;
+  fieldCode: keyof MCCard;
 }
 
-const MultiselectFilterNew = ({ control, fieldName }: Props) => {
+const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
+  const fieldName = fieldCode.replace("code", "name") as keyof MCCard;
   // @ToDo: selectUniqueFieldValues should return Map<string, string> (code, value), now it return code[]
-  const uniqueFieldValues = useSelector(selectUniqueFieldValues(fieldName));
+  const uniqueFieldCodeNames: FieldOption[] = useSelector(selectUniqueFieldOptions(fieldCode, fieldName));
+
+  console.log("uniqueFieldCodeNames", uniqueFieldCodeNames);
+  const options: OptionsOrGroups<unknown, GroupBase<unknown>> = uniqueFieldCodeNames.map((option: FieldOption) => {
+    return { value: option.value, label: option.label };
+  });
   //console.log("uniqueFieldValues", uniqueFieldValues);
-  const defaultValue = useSelector(selectFilterValues("multiselect", fieldName)) as string[] ?? [];
+  const defaultValues = useSelector(selectFilterValues("multiselect", fieldCode)) as string[] ?? [];
   
   const { t } = useTranslation("filters");
 
@@ -40,14 +46,16 @@ const MultiselectFilterNew = ({ control, fieldName }: Props) => {
         <Controller
           name={fieldName}
           control={control}
-          defaultValue={defaultValue as any}
           render={() => (<>
             <Select
-              options={uniqueFieldValues.map(([key, value]) => ({ value: key, label: value }))}
+              options={options}
+              placeholder={`${options.slice(0, 2).map(option => (option as { label: string }).label).join(', ')}...`}
               isMulti
+              value={(options as FieldOption[]).filter((option: FieldOption) => defaultValues.includes(option.value))}
               onChange={(selectedOptions: any) => {
                 const values = selectedOptions.map((option: any) => option.value.toLocaleLowerCase());
-                dispatch(filterUpdated({ filterType: "multiselect", fieldName: fieldName, values: values }));
+
+                dispatch(filterUpdated({ filterType: "multiselect", fieldCode: fieldCode, values: values.length > 0 ? values : undefined }));
                 //field.onChange(values);
               }} />
           </>

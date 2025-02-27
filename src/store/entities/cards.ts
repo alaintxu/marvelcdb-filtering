@@ -3,6 +3,7 @@ import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
 import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 import {cleanCards} from "./cardsModificationUtils";
+import { FieldOption } from "../ui/filters";
 
 export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
 export const CARD_PACK_URL = '/cards/';
@@ -189,4 +190,31 @@ export const selectUniqueFieldValues = (fieldName: keyof MCCard) => createSelect
         return Array.from(values);
     }
 );
+
+export const selectUniqueFieldOptions = (fieldCode: keyof MCCard, fieldName: keyof MCCard) => createSelector(
+    selectAllCards,
+    (cards) => {
+        const foundCodes = new Set<string>();
+        const values: FieldOption[] = [];
+        cards.forEach((card: MCCard) => {
+            if (card[fieldCode] && !foundCodes.has(card[fieldCode] as string) && card[fieldName]) {
+                values.push({ value: card[fieldCode] as string, label: card[fieldName] as string });
+                foundCodes.add(card[fieldCode] as string);0
+            }
+        }
+        );
+        return Array.from(values);
+    }
+);
+
+export const selectFieldOption = (fieldCode: keyof MCCard, fieldCodeValue: any, fieldName?: keyof MCCard): ((state: RootState) => FieldOption | undefined) => createSelector(
+    selectAllCards,
+    (cards) => {
+        if (!fieldName) fieldName = fieldCode.replace("code", "name") as keyof MCCard;
+        const card: MCCard | undefined = cards.find((card: MCCard) => card[fieldCode] && card[fieldCode] === fieldCodeValue);
+        if (!card) return undefined;
+        return { value: card[fieldCode] as string, label: card[fieldName] as string };
+    }
+);
+
 

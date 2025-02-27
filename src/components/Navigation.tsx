@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-
-//import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
 import { useDispatch, useSelector } from "react-redux";
 import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
 import LoadingSpinner from './LoadingSpinner';
@@ -11,6 +9,7 @@ import IconForConcept from './IconForConcept';
 import { selectCurrentDeck } from '../store/entities/decks';
 import { AppDispatch } from '../store/configureStore';
 import { selectIsAnyPackDownloading } from '../store/entities/packs';
+import NumberOfFiltersBadge from './Filter/NumberOfFiltersBadge';
 
 
 type IconDict = {
@@ -38,6 +37,9 @@ const Navigation = () => {
         break;
       case "card_list":
         additionalElement = !currentDeck ? <CardPaginationNumberBadge /> : <></>;
+        break;
+      case "filters":
+        additionalElement = <NumberOfFiltersBadge />;
         break;
     }
     return additionalElement;

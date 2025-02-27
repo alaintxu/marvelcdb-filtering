@@ -233,8 +233,15 @@ img {
     left: -200px;
 }
 
+#top-actions {
+    z-index: 2;
+}
+
 #filters {
     right: -200px;
+}
+#quick-search-filter {
+    max-width: 60ch;
 }
 
 #main-section {
@@ -284,7 +291,6 @@ img {
 #main-navigation {
     width: '100%';
     background-color: black;
-    z-index: 100;
 }
 
 #mc-card-list-actions {
@@ -292,7 +298,6 @@ img {
     top: 1em;
     right: 1.5em;
     transition: right 400ms;
-    z-index: 100;
     display: flex;
     flex-direction: column;
     gap: 4px
@@ -301,7 +306,6 @@ img {
 #pagination-container {
     position: sticky;
     bottom: 0;
-    z-index: 500;
     box-shadow: 0 -4px 4px #0000001C;
 
     & .pagination {
@@ -314,4 +318,10 @@ img {
 }
 .markdown-no-margin > :last-child {
     margin-bottom: 0;
+}
+
+.two-column-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: .5em;
 }

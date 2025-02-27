@@ -11,16 +11,16 @@ import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
 
 interface Props {
   control: Control<MCCard>;
-  fieldName: keyof MCCard;
+  fieldCode: keyof MCCard;
 }
 
-const BooleanFilterRedux = ({ control, fieldName }: Props) => {
+const BooleanFilterRedux = ({ control, fieldCode }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
-  const storeValue = useSelector(selectFilterValues("boolean", fieldName)) as boolean | undefined;
+  const storeValue = useSelector(selectFilterValues("boolean", fieldCode)) as boolean | undefined;
   const { t } = useTranslation("filters");
   
   return (
-    <div key={`filter_${fieldName}`} className="mb-3">
+    <div key={`filter_${fieldCode}`}>
       <label
         style={{
           fontSize: "0.75rem",
@@ -29,13 +29,13 @@ const BooleanFilterRedux = ({ control, fieldName }: Props) => {
           color: "white",
         }}
       >
-        {t(fieldName)}
+        {t(fieldCode)}
         {storeValue === undefined ? <MdIndeterminateCheckBox className="mb-1 ms-2" /> : storeValue ? <MdCheckBox  className="mb-1 ms-2" /> : <MdCheckBoxOutlineBlank  className="mb-1 ms-2" />}
       </label>
       <br />
-      <div className="btn-group" role="group" aria-label={t(fieldName)}>
+      <div className="btn-group" role="group" aria-label={t(fieldCode)}>
         <Controller
-          name={fieldName}
+          name={fieldCode}
           control={control}
           defaultValue={storeValue}
           render={() => (
@@ -43,16 +43,16 @@ const BooleanFilterRedux = ({ control, fieldName }: Props) => {
               <input
                 type="radio"
                 className="btn-check"
-                id={`filter_${fieldName}_disable`}
+                id={`filter_${fieldCode}_disable`}
                 value="disabled"
                 checked={storeValue === undefined}
                 onChange={(e) => {
-                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: undefined }));
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldCode: fieldCode, values: undefined }));
                 }}
               />
               <label
                 className="btn btn-outline-primary"
-                htmlFor={`filter_${fieldName}_disable`}
+                htmlFor={`filter_${fieldCode}_disable`}
                 title={t("filter_disabled")}
               >
                 <MdIndeterminateCheckBox />
@@ -60,16 +60,16 @@ const BooleanFilterRedux = ({ control, fieldName }: Props) => {
               <input
                 type="radio"
                 className="btn-check"
-                id={`filter_${fieldName}_false`}
+                id={`filter_${fieldCode}_false`}
                 value="false"
                 checked={storeValue === false}
                 onChange={(e) => {
-                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: false }));
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldCode: fieldCode, values: false }));
                 }}
               />
               <label
                 className="btn btn-outline-primary"
-                htmlFor={`filter_${fieldName}_false`}
+                htmlFor={`filter_${fieldCode}_false`}
                 title={t("filter_false")}
               >
                 <MdCheckBoxOutlineBlank />
@@ -78,16 +78,16 @@ const BooleanFilterRedux = ({ control, fieldName }: Props) => {
               <input
                 type="radio"
                 className="btn-check"
-                id={`filter_${fieldName}_true`}
+                id={`filter_${fieldCode}_true`}
                 value="true"
                 checked={storeValue === true}
                 onChange={(e) => {
-                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldName: fieldName, values: true }));
+                  if (e.target.checked) dispatch(filterUpdated({ filterType: "boolean", fieldCode: fieldCode, values: true }));
                 }}
               />
               <label
                 className="btn btn-outline-primary"
-                htmlFor={`filter_${fieldName}_true`}
+                htmlFor={`filter_${fieldCode}_true`}
                 title={t("filter_true")}
               >
                 <MdCheckBox />

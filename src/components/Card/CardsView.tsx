@@ -15,29 +15,43 @@ import { sortCards } from "../../store/entities/cardsModificationUtils";
 
 
 const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
-  // @ToDo: add multiselect filters
-  console.warn('multiselect filters not implemented yet');
   return cards.filter((card) => {
+    // @ToDo: dotted filters (traits)
+    for (const key of Object.keys(filters['boolean'])) {
+      const mcKey = key as keyof MCCard;
+      const filterValue = filters['boolean'][mcKey];
+      const cardValue = card[mcKey];
+      if (filterValue!==undefined && cardValue !== filterValue) {
+        return false
+      }
+    }
     for (const key of Object.keys(filters['number'])) {
       const mcKey = key as keyof MCCard;
-      const value = filters['number'][mcKey];
-      if (value!==undefined && card[mcKey] !== value) {
+      const filterValue = filters['number'][mcKey];
+      const cardValue = card[mcKey];
+      if (filterValue!==undefined && cardValue !== filterValue) {
+        // Card value does not match filter
         return false;
+      }
+    }
+    for (const key of Object.keys(filters['multiselect'])) {
+      const mcKey = key as keyof MCCard;
+      const filterValues = filters['multiselect'][mcKey];
+      const cardValue = card[mcKey]?.toString();
+      if (filterValues!==undefined && filterValues.length){
+        // Filter is set and has values
+        if (cardValue === undefined || filterValues.includes(cardValue) === false) {
+          // Card value does not match filter
+          return false;
+        }
       }
     }
     for (const key of Object.keys(filters['string'])) {
       const mcKey = key as keyof MCCard;
-      const value = normalizeString(filters['string'][mcKey]);
+      const filterValue = normalizeString(filters['string'][mcKey]);
       const cardValue = normalizeString(card[mcKey]);
-      if (value!==undefined && typeof cardValue === 'string' && cardValue.includes(value) === false) {
+      if (filterValue!==undefined && typeof cardValue === 'string' && cardValue.includes(filterValue) === false) {
         return false;
-      }
-    }
-    for (const key of Object.keys(filters['boolean'])) {
-      const mcKey = key as keyof MCCard;
-      const value = filters['boolean'][mcKey];
-      if (value!==undefined && card[mcKey] !== value) {
-        return false
       }
     }
     return true;

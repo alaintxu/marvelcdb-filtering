@@ -122,7 +122,7 @@ const QuickSearchFilter = () => {
     };
 
   return (
-    <div className="input-group" id="quick-search-filter" style={{maxWidth: '60ch'}}>
+    <div className="input-group mx-2" id="quick-search-filter">
         <label htmlFor="quick-search-input" className="input-group-text">
             <IconForConcept concept="search" />
         </label>
@@ -135,7 +135,7 @@ const QuickSearchFilter = () => {
             onChange={handleChange}
             />
         <button className="btn btn-outline-danger" onClick={resetValue} type="button">
-            <IconForConcept concept="delete" />
+            <IconForConcept concept="erase" />
         </button>
     </div>
   )

@@ -1,11 +1,9 @@
 import { MCCard } from "../../store/entities/cards";
 import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
-import { useEffect, HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
-import StringFilter from "./StringFilter";
-import { FaEraser, FaFilter } from "react-icons/fa6";
-import { VscSymbolString } from "react-icons/vsc";
+import { FaEraser } from "react-icons/fa6";
 import { MdNumbers, MdCheckBox } from "react-icons/md";
 import { TbBracketsContain, TbCards } from "react-icons/tb";
 import { GoMultiSelect } from "react-icons/go";
@@ -14,68 +12,23 @@ import MultiselectFilterRedux from "./MultiselectFilterRedux";
 import NumberFilterRedux from "./NumberFilterRedux";
 import StringFilterRedux from "./StringFilterRedux";
 import BooleanFilterRedux from "./BooleanFilterRedux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../store/configureStore";
-import { resetFilters } from "../../store/ui/filters";
+import { 
+  resetFilters, 
+  KEY_VALUE_FILTERS, 
+  STRING_FILTERS, 
+  NUMBER_FILTERS, 
+  BOOLEAN_FILTERS, 
+  selectNumberOfFiltersByType
+} from "../../store/ui/filters";
+import IconForConcept from "../IconForConcept";
+import NumberOfFiltersBadge from "./NumberOfFiltersBadge";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
   type: "string" | "number" | "boolean"
 }
-export const MCCardFilterableFields = [
-  { name: "cost", type: "number" },
-  { name: "thwart", type: "number" },
-  { name: "attack", type: "number" },
-  { name: "defense", type: "number" },
-  { name: "threat", type: "number" },
-  { name: "hand_size", type: "number" },
-  { name: "health", type: "number" },
-  { name: "base_threat", type: "number" },
-  { name: "quantity", type: "number" },
-  { name: "position", type: "number" },
-  { name: "set_position", type: "number" },
-  /*{ name: "spoiler", type: "number" },*/
-  { name: "is_unique", type: "boolean" },
-  { name: "permanent", type: "boolean" },
-  { name: "health_per_hero", type: "boolean" },
-  { name: "thwart_star", type: "boolean" },
-  { name: "attack_star", type: "boolean" },
-  { name: "threat_fixed", type: "boolean" },
-  { name: "base_threat_fixed", type: "boolean" },
-  { name: "hidden", type: "boolean" },
-  { name: "double_sided", type: "boolean" },
-  { name: "escalation_threat_fixed", type: "boolean" },
-  { name: "traits", type: "multiselect", value_name: "traits", dotted: true },
-  { name: "faction_code", type: "multiselect", value_name: "faction_name" },
-  // { name: "faction_name", type: "multiselect", key_name: "faction_code" },
-  { name: "pack_code", type: "multiselect", value_name: "pack_name" },
-  // { name: "pack_name", type: "multiselect", key_name: "pack_code" },
-  { name: "type_code", type: "multiselect", value_name: "type_name" },
-  // { name: "type_name", type: "multiselect", key_name: "type_code" },
-  { name: "card_set_code", type: "multiselect", value_name: "card_set_name" },
-  // { name: "card_set_name", type: "multiselect", key_name: "card_set_code" },
-  { name: "duplicate_of_code", type: "string" },
-  { name: "duplicate_of_name", type: "string" },
-  { name: "card_set_type_name_code", type: "string" },
-  { name: "back_flavor", type: "string" },
-  { name: "back_text", type: "string" },
-  { name: "backimagesrc", type: "string" },
-  { name: "code", type: "string" },
-  { name: "flavor", type: "string" },
-  /*{ name: "imagesrc", type: "string" },*/
-  /* ToDo: Manage this field */
-  /*{ name: "linked_card", type: "MCCard" },*/
-  { name: "linked_to_code", type: "string" },
-  { name: "linked_to_name", type: "string" },
-  { name: "octgn_id", type: "string" },
-  { name: "name", type: "contains" },
-  { name: "real_name", type: "contains" },
-  { name: "text", type: "contains" },
-  { name: "real_text", type: "contains" },
-  { name: "real_traits", type: "string" },
-  { name: "subname", type: "contains" },
-  /*{ name: "url", type: "string" }*/
-];
 
 export type UniqueFilterOptions = {
   fieldName: keyof MCCard,
@@ -98,134 +51,155 @@ const CardFiltersView = ({
 }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation("filters");
-  const { control, watch } = useForm<MCCard>({
+  const { control, reset } = useForm<MCCard>({
     mode: "onChange",
   });
 
-  const filterFormValues = watch();
+  const multiselectFilterNumber = useSelector(selectNumberOfFiltersByType("multiselect"));
+  const stringFilterNumber = useSelector(selectNumberOfFiltersByType("string"));
+  const numberFilterNumber = useSelector(selectNumberOfFiltersByType("number"));
+  const booleanFilterNumber = useSelector(selectNumberOfFiltersByType("boolean"));
 
-  useEffect(() => {
-    let newSelectedFilters: SelectedFilters = {};
-    for (const [key, value] of Object.entries(filterFormValues)) {
-      if (value !== undefined) {
-        const filtrableField: FiltrableFieldType = MCCardFilterableFields.find(
-          (field) => field.name === key
-        ) as FiltrableFieldType;
-
-        switch (filtrableField?.type) {
-          case "boolean":
-            newSelectedFilters[key] = value ? ["true"] : ["false"];
-            break;
-          case "string":
-          default:
-            if (value.toString() != "") {
-              newSelectedFilters[key] = [value.toString()]
-            }            
-            break;
-        }
-      }
-    }
-    if (
-      JSON.stringify(newSelectedFilters) !== JSON.stringify(selectedFilters)
-    ) {
-      setSelectedFilters(newSelectedFilters);
-    }
-  }, [filterFormValues, selectedFilters, setSelectedFilters]);
-
-  /*const sortedFields = MCCardFilterableFields.sort((a, b) => {
-    // First, compare by type
-    const typeComparison = b.type.localeCompare(a.type);
-    if (typeComparison !== 0) return typeComparison;
-
-    // If types are the same, then compare by name
-    return a.name.localeCompare(b.name);
-  });*/
-
-  const booleanFields = MCCardFilterableFields.filter(
-    (field) => field.type === "boolean"
-  );
-  const multiselectFields = MCCardFilterableFields.filter(
-    (field) => field.type === "multiselect"
-  );
-  const containsFields = MCCardFilterableFields.filter(
-    (field) => field.type === "contains"
-  );
-  const stringFields = MCCardFilterableFields.filter(
-    (field) => field.type === "string"
-  );
-  const numberFields = MCCardFilterableFields.filter(
-    (field) => field.type === "number"
-  );
 
   return (
     <section {...rest}>
-      <h3><FaFilter /> {t('filters')}</h3>
+      <h3 className="d-flex align-items-center gap-2">
+        <IconForConcept concept="filter" />
+        {t('filters')}
+        <NumberOfFiltersBadge className="ms-auto bg-light text-dark" />
+      </h3>
       <PaginationElementsPerPageFilter
           title={t("cards_per_page")}
           iconType={TbCards}
           />
-      <form>
-        <details>
-            <summary>{t("multiselect_filters_title")} (redux) <GoMultiSelect /></summary>
-            {multiselectFields.map((field) => {
+      <form className="accordion" id="filterAccordion">
+        <div className="accordion-item bg-dark">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#multiselectFilterCollapse" 
+              aria-expanded="false" 
+              aria-controls="multiselectFilterCollapse">
+              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+                <GoMultiSelect />
+                {multiselectFilterNumber > 0 && multiselectFilterNumber}
+              </span>
+              {t("multiselect_filters_title")} 
+            </button>
+          </h2>
+          <div 
+              id="multiselectFilterCollapse"
+              className="accordion-collapse collapse p-4" 
+              data-bs-parent="#filterAccordion">
+            {KEY_VALUE_FILTERS.map((field_base) => {
               return (
                 <MultiselectFilterRedux
-                    key={`multiselect_filter_${field.name}`}
+                    key={`multiselect_filter_${field_base}`}
                     control={control}
-                    fieldName={field.name as keyof MCCard}
+                    fieldCode={`${field_base}code` as keyof MCCard}
                 />
               );
             })}
-        </details>
-        <details>
-            <summary>{t("contains_filters_title")} (redux) <TbBracketsContain /></summary>
-            {containsFields.map((field) => (
+          </div>
+        </div>
+        <div className="accordion-item bg-dark">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#accordionStringFilters" 
+              aria-expanded="false" 
+              aria-controls="accordionStringFilters">
+              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+                <TbBracketsContain />
+                {stringFilterNumber > 0 && stringFilterNumber}
+              </span>
+              {t("contains_filters_title")}
+            </button>
+          </h2>
+          <div 
+              id="accordionStringFilters"
+              className="accordion-collapse collapse p-4" 
+              data-bs-parent="#filterAccordion">
+            {STRING_FILTERS.map((fieldCode) => (
                 <StringFilterRedux
-                    key={`contains_filter_${field.name}`}
+                    key={`contains_filter_${fieldCode}`}
                     control={control}
-                    fieldName={field.name as keyof MCCard}
+                    fieldCode={fieldCode as keyof MCCard}
                 />
             ))}
-        </details>
-
-        <details>
-            <summary>{t("number_filters_title")} (redux) <MdNumbers /></summary>
-            {numberFields.map((field) => (
-                <NumberFilterRedux
-                    key={`number_filter_${field.name}`}
-                    control={control}
-                    fieldName={field.name as keyof MCCard}
-                />
-            ))}
-        </details>
-        <details>
-            <summary>{t("boolean_filters_title")} (redux) <MdCheckBox /></summary>
-
-            {booleanFields.map((field) => (
+          </div>
+        </div>
+        <div className="accordion-item bg-dark">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#accordionNumberFilters" 
+              aria-expanded="false" 
+              aria-controls="accordionNumberFilters">
+              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+                <MdNumbers/>
+                {numberFilterNumber > 0 && numberFilterNumber}
+              </span>
+              {t("number_filters_title")}
+            </button>
+          </h2>
+          <div 
+              id="accordionNumberFilters"
+              className="accordion-collapse collapse p-4" 
+              data-bs-parent="#filterAccordion">
+            <div className="two-column-grid">
+              {NUMBER_FILTERS.map((fieldCode) => (
+                  <NumberFilterRedux
+                      key={`number_filter_${fieldCode}`}
+                      control={control}
+                      fieldCode={fieldCode as keyof MCCard}
+                  />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="accordion-item bg-dark">
+          <h2 className="accordion-header">
+            <button
+              className="accordion-button collapsed" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#accordionBooleanFilters" 
+              aria-expanded="false" 
+              aria-controls="accordionBooleanFilters">
+              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+                <MdCheckBox />
+                {booleanFilterNumber > 0 && booleanFilterNumber}
+              </span>
+              {t("boolean_filters_title")}
+            </button>
+          </h2>
+          <div 
+              id="accordionBooleanFilters"
+              className="accordion-collapse collapse p-4" 
+              data-bs-parent="#filterAccordion">
+                <div className="two-column-grid">
+            {BOOLEAN_FILTERS.map((fieldCode) => (
             <BooleanFilterRedux
-                key={`boolean_filter_${field.name}`}
+                key={`boolean_filter_${fieldCode}`}
                 control={control}
-                fieldName={field.name as keyof MCCard}
+                fieldCode={fieldCode as keyof MCCard}
             />
-            ))}
-        </details>
-
-        <details>
-            <summary>{t("string_filters_title")} <VscSymbolString /></summary>
-            {stringFields.map((field) => (
-                <StringFilter
-                    key={`string_filter_${field.name}`}
-                    control={control}
-                    fieldName={field.name as keyof MCCard}
-                />
-            ))}
-        </details>
+            ))}</div>
+          </div>
+        </div>
         <button
           type="reset" 
           title={t("reset")}
           className="btn btn-outline-danger mt-3" onClick={() => {
             dispatch(resetFilters());
-          //reset({});
+            reset();
         }}>
           <FaEraser /> {t("reset_filters")}
         </button>

@@ -1,6 +1,7 @@
 import { HTMLAttributes } from "react"
 import { IconType } from "react-icons"
 import { BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCloudArrowDown, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsPhone, BsPhoneFill, BsPhoneFlip, BsSearch, BsStack, BsTrash } from "react-icons/bs"
+import { FaEraser } from "react-icons/fa6"
 import { ImStack } from "react-icons/im"
 import { MdClose, MdDownloadForOffline, MdError, MdErrorOutline, MdFileDownloadDone, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
 import { RiArchiveStackFill, RiArchiveStackLine, RiStackedView } from "react-icons/ri"
@@ -39,6 +40,8 @@ export type Concepts = {
 
   error: IconType;
   errorFill: IconType;
+
+  erase: IconType;
 
   filter: IconType;
   hide: IconType;
@@ -82,6 +85,8 @@ const conceptIcons: Concepts = {
 
     error: MdErrorOutline,
     errorFill: MdError,
+
+    erase: FaEraser,
 
     filter: BsFunnel,
     hide: BsEyeSlash,
