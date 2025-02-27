@@ -1,15 +1,15 @@
-import { useSelector } from 'react-redux'
 import { selectNumberOfCards } from '../../../store/entities/cards';
 import { selectNumberOfDownloadedPacks, selectNumberOfPacks, selectPackStatusBootstrapVariant } from '../../../store/entities/packs';
 import { useTranslation } from 'react-i18next';
 import IconForConcept from '../../IconForConcept';
+import { useAppSelector } from '../../../hooks/useStore';
 
 const PacksData = () => {
     const {t} = useTranslation("global");
-    const numberOfDownloadedPacks = useSelector(selectNumberOfDownloadedPacks);
-    const numberOfPacks = useSelector(selectNumberOfPacks)
-    const numberOfCards = useSelector(selectNumberOfCards);
-    const packStatusVariant = useSelector(selectPackStatusBootstrapVariant)
+    const numberOfDownloadedPacks = useAppSelector(selectNumberOfDownloadedPacks);
+    const numberOfPacks = useAppSelector(selectNumberOfPacks)
+    const numberOfCards = useAppSelector(selectNumberOfCards);
+    const packStatusVariant = useAppSelector(selectPackStatusBootstrapVariant)
   return (
     <div id="pack-data"
           className='d-flex flex-column align-items-center justify-content-center gap-1 mb-4'

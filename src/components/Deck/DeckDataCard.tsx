@@ -5,23 +5,22 @@ import { TbCards } from 'react-icons/tb'
 import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import { selectCardByCode } from "../../store/entities/cards"
-import { useDispatch, useSelector } from "react-redux"
 import CardGrid from "../Card/CardGrid"
 import { useMemo } from "react"
 import DeckBookmarkAction from "./DeckBookmarkAction"
 import { aspectColorMap } from "../DownloadManager/Decks/DeckListItem"
 import IconForConcept from "../IconForConcept"
-import { AppDispatch } from "../../store/configureStore"
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore"
 
 type Props = {
     deck: MarvelDeck,
 }
 
 const DeckDataCard = ({deck}: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('global');
   const aspectColor = deck.aspect ? aspectColorMap[deck.aspect] : 'dark';
-  const heroCard = useSelector(selectCardByCode(deck.hero_code));
+  const heroCard = useAppSelector(selectCardByCode(deck.hero_code));
   const numberOfCards = useMemo(() => Object.values(deck.slots).reduce((acc, val) => acc + val, 0), [deck.slots]);
   return (
     <div className="card text-light">

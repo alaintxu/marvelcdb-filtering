@@ -66,15 +66,25 @@ const convertDeckToMarvelDeck = (deck: Deck): MarvelDeck => {
     };
 }
 
+type DecksState = {
+    currentDeck: MarvelDeck | null,
+    deckError: string,
+    isDeckLoading: boolean,
+    decks: MarvelDecksDict,
+}
+
+const initialState: DecksState = {
+    currentDeck: null,
+    deckError: "",
+    isDeckLoading: false,
+    decks: getFromLocalStorage<MarvelDecksDict>(LOCAL_STORAGE_DECKS_KEY) || {}
+};
+
+
 /* Slice */
 const slice = createSlice({
     name: 'decks',
-    initialState: {
-        currentDeck: null as MarvelDeck | null,
-        deckError: "" as string,
-        isDeckLoading: false as boolean,
-        decks: getFromLocalStorage<MarvelDecksDict>(LOCAL_STORAGE_DECKS_KEY) || {} as MarvelDecksDict,
-    },
+    initialState: initialState,
     reducers: {
         // Actions
         removeCurrentDeck: (state) => {
@@ -146,45 +156,45 @@ export const loadDeck = (deckId: number) => apiCallBegan({
 /* Selectors */
 export const selectDeckSlice = (rootState: RootState) => rootState.entities.decks;
 
-export const selectIsDeckLoading = createSelector(
+export const selectIsDeckLoading = createSelector<RootState, boolean>(
     selectDeckSlice,
     (state) => state.isDeckLoading
 );
 
-export const selectDeckError = createSelector(
+export const selectDeckError = createSelector<RootState, string>(
     selectDeckSlice,
     (state) => state.deckError
 );
 
-export const selectCurrentDeck = createSelector(
+export const selectCurrentDeck = createSelector<RootState, MarvelDeck | undefined>(
     selectDeckSlice,
     (state) => state.currentDeck
 );
-export const selectCurrentDeckId = createSelector(
+export const selectCurrentDeckId = createSelector<RootState, number | undefined>(
     selectCurrentDeck,
     (currentDeck) => currentDeck?.id
 )
 
-export const selectAllDecks = createSelector(
+export const selectAllDecks = createSelector<RootState, MarvelDecksDict>(
     selectDeckSlice,
     (state) => state.decks
 );
-export const selectAllDeckIds = createSelector(
+export const selectAllDeckIds = createSelector<RootState, number[]>(
     selectAllDecks,
     (decks) => Object.keys(decks).map(Number)
 );
 
-export const selectDeckById = (deck_id: number) => createSelector(
+export const selectDeckById = (deck_id: number) => createSelector<RootState, MarvelDeck | undefined>(
     selectAllDecks,
     (decks) => decks[deck_id]
 );
 
-export const selectIsDeckInList = (deckId: number) => createSelector(
+export const selectIsDeckInList = (deckId: number) => createSelector<RootState, boolean>(
     selectAllDeckIds,
     (deckIds) => deckIds.includes(deckId)
 );
 
-export const selectIsCurrentInList = createSelector(
+export const selectIsCurrentInList = createSelector<RootState, boolean>(
     selectCurrentDeckId,
     selectAllDeckIds,
     (currentDeckId, decks) => currentDeckId ? decks.includes(currentDeckId) : false

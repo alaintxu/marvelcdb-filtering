@@ -1,17 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { bookmarkCurrentDeck, unbookmarkDeck, MarvelDeck, selectIsDeckInList } from '../../store/entities/decks'
 import { useMemo, useState } from 'react';
 import { t } from 'i18next';
 import IconForConcept from '../IconForConcept';
-import { AppDispatch } from '../../store/configureStore';
+import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
 
 type Props = {
     deck: MarvelDeck
 }
 
 const DeckBookmarkAction = ({deck}: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const deckInList: boolean = useSelector(selectIsDeckInList(deck.id));
+  const dispatch = useAppDispatch();
+  const deckInList: boolean = useAppSelector(selectIsDeckInList(deck.id));
   const [isHovering, setIsHovering] = useState(false);
 
   const bookmarkIcon = useMemo(() => {

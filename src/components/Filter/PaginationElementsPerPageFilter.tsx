@@ -3,9 +3,9 @@ import { IconType } from "react-icons";
 import { MdNumbers } from "react-icons/md";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { paginationElementsPerPageUpdated } from "../../store/ui/pagination";
-import { AppDispatch, RootState } from "../../store/configureStore";
+
+import { paginationElementsPerPageUpdated, selectPaginationElementsPerPage } from "../../store/ui/pagination";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 
 type Props = {
@@ -18,9 +18,9 @@ const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers}: Props) =
   const { t } = useTranslation('global');
   if(!title) title = t('elements_per_page');
 
-  const elementsPerPage = useSelector((state: RootState) => state.ui.pagination.elementsPerPage);
+  const elementsPerPage = useAppSelector(selectPaginationElementsPerPage);
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
  
 

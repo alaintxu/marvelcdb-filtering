@@ -1,15 +1,15 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from "react-redux";
+
 import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
 import LoadingSpinner from './LoadingSpinner';
 import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
 import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
 import IconForConcept from './IconForConcept';
 import { selectCurrentDeck } from '../store/entities/decks';
-import { AppDispatch } from '../store/configureStore';
 import { selectIsAnyPackDownloading } from '../store/entities/packs';
 import NumberOfFiltersBadge from './Filter/NumberOfFiltersBadge';
+import { useAppDispatch, useAppSelector } from '../hooks/useStore';
 
 
 type IconDict = {
@@ -24,10 +24,10 @@ const navigaitonIcons: IconDict = {
 
 const Navigation = () => {
   const { t } = useTranslation('global');
-  const dispatch = useDispatch<AppDispatch>();
-  const selectedNavigationOptionKey: NavigationOptionsKey = useSelector(selectNavigationOptionKey);
-  const isAnyPackDownloading: boolean = useSelector(selectIsAnyPackDownloading);
-  const currentDeck = useSelector(selectCurrentDeck);
+  const dispatch = useAppDispatch();
+  const selectedNavigationOptionKey: NavigationOptionsKey = useAppSelector(selectNavigationOptionKey);
+  const isAnyPackDownloading: boolean = useAppSelector(selectIsAnyPackDownloading);
+  const currentDeck = useAppSelector(selectCurrentDeck);
 
   const getAdditionalElement = (key: NavigationOptionsKey): ReactNode => {
     let additionalElement: ReactNode;

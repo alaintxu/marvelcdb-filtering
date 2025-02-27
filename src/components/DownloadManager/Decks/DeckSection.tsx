@@ -1,11 +1,10 @@
-import { useDispatch, useSelector, } from "react-redux"
 import { loadDeck, selectCurrentDeck, selectDeckError, selectIsCurrentInList, selectIsDeckLoading } from "../../../store/entities/decks"
 import { useTranslation } from "react-i18next";
 import IconForConcept from "../../IconForConcept";
 import DeckList from "./DeckList";
 import DeckListItem from "./DeckListItem";
 import LoadingSpinner from "../../LoadingSpinner";
-import { AppDispatch } from "../../../store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 
 const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -36,11 +35,11 @@ const DeckSection = () => {
     // @ToDo: improve styling
     const { t: globalT } = useTranslation('global');
     const { t } = useTranslation("decks");
-    const dispatch = useDispatch<AppDispatch>();
-    const deckDownloading = useSelector(selectIsDeckLoading);
-    const deckDownloadError = useSelector(selectDeckError);
-    const currentDeck = useSelector(selectCurrentDeck);
-    const isCurrentDeckInList = useSelector(selectIsCurrentInList);
+    const dispatch = useAppDispatch();
+    const deckDownloading = useAppSelector(selectIsDeckLoading);
+    const deckDownloadError = useAppSelector(selectDeckError);
+    const currentDeck = useAppSelector(selectCurrentDeck);
+    const isCurrentDeckInList = useAppSelector(selectIsCurrentInList);
 
     const callApiForDeck = (value: string) => {
         if (value.match(NUMBER_REGEX) || value.match(URL_REGEX)) {

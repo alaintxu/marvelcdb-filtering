@@ -23,6 +23,7 @@ export type Pack = {
     // Additional fields
     download_date?: number;
     download_status?: "unselected" | "selected" | "downloading" | "downloaded" | "error";
+    error?: string;
 }
 
 export type PackSliceState = {
@@ -34,7 +35,7 @@ export type PackSliceState = {
 
 const initialState: PackSliceState = {
     list: [],
-    loading: false,
+    loading: true,
     lastFetch: 0,
     error: null
 }
@@ -56,11 +57,9 @@ const slice = createSlice({
         },
         packCardsRequested: (state, action: PayloadAction<string>) => {
             const packCode = action.payload;
-            const pack = state.list.find((pack: Pack) => pack.code === packCode);
-            if (pack) {
-                pack.download_status = "downloading";
-                pack.download_date = Date.now();
-            }
+            const packIndex = state.list.findIndex((pack: Pack) => pack.code === packCode);
+            if (packIndex === -1) return state;
+            state.list[packIndex].download_status = "downloading";
             return state;
         },
         packCardsReceived: (state, action: PayloadAction<MCCard[]>) => {
@@ -72,16 +71,19 @@ const slice = createSlice({
             if (index !== -1) {
                 state.list[index].download_status = "downloaded";
                 state.list[index].download_date = Date.now();
+                state.list[index].error = "";
                 // @ToDo: Remove old cards and add new cards to store
             }
             return state;
         },
-        packCardsRequestFailed: (state, action: PayloadAction<string>) => {
-            const packCode = action.payload;
+        packCardsRequestFailed: (state, action: PayloadAction<{error: string, errorPayload: string}>) => {
+            const packCode = action.payload.errorPayload;
+            const error = action.payload.error;
             const index = state.list.findIndex((pack: Pack) => pack.code === packCode);
             if (index !== -1) {
                 state.list[index].download_status = "error";
-                state.list[index].download_date = Date.now();
+                state.list[index].download_date = 0;
+                state.list[index].error = error;
             }
             return state;
         },
@@ -143,7 +145,7 @@ export const {
 
 
 /* Action creators */
-export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootState*/): Promise<any> => {
+export const loadPacks = () => (dispatch: Dispatch<any>) => {
 
     /*
     ** Get list of packs from the server 
@@ -160,19 +162,23 @@ export const loadPacks = () => (dispatch: Dispatch<any>/*, getState: () => RootS
             onSuccess: packsReceived.type,
             onError: packsRequestFailed.type
         })
-    ) as any;
+    );
 }
+
 
 export const loadPackCards = (packCode: string) => (dispatch: Dispatch<any>) => {
     return dispatch(
         apiCallBegan({
             url: PACK_CARDS_URL + packCode + '.json',
-            onStart: packCardsRequested(packCode).type,
+            onStart: packCardsRequested.type,
+            onStartPayload: packCode,
             onSuccess: [packCardsReceived.type, cardsReceived.type],
-            onError: packCardsRequestFailed(packCode).type
+            onError: packCardsRequestFailed.type,
+            onErrorPayload: packCode
         })
     );
 }
+
 
 /*
 ** POST pack and add it to the store if successful

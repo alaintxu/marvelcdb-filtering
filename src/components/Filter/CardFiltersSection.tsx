@@ -12,8 +12,7 @@ import MultiselectFilterRedux from "./MultiselectFilterRedux";
 import NumberFilterRedux from "./NumberFilterRedux";
 import StringFilterRedux from "./StringFilterRedux";
 import BooleanFilterRedux from "./BooleanFilterRedux";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../store/configureStore";
+
 import { 
   resetFilters, 
   KEY_VALUE_FILTERS, 
@@ -24,6 +23,7 @@ import {
 } from "../../store/ui/filters";
 import IconForConcept from "../IconForConcept";
 import NumberOfFiltersBadge from "./NumberOfFiltersBadge";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -39,26 +39,24 @@ export type UniqueFilterOptions = {
 type Props = {
   selectedFilters: SelectedFilters;
   setSelectedFilters: (newSelectedFilters: SelectedFilters) => void;
-  uniqueFilterOptions: UniqueFilterOptions[]
 } & HTMLAttributes<HTMLDivElement>;
 
 
 /* Component */
 const CardFiltersView = ({
   selectedFilters, setSelectedFilters,
-  uniqueFilterOptions,
   ...rest
 }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation("filters");
   const { control, reset } = useForm<MCCard>({
     mode: "onChange",
   });
 
-  const multiselectFilterNumber = useSelector(selectNumberOfFiltersByType("multiselect"));
-  const stringFilterNumber = useSelector(selectNumberOfFiltersByType("string"));
-  const numberFilterNumber = useSelector(selectNumberOfFiltersByType("number"));
-  const booleanFilterNumber = useSelector(selectNumberOfFiltersByType("boolean"));
+  const multiselectFilterNumber = useAppSelector(selectNumberOfFiltersByType("multiselect"));
+  const stringFilterNumber = useAppSelector(selectNumberOfFiltersByType("string"));
+  const numberFilterNumber = useAppSelector(selectNumberOfFiltersByType("number"));
+  const booleanFilterNumber = useAppSelector(selectNumberOfFiltersByType("boolean"));
 
 
   return (

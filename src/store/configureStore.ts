@@ -15,10 +15,11 @@ const store = createStore();
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
 
-export interface StoreType {
-    dispatch: any;
-    getState(): RootState;
-}
+// export interface StoreType {
+//     dispatch: any;
+//     getState(): RootState;
+// }
 
 export default store;

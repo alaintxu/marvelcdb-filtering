@@ -1,5 +1,5 @@
 import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards, Pack } from "../store/entities/packs";
-import { createStore, RootState, StoreType } from "../store/configureStore";
+import { createStore, RootState, AppStore, /*StoreType*/ } from "../store/configureStore";
 import fetchMock from "jest-fetch-mock";
 
 const MOCK_BASE_PATH = "http://localhost:3000";
@@ -12,11 +12,11 @@ jest.mock("i18next", () => ({
     init: jest.fn()
 }));
 
-let store: StoreType;
+let store: AppStore;
 const packsUrl: string = `${MOCK_BASE_PATH}/api/public/packs/`
 const packCardsBaseUrl: string = `${MOCK_BASE_PATH}/api/public/cards/`;
 
-const packsSlice = (myStore?: StoreType) => (myStore ||store).getState().entities.packs;
+const packsSlice = (myStore?: AppStore) => (myStore ||store).getState().entities.packs;
 
 describe("packsSlice", () => {
     beforeEach(() => {
@@ -38,7 +38,7 @@ describe("packsSlice", () => {
             );
 
             // Act
-            await store.dispatch(loadPacks());
+            await store.dispatch<any>(loadPacks());
 
             // Assert
             expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -60,7 +60,7 @@ describe("packsSlice", () => {
             );
 
             // Act
-            await store.dispatch(loadPacks());
+            await store.dispatch<any>(loadPacks());
 
             // Assert
             expect(consoleSpy).toHaveBeenCalled();
@@ -185,7 +185,7 @@ describe("packsSlice", () => {
     describe("loadPackCards", () => {
         it("should handle ok response", async () => {
             // Arrange
-            const testStore: StoreType = createStore({
+            const testStore: AppStore = createStore({
                 entities: {
                     packs: {
                         list: [
@@ -208,7 +208,7 @@ describe("packsSlice", () => {
             );
 
             // Act
-            await testStore.dispatch(loadPackCards("core"));
+            await testStore.dispatch<any>(loadPackCards("core"));
 
             // Assert
             expect(fetchMock).toHaveBeenCalledTimes(1);

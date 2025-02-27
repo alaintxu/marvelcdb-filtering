@@ -2,15 +2,14 @@
 import { BsTrash } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '../../../store/configureStore';
 import { selectAllPacks, unloadPackCards } from '../../../store/entities/packs';
 import { removeAllCards } from '../../../store/entities/cards';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 
 const RemoveAllButton = () => {
     const { t } = useTranslation('global');
-    const dispatch = useDispatch<AppDispatch>();
-    const packs = useSelector(selectAllPacks);
+    const dispatch = useAppDispatch();
+    const packs = useAppSelector(selectAllPacks);
     return (
         <>
             <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>

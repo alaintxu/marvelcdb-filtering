@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+
 import { quickFilterSet, selectQuickFilter } from "../../store/ui/filters";
 import React, { useCallback, useState } from "react";
 import IconForConcept from "../IconForConcept";
 import { MCCard } from "../../store/entities/cards";
-import { AppDispatch } from "../../store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 
     /*
@@ -95,8 +95,8 @@ export const quickFilterCardList = (cards: MCCard[], quickFilter: string) => {
 
 const QuickSearchFilter = () => {
     const { t } = useTranslation("filters");
-    const dispatch = useDispatch<AppDispatch>();
-    const quickFilter = useSelector(selectQuickFilter);
+    const dispatch = useAppDispatch();
+    const quickFilter = useAppSelector(selectQuickFilter);
     const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const [quickFilterValue, setQuickFilterValue] = useState(quickFilter);
 

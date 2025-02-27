@@ -4,11 +4,10 @@ import { Modal } from "../../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+
 import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/other";
 import CardTop from "./CardTop";
-import { AppDispatch } from "../../../store/configureStore";
-
+import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 
 export type MCCardKeys = keyof MCCard;
 
@@ -53,9 +52,9 @@ const isCardHorizontal = (card: MCCard) => {
 
 
 const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const { i18n } = useTranslation('global');
-  const isClicked = useSelector(selectIsCardCodeClicked(card.code));
+  const isClicked = useAppSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const isMainScheme = card.type_code === "main_scheme";
 

@@ -1,8 +1,7 @@
-import { useDispatch } from 'react-redux'
 import { loadPackCards, Pack, unloadPackCards } from '../../../store/entities/packs'
 import LoadingSpinner from '../../LoadingSpinner'
 import IconForConcept from '../../IconForConcept'
-import { AppDispatch } from '../../../store/configureStore'
+import { useAppDispatch } from '../../../hooks/useStore'
 
 type Props = {
     pack: Pack
@@ -24,7 +23,7 @@ const packStatusVariant = (packStatus: "error" | "unselected" | "selected" | "do
 
 
 const PackListItem = ({pack}: Props) => {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     const id:string = "download-manager-pack-list-item" + pack.code;
 
     return <span
@@ -34,7 +33,7 @@ const PackListItem = ({pack}: Props) => {
                 if (pack.download_status === "downloaded"){
                     dispatch(unloadPackCards(pack.code));
                 } else {
-                    dispatch(loadPackCards(pack.code));
+                    await dispatch<any>(loadPackCards(pack.code));
                 }
             }}>
             <span style={{ textAlign: "left" }}>

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { BsArrowsCollapse, BsArrowsExpand, BsExclamationTriangle } from "react-icons/bs";
 import LoadingSpinner from '../../LoadingSpinner';
-import { useDispatch, useSelector } from 'react-redux';
 import { loadPacks, Pack, selectAllPacks, selectArePacksLoading, selectIsAnyPackDownloading, selectPacksError } from '../../../store/entities/packs';
 import { selectShowPackList, showPackListToggled } from '../../../store/ui/other';
 import PackListItem from '../Packs/PackListItem';
@@ -11,43 +10,24 @@ import RemoveAllButton from '../Packs/RemoveAllButton';
 import DownloadAllButton from '../Packs/DownloadAllButton';
 import { useEffect } from 'react';
 import PackStatusCountBadge from './PackStatusCountBadge';
-import { AppDispatch } from '../../../store/configureStore';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 
 const PacksSection = () => {
     const { t, i18n } = useTranslation('global');
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
 
-    const packs: Pack[] = useSelector(selectAllPacks);
-    const arePacksLoading = useSelector(selectArePacksLoading);
-    const packsError = useSelector(selectPacksError);
+    const packs: Pack[] = useAppSelector(selectAllPacks);
+    const arePacksLoading = useAppSelector(selectArePacksLoading);
+    const packsError = useAppSelector(selectPacksError);
 
-    //const packStatusDict: PackStatusDict = useSelector(selectPackStatusDict);
-    const showPackList = useSelector(selectShowPackList);
-    const isAnyPackDownloading = useSelector(selectIsAnyPackDownloading);
+    const showPackList = useAppSelector(selectShowPackList);
+    const isAnyPackDownloading = useAppSelector(selectIsAnyPackDownloading);
 
 
 
     useEffect(() => {
-      dispatch(loadPacks());
-    }, [i18n.language]);
-     
-    // const downloadPackCards = async (packCode: string) => {
-    //     // @ToDo: Change to redux api.ts middleware
-    //     cardPackRemoved(packCode);
-    //     dispatch(cardPackRemoved(packCode));
-    //     dispatch(packStatusPackDownloadStatusSet({packCode: packCode, downloadStatus: "downloading"}));
-
-    //     const response = await fetch(t('base_path') + '/api/public/cards/' + packCode + '.json');
-
-    //     if (!response.ok) {
-    //     console.error(`Error fetching pack data (${packCode}`, response.status);
-    //     return;
-    //     }
-    //     const data = await response.json() as MCCard[];
-    //     dispatch(cardPackAdded({ packCode: packCode, newCards: data }));
-    //     dispatch(packStatusPackCardsDownloaded({packCode: packCode, numberOfCards: data.length}));
-    //     dispatch(cardsSorted("code"));
-    // }
+      dispatch<any>(loadPacks());
+    }, [i18n.language, dispatch]);
   return (
     <section id="pack-section">
         <PacksData />

@@ -1,11 +1,11 @@
-import { useSelector } from 'react-redux';
 import { selectNumberOfCards } from '../../store/entities/cards';
 import { selectPagination } from '../../store/ui/pagination';
 import IconForConcept from '../IconForConcept';
+import { useAppSelector } from '../../hooks/useStore';
 
 const CardPaginationNumberBadge = () => {
-    const paginationStatus = useSelector(selectPagination);
-    const numberOfCards: number = useSelector(selectNumberOfCards);
+    const paginationStatus = useAppSelector(selectPagination);
+    const numberOfCards: number = useAppSelector(selectNumberOfCards);
     return (
         <span className='ms-1'>
             <span className='badge bg-secondary d-inline-flex align-items-center'>

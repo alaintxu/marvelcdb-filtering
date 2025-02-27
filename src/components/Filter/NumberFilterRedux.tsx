@@ -4,10 +4,10 @@ import {
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { MCCard } from "../../store/entities/cards";
-import { AppDispatch } from "../../store/configureStore";
-import { useDispatch, useSelector } from "react-redux";
+
 import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import IconForConcept from "../IconForConcept";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 interface Props {
   control: Control<MCCard>;
@@ -15,8 +15,8 @@ interface Props {
 }
 
 const NumberFilterRedux = ({ control, fieldCode }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const storeValue = useSelector(selectFilterValues("number", fieldCode)) as number | undefined;
+  const dispatch = useAppDispatch();
+  const storeValue = useAppSelector(selectFilterValues("number", fieldCode)) as number | undefined;
   const { t } = useTranslation("filters");
 
   return (

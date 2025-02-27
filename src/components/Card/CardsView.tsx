@@ -3,15 +3,15 @@ import CardGrid from "./CardGrid";
 import { useTranslation } from "react-i18next";
 import { ReactBSPagination } from "@draperez/react-components";
 import { MCCard, selectAllCards } from "../../store/entities/cards";
-import { useDispatch, useSelector } from "react-redux";
+
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 import IconForConcept from "../IconForConcept";
 import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other";
 import { FiltersByTypes, selectFilters, selectQuickFilter } from "../../store/ui/filters";
 import TopActions from "../TopActions";
 import { normalizeString, quickFilterCardList } from "../Filter/QuickSearchFilter";
-import { AppDispatch } from "../../store/configureStore";
 import { sortCards } from "../../store/entities/cardsModificationUtils";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 
 const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
@@ -64,18 +64,18 @@ const CardsView = () => {
   const [filteredCards, setFilteredCards] = useState<MCCard[]>([]);
   const [paginatedCards, setPaginatedCards] = useState<MCCard[]>([]);
 
-  const pagination = useSelector(selectPagination);
-  const cards = useSelector(selectAllCards);
+  const pagination = useAppSelector(selectPagination);
+  const cards = useAppSelector(selectAllCards);
 
-  const showAllCardData = useSelector(selectShowAllCardData);
-  const flipAllCards = useSelector(selectFlipAllCards);
-  const quickFilter = useSelector(selectQuickFilter);
-  const filters: FiltersByTypes = useSelector(selectFilters);
+  const showAllCardData = useAppSelector(selectShowAllCardData);
+  const flipAllCards = useAppSelector(selectFlipAllCards);
+  const quickFilter = useAppSelector(selectQuickFilter);
+  const filters: FiltersByTypes = useAppSelector(selectFilters);
 
 
-  //const filters = useSelector((state: RootState) => state.filters);
+  //const filters = useAppSelector((state: RootState) => state.filters);
   
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const filteredCards = filterCards(cards, filters);

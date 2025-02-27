@@ -5,9 +5,9 @@ import {
 import Select, { GroupBase, OptionsOrGroups } from 'react-select';
 import { useTranslation } from "react-i18next";
 import { MCCard, selectUniqueFieldOptions } from "../../store/entities/cards";
-import { useDispatch, useSelector } from "react-redux";
+
 import { FieldOption, filterUpdated, selectFilterValues } from "../../store/ui/filters";
-import { AppDispatch } from "../../store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 interface Props {
   control: Control<MCCard>;
@@ -15,15 +15,14 @@ interface Props {
 }
 
 const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const fieldName = fieldCode.replace("code", "name") as keyof MCCard;
-  const uniqueFieldCodeNames: FieldOption[] = useSelector(selectUniqueFieldOptions(fieldCode, fieldName));
+  const uniqueFieldCodeNames: FieldOption[] = useAppSelector(selectUniqueFieldOptions(fieldCode, fieldName));
 
   const options: OptionsOrGroups<unknown, GroupBase<unknown>> = uniqueFieldCodeNames.map((option: FieldOption) => {
     return { value: option.value, label: option.label };
   });
-  //console.log("uniqueFieldValues", uniqueFieldValues);
-  const defaultValues = useSelector(selectFilterValues("multiselect", fieldCode)) as string[] ?? [];
+  const defaultValues = useAppSelector(selectFilterValues("multiselect", fieldCode)) as string[] ?? [];
   
   const { t } = useTranslation("filters");
 

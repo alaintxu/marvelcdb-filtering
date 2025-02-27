@@ -1,16 +1,16 @@
 
-import { useDispatch, useSelector } from "react-redux";
+
 import { flipAllCardsToggled, selectFlipAllCards, selectShowAllCardData, showAllCardDataToggled } from "../../store/ui/other";
 import IconForConcept from "../IconForConcept";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
-import { AppDispatch } from "../../store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 const AllCardActions = () => {
   const { t } = useTranslation('global');
-  const dispatch = useDispatch<AppDispatch>();
-  const showAllCardData = useSelector(selectShowAllCardData);
-  const flipAllCards = useSelector(selectFlipAllCards);
+  const dispatch = useAppDispatch();
+  const showAllCardData = useAppSelector(selectShowAllCardData);
+  const flipAllCards = useAppSelector(selectFlipAllCards);
   const [isShowHovering, setIsShowHovering] = useState<boolean>(false);
   const [isFlipHovering, setIsFlipHovering] = useState<boolean>(false);
 

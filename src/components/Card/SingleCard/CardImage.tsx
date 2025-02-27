@@ -69,30 +69,6 @@ const CardImage = ({ card, horizontal }: Props) => {
 
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
 
-  /*
-  const getBackImageSrc = () => {
-    if (card.backimagesrc)
-      return marvelcdb_basepath + card.backimagesrc;
-
-    if (card.linked_card?.imagesrc)
-      return marvelcdb_basepath + card.linked_card.imagesrc;
-
-    if (card.type_code == "villain")
-      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_purple.webp";
-
-    if (card.faction_code == "encounter")
-      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_orange.webp";
-
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_blue.webp";
-  }
-
-  const getFrontImageSrc = () => {
-    if (card.imagesrc) return marvelcdb_basepath + card.imagesrc;
-
-    return marvelcdb_basepath + "/bundles/cards/" + card.code + ".png";
-  }
-  */
-
   const replaceImgSrcTranslation = (imgSrc: string) => {
     if (!error && i18n.language == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
       const code = imgSrc.split("/").pop();

@@ -1,9 +1,9 @@
 import { BsDownload } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
 import { loadPackCards, selectAllPacks } from '../../../store/entities/packs';
 import { AppDispatch } from '../../../store/configureStore';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 
 function delayedDispatch(dispatch: AppDispatch, action: any, delay: number) {
     return new Promise((resolve) => {
@@ -17,8 +17,8 @@ function delayedDispatch(dispatch: AppDispatch, action: any, delay: number) {
 
 const DownloadAllButton = () => {
     const { t } = useTranslation('global');
-    const dispatch = useDispatch<AppDispatch>();
-    const packs = useSelector(selectAllPacks);
+    const dispatch = useAppDispatch();
+    const packs = useAppSelector(selectAllPacks);
 
     return (
         <>
@@ -36,10 +36,15 @@ const DownloadAllButton = () => {
                 //dispatch(packStatusDictSet({}));
                 if (!packs) return
 
-                const batchSize = 10;
+                const batchSize = 3;
                 for (let i = 0; i < packs.length; i += batchSize) {
                     const batch = packs.slice(i, i + batchSize);
-                    await Promise.all(batch.map(async (pack) => delayedDispatch(dispatch, loadPackCards(pack.code), 1000)));
+                    //await Promise.all(batch.map(async (pack) => delayedDispatch(dispatch, loadPackCards(pack.code), 1000)));
+                    await Promise.all(
+                        batch.map(
+                            async (pack) => dispatch(loadPackCards(pack.code))
+                        )
+                    );
                 }
                 }}>
                 <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />

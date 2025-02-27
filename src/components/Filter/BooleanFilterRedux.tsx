@@ -5,9 +5,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { MCCard } from "../../store/entities/cards";
 import { MdCheckBox, MdIndeterminateCheckBox, MdCheckBoxOutlineBlank  } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch } from "../../store/configureStore";
+
 import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
+import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 interface Props {
   control: Control<MCCard>;
@@ -15,8 +15,8 @@ interface Props {
 }
 
 const BooleanFilterRedux = ({ control, fieldCode }: Props) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const storeValue = useSelector(selectFilterValues("boolean", fieldCode)) as boolean | undefined;
+  const dispatch = useAppDispatch();
+  const storeValue = useAppSelector(selectFilterValues("boolean", fieldCode)) as boolean | undefined;
   const { t } = useTranslation("filters");
   
   return (

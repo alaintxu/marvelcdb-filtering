@@ -67,11 +67,12 @@ export type MCCard = {
     url?: string;
 };
 
+const initialState: MCCard[] = getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [] as MCCard[];
 
 /* Reducer */
 const slice = createSlice({
     name: 'cards',
-    initialState: getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [] as MCCard[], //getCardsFromLocalStorage(),
+    initialState: initialState, //getCardsFromLocalStorage(),
     reducers: {
         // cardsAdded: (cards: MCCard[], action) => {
         //     const newCards: MCCard[] = action.payload;

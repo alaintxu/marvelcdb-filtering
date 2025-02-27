@@ -3,8 +3,8 @@ import DeckDataCard from "./DeckDataCard"
 import { useEffect, useState } from "react"
 import { MCCard, selectCardsByCodes } from "../../store/entities/cards"
 import CardGrid from "../Card/CardGrid"
-import { useSelector } from "react-redux"
 import { t } from "i18next"
+import { useAppSelector } from "../../hooks/useStore"
 
 
 
@@ -49,12 +49,11 @@ const getSortedTypes = (deckCards: {[typeCode:string]: MCCard[]}): string[] => {
 }
 
 const DeckView = ({ deck }: Props) => {
-  const deckCardsUnique: MCCard[] = useSelector(selectCardsByCodes(Object.keys(deck.slots)));
+  const deckCardsUnique: MCCard[] = useAppSelector(selectCardsByCodes(Object.keys(deck.slots)));
   const [deckCards, setDeckCards] = useState<{[typeCode: string]: MCCard[]}>({});
   const [notFoundCardCodes, setNotFoundCardCodes] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("Filter deck cards", Object.keys(deck.slots), deckCardsUnique)
     const cardsTmp: {[typeCode: string]: MCCard[]} = {};
     const notFoundCardCodesTmp: string[] = [];
 

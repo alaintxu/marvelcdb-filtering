@@ -1,18 +1,18 @@
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+
 import { selectAllDecks } from "../../../store/entities/decks";
 import DeckListItem from "./DeckListItem";
 import IconForConcept from "../../IconForConcept";
 import { selectShowDeckList, showDeckListToggled } from '../../../store/ui/other';
 import { BsArrowsCollapse, BsArrowsExpand } from "react-icons/bs";
-import { AppDispatch } from "../../../store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 
 
 const DeckList = () => {
-    const dispatch = useDispatch<AppDispatch>();
     const { t } = useTranslation('decks');
-    const decks = useSelector(selectAllDecks);
-    const showDeckList = useSelector(selectShowDeckList);
+    const dispatch = useAppDispatch();
+    const decks = useAppSelector(selectAllDecks);
+    const showDeckList = useAppSelector(selectShowDeckList);
   return (
     <section className="deck-list mt-4">
         <div id="deckListAccordion" className='px-3 mb-3'>
