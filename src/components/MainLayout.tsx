@@ -17,6 +17,16 @@ import { hasClassInAncestors } from "./Card";
 import { AppDispatch } from "../store/configureStore";
 import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState } from "../store/entities/packs";
 
+
+const isSelectXButton = (element: HTMLElement) => {
+  if(element.classList?.toString().includes("-indicatorContainer")){
+    return true;
+  }
+  if(!element.parentNode){
+    return false;
+  }
+  return isSelectXButton(element.parentNode as HTMLElement);
+}
 const MainLayout = () => {
   const { i18n } = useTranslation('global');
   const dispatch = useDispatch<AppDispatch>();
@@ -48,8 +58,14 @@ const MainLayout = () => {
   // Listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // Handle exception for multiselect filters X buttons
+      const clickedElement: HTMLElement = event.target as HTMLElement;
+      if(isSelectXButton(clickedElement)){
+        return true;
+      }
+
       // Unselect card if clicked outside
-      if (!hasClassInAncestors(event.target as HTMLElement /*, "mc-card"*/)) {
+      if (!hasClassInAncestors(clickedElement /*, "mc-card"*/)) {
         if(isAnyCardClicked){
           console.log('unclick all cards');
           dispatch(cardCodeAllUnclicked());
@@ -58,14 +74,14 @@ const MainLayout = () => {
 
       // Hide asides when clicked outside
       if (
-        !hasClassInAncestors(event.target as HTMLElement, "download-manager-container")
+        !hasClassInAncestors(clickedElement, "download-manager-container")
         &&
-        !hasClassInAncestors(event.target as HTMLElement, "filter-container")
+        !hasClassInAncestors(clickedElement, "filter-container")
         &&
-        !hasClassInAncestors(event.target as HTMLElement, "main-navigation-item")  // se encarga nav
+        !hasClassInAncestors(clickedElement, "main-navigation-item")  // se encarga nav
       ) {
         if (selectedNavigationOptionKey !== "card_list"){
-          console.log('clicked outside');
+          console.log('clicked outside', event.target);
           dispatch(navigationOptionKeySet("card_list"));
         }
       }

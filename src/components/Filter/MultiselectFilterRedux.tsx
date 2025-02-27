@@ -17,10 +17,8 @@ interface Props {
 const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const fieldName = fieldCode.replace("code", "name") as keyof MCCard;
-  // @ToDo: selectUniqueFieldValues should return Map<string, string> (code, value), now it return code[]
   const uniqueFieldCodeNames: FieldOption[] = useSelector(selectUniqueFieldOptions(fieldCode, fieldName));
 
-  console.log("uniqueFieldCodeNames", uniqueFieldCodeNames);
   const options: OptionsOrGroups<unknown, GroupBase<unknown>> = uniqueFieldCodeNames.map((option: FieldOption) => {
     return { value: option.value, label: option.label };
   });
