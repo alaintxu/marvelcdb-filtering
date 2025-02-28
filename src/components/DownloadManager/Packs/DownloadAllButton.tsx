@@ -34,7 +34,9 @@ const DownloadAllButton = () => {
                             async (pack) => dispatch<any>(loadPackCards(pack.code))
                         )
                     );
+                    //await new Promise((resolve) => setTimeout(resolve, 1000));
                 }
+                
                 }}>
                 <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
             </Modal>

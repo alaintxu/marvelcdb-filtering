@@ -7,12 +7,12 @@ const ReactCompilerConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(/*{
+  plugins: [react({
     babel: {
       plugins: [
         ["babel-plugin-react-compiler", ReactCompilerConfig]
       ]
     }
-  }*/)],
+  })],
   base: '/marvelcdb-filtering'
 })

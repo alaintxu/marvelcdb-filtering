@@ -49,7 +49,7 @@ const MainLayout = () => {
   useEffect(() => { if (packsState)     saveToLocalStorage(LOCAL_STORAGE_PACKS_KEY, packsState);                  }, [packsState]);
   useEffect(() => {                     saveToLocalStorage(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, elementsPerPage); }, [elementsPerPage]);
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
-  useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);             }, [cards]);
+  useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);                       }, [cards]);
 
   // Listener
   useEffect(() => {
@@ -102,33 +102,29 @@ const MainLayout = () => {
 
   return (
     <>
+      <Suspense fallback={
+        <div style={{aspectRatio: 1/1, display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <LoadingSpinner />
+        </div>
+        }>
       <main id="main-section" className={mainClassNames.join(" ")}>
-        <Suspense fallback={<LoadingSpinner />}>
           <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
-        </Suspense>
         {currentDeck ? (
-          <Suspense fallback={<LoadingSpinner />}>
             <DeckView deck={currentDeck} />
-          </Suspense>
         ) : (
           cards.length > 0 ? (
-          <Suspense fallback={<LoadingSpinner />}>
              <CardsView />
-          </Suspense>
           ) : (
-          <Suspense fallback={<LoadingSpinner/>}>
             <Instructions />
-          </Suspense>
         ))}
-        <Suspense fallback={<LoadingSpinner />}>
           <CardFiltersView
             id="filters" 
             className="bg-dark shadow d-flex flex-column p-3 filter-container"
             selectedFilters={{}/*selectedFilters*/} 
             setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
             />
-        </Suspense>
       </main>
+      </Suspense>
       <Suspense fallback={<LoadingSpinner />}>
         <Navigation />
       </Suspense>

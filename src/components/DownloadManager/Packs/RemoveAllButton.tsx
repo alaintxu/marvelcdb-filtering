@@ -23,12 +23,10 @@ const RemoveAllButton = () => {
                 title={t(`modal.delete_all_packs.title`)}
                 modal_id='modal-remove-all'
                 onAccept={() => { 
-                    //dispatch(cardsSet([]));
                     for(const pack of packs){
                         dispatch(unloadPackCards(pack.code));
                         dispatch(removeAllCards())
                     }
-                    //dispatch(packStatusDictSet({}));
                 }} >
                 <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
             </Modal >
