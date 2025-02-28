@@ -1,66 +1,81 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { BsFunnel, BsCloudArrowDown, BsPersonBadge } from 'react-icons/bs';
+import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
+import LoadingSpinner from './LoadingSpinner';
+import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
+import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
+import IconForConcept from './IconForConcept';
+import { selectCurrentDeck } from '../store/entities/decks';
+import { selectIsAnyPackDownloading } from '../store/entities/packs';
+import NumberOfFiltersBadge from './Filter/NumberOfFiltersBadge';
+import { useAppDispatch, useAppSelector } from '../hooks/useStore';
 
-export type NavigationOptionsKey = "download_manager" | "filters" | "card_list";
 
-
-type Option = {
-  key: NavigationOptionsKey,
-  icon: ReactNode
+type IconDict = {
+  [optionKey: string]: ReactNode
 }
 
-type Props = {
-  selected: NavigationOptionsKey,
-  active: boolean,
-  additionalText?: Map<NavigationOptionsKey, string>,
-  onClick: (newSelected: NavigationOptionsKey) => void
-}
+const navigaitonIcons: IconDict = {
+  download_manager: <IconForConcept concept="downloadManager" />,
+  card_list: <IconForConcept concept="cardList" />,
+  filters: <IconForConcept concept="filter" />,
+};
 
-const Navigation = ({ selected, active, onClick, additionalText }: Props) => {
+const Navigation = () => {
   const { t } = useTranslation('global');
+  const dispatch = useAppDispatch();
+  const selectedNavigationOptionKey: NavigationOptionsKey = useAppSelector(selectNavigationOptionKey);
+  const isAnyPackDownloading: boolean = useAppSelector(selectIsAnyPackDownloading);
+  const currentDeck = useAppSelector(selectCurrentDeck);
 
-
-  const navigationOptions: Option[] = [
-    {
-      key: "download_manager",
-      icon: <BsCloudArrowDown />,
-    },
-    {
-      key: "card_list",
-      icon: <BsPersonBadge />,
-    },
-    {
-      key: "filters",
-      icon: <BsFunnel />,
-    },
-  ]
+  const getAdditionalElement = (key: NavigationOptionsKey): ReactNode => {
+    let additionalElement: ReactNode;
+    switch (key) {
+      case "download_manager":
+        additionalElement = <PackStatusCountBadge />;
+        break;
+      case "card_list":
+        additionalElement = !currentDeck ? <CardPaginationNumberBadge /> : <></>;
+        break;
+      case "filters":
+        additionalElement = <NumberOfFiltersBadge />;
+        break;
+    }
+    return additionalElement;
+  }
+  
 
   return (
     <nav id="main-navigation">
       <div className="btn-group d-flex" role="group" aria-label="Navigation">
-        {navigationOptions.map((navigationOption) => {
-          const isActive: boolean = navigationOption.key == 'card_list' || navigationOption.key == selected;
-          const currentAdditionalText = additionalText?.get(navigationOption.key);
+        {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
+          const additionalText = getAdditionalElement(navigationOptionKey);
+          const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
           return <button
-            key={`navigation-${navigationOption.key}`}
+            key={`navigation-${navigationOptionKey}`}
             type="button"
             className={`
+              main-navigation-item
               btn 
               btn-${isActive ? '' : 'outline-'}light 
               ${isActive ? 'active' : ''}
             `}
-            disabled={!active}
             onClick={() => {
-              if (onClick) onClick(navigationOption.key)
+              if (navigationOptionKey !== selectedNavigationOptionKey)
+                dispatch(navigationOptionKeySet(navigationOptionKey));
+              else
+                dispatch(navigationOptionKeySet("card_list"));
+
             }}>
-            {navigationOption.icon} {t(navigationOption.key)}
-            {currentAdditionalText && <>
+            {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
+            {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
               &nbsp;
-                <span className='badge bg-secondary'>
-                  {currentAdditionalText}
-                </span>
+              <LoadingSpinner small />
+            </>}
+            {additionalText && <>
+                &nbsp;
+                {getAdditionalElement(navigationOptionKey)}
             </>}
           </button>
         })}

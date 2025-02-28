@@ -1,4 +1,5 @@
 {
+    "quick_search": "Búsqueda rápida",
     "traits": "Rasgos",
     "faction_code": "Facción (código)",
     "pack_code": "Pack (código)",
@@ -13,8 +14,14 @@
     "name": "Nombre",
     "real_name": "Nombre (original)",
     "text": "Texto",
+    "back_text": "Texto (trasero)",
     "real_text": "Texto (original)",
     "subname": "Subnombre",
+    "flavor": "Texto de hambientación",
+    "back_flavor": "Texto de hambientación (trasero)",
+    "illustrator": "Ilustrador",
+    "octgn_id": "ID de OCTGN",
+    "code": "Código",
 
     "cost": "Coste",
     "attack": "Ataque",
@@ -29,7 +36,7 @@
     "threat": "Amenaza",
     "thwart": "Intervención",
     
-    "attack_star": "\u2606 en ataque",
+    "attack_star": "* en ataque",
     "base_threat_fixed": "Amenaza base fija",
     "double_sided": "Doble cara",
     "escalation_threat_fixed": "Amenaza de escalada fija",
@@ -38,7 +45,7 @@
     "is_unique": "Es único",
     "permanent": "Permanente",
     "threat_fixed": "Amenaza fija",
-    "thwart_star": "\u2606 en intervención",
+    "thwart_star": "* en intervención",
 
     "filters": "Filtros",
     "contains_filters_title": "Contiene texto",

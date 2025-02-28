@@ -1,7 +1,7 @@
 {
   "base_path": "https://es.marvelcdb.com",
-  "card_list": "Listado de cartas",
-  "pack_list": "Listado de packs",
+  "card_list": "Lista de cartas",
+  "pack_list": "Lista de packs",
   "cards_per_page": "Cartas por página",
   "close": "Cerrar",
   "continue": "Seguir",
@@ -9,6 +9,7 @@
   "download_manager": "Gestor de descargas",
   "downloaded_cards": "Cartas descargadas",
   "downloaded_packs": "Packs descargados",
+  "description": "Descripción",
   "import_export": "Gestionar datos manualmente",
   "export": "Exportar JSON",
   "import": "Importar JSON",
@@ -55,5 +56,21 @@
       "title": "Reiniciar applicación",
       "content": "<p>¿Estas seguro de que quieres <b>reiniciar la applicación</b>?</p><p>Esto borrará <b>todas las cartas, packs, idioma...</b> de tu navegador.</p>"
     }
-  }
+  },
+  "aspect": {
+    "aggression": "Agresividad",
+    "justice": "Justicia",
+    "leadership": "Liderazgo",
+    "protection": "Protección"
+  },
+  "tag": {
+    "solo": "Solo",
+    "multiplayer": "Multi",
+    "expert": "Experto",
+    "standard": "Normal",
+    "heroic": "Heroico",
+    "nightmare": "Pesadilla",
+    "theme": "Temático"
+  },
+  "number_of_cards": "Número de cartas"
 }

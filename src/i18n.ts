@@ -4,7 +4,14 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
 export const I18N_LANGS = ['en', 'es', 'fr', 'de', 'it', 'ko'];
-export const I18N_NAMESPACES = ['global', 'multiselect_filter', 'modal', 'instructions', 'filters'];
+export const I18N_NAMESPACES = ['decks','global', 'multiselect_filter', 'modal', 'instructions', 'filters', 'error'];
+
+export const checkLanguageString = (language: string): string => {
+  if (!I18N_LANGS.includes(language)) {
+    return I18N_LANGS[0];
+  }
+  return language;
+}
 
 i18n
   .use(initReactI18next)
@@ -24,7 +31,6 @@ i18n
 /*
 I18N_LANGS.map((lang) => 
   I18N_NAMESPACES.map((namespace) => {
-    console.log("addResourceBundle",lang, namespace);
     i18n.addResourceBundle(
       lang,
       namespace, 

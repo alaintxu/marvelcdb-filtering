@@ -1,0 +1,10 @@
+{
+  "decks": "Mazos",
+  "decks_bookmarked": "Mazos guardados",
+  "download_deck": "Descargar mazo",
+  "delete_deck": "Borrar mazo",
+  "deck_id_or_url": "ID o URL del mazo",
+  "find_decks_marvelcdb_md_old": "Busca mazos en [MarvelCDB](https://es.marvelcdb.com/decklists)",
+  "find_decks": "Busca mazos en",
+  "deck_list": "Lista de mazos guardados"
+}

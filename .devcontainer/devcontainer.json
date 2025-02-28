@@ -3,6 +3,7 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 
     "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
 	"runArgs": ["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
 	"customizations": {
 		"vscode": {
@@ -13,9 +14,11 @@
 				"GitHub.copilot",
 				"dsznajder.es7-react-js-snippets",
 				"vscode-icons-team.vscode-icons",
-				"GitHub.vscode-github-actions"
+				"GitHub.vscode-github-actions",
+				"Orta.vscode-jest"
 			]
 		}
 	},
-	"postCreateCommand": "bash .devcontainer/scripts/postCreateCommand.sh"
+	"postCreateCommand": "bash .devcontainer/scripts/postCreateCommand.sh",
+	"forwardPorts": [5173, 9222]
 }

@@ -1,0 +1,39 @@
+name: Test npm
+run-name: ${{ github.actor }} is testing NPM package using GitHub Actions 🚀
+on:
+  push:
+  pull_request:
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            checks: write
+            statuses: write
+            pull-requests: write
+        steps:
+            - name: Check out repository code
+              uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: '22.x'
+                registry-url: 'https://registry.npmjs.org'
+            - name: Install dependencies
+              run: npm i
+            - name: jest test with Coverage
+              continue-on-error: true
+              run: npx jest --json --outputFile=jest-results.json --coverage
+            - name: Test results artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: jest-results.json
+                path: jest-results.json
+                compression-level: 9
+            - name: Test coverage artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: coverage
+                path: coverage/
+                compression-level: 9
+            - run: echo "🍏 This job's status is ${{ job.status }}."

@@ -5,6 +5,7 @@
   "cards_per_page": "Cards per page",
   "close": "Close",
   "continue": "Continue",
+  "description": "Description",
   "download_all": "Download all",
   "download_manager": "Download manager",
   "downloaded_cards": "Downloaded cards",
@@ -56,5 +57,21 @@
       "title": "Reset app",
       "content": "<p>Are you sure you want to <b>reset the app</b>?</p><p>This will delete <b>all the packs, cards, language configuration...</b> from your browser.</p>"
     }
-  }
+  },
+  "aspect": {
+    "aggression": "Aggression",
+    "justice": "Justice",
+    "leadership": "Leadership",
+    "protection": "Protection"
+  },
+  "tag": {
+    "solo": "Solo",
+    "multiplayer": "Multiplayer",
+    "expert": "Expert",
+    "standard": "Standard",
+    "heroic": "Heroic",
+    "nightmare": "Nightmare",
+    "theme": "Theme"
+  },
+  "number_of_cards": "Number of cards"
 }

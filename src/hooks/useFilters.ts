@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
-import { MCCard } from "./useCards";
+import { MCCard } from "../store/entities/cards";
 
 
 export type OptionType = {
@@ -155,16 +155,6 @@ const useFilters = (cards: MCCard[]) => {
     () => filterCardsBySelectedFilters(cards, selectedFilters),
     [cards, selectedFilters]
   );
-
-  /*useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    // Foreach key of MCCard class get query Params
-    let queryParamSelectedFilters: SelectedFilters = {};
-    for (const [key, value] of queryParams.entries()) {
-      queryParamSelectedFilters[key] = value.split(",");
-      setSelectedFilters(queryParamSelectedFilters);
-    }
-  }, []);*/
 
   useEffect(() => {
     let filterString = "";

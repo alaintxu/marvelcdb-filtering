@@ -1,4 +1,6 @@
 {
-  "instructions_title": "Instrucciones",
-  "instructions_text": "No tienes ninguna carta todavía. Para empezar, entra en el 'Gestor de Descargas', selecciona el idioma y clicka en 'Descargar todos'. Si no tienes todas las cartas, puedes desplegar 'la lista de packs' y descargar los packs que tengas."
+  "title": "Instrucciones",
+  "alert_md": "Este mensaje puede aparecer por varias razones:\n\n1. Si es la **primera vez** que entras en la aplicación.\n2. Si **has borrado** o **no hay cartas** descargadas en este navegador.\n3. Si has **cambiado de navegador**.\n4. Si ha habido alguna **actualización** que necesita borrar los datos antiguos.",
+  "instructions_md": "No tienes **ninguna carta todavía**. Para empezar:\n\n1. Entra en el **Gestor de Descargas**.\n1. Selecciona el **idioma**.\n1. Despliega la **lista de packs** y selecciona los packs que tengas. Si tienes todos los packs o quieres ver todas las cartas, en vez de eso, puedes hacer click en **Descargar todos**. ",
+  "reset_help_md": "Si algo funciona mal o tienes problemas con la aplicación, puedes probar a **Reiniciar la aplicación**. Para ello, ve a **Gestor de descargas** y haz click en **Reiniciar aplicación**."
 }

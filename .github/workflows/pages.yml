@@ -1,6 +1,10 @@
 name: Build NPM
 run-name: ${{ github.actor }} is building NPM package using GitHub Actions 🚀
 on:
+  workflow_run:
+    workflows: ["Test npm"]
+    types:
+      - completed
   push:
     branches:
       - main
@@ -8,6 +12,7 @@ on:
 
 jobs:
   build:
+    if: github.event.workflow_run.conclusion == 'success' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
