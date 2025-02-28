@@ -14,7 +14,6 @@ type Props = {
 }
 
 const PaginationElementsPerPageFilter = ({title, iconType = MdNumbers}: Props) => {
-  //const queryClient = useQueryClient();
   const { t } = useTranslation('global');
   if(!title) title = t('elements_per_page');
 

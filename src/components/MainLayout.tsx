@@ -1,10 +1,7 @@
-import { useEffect } from "react";
-import Instructions from "./Instructions";
-import CardFiltersView from "./Filter/CardFiltersSection";
-import Navigation from "./Navigation";
-import CardsView from "./Card/CardsView";
-import DownloadManager from "./DownloadManager/DownloadManager";
-import DeckView from "./Deck/DeckView";
+import { lazy, Suspense, useEffect } from "react";
+// import CardFiltersView from "./Filter/CardFiltersSection";
+// import Navigation from "./Navigation";
+// import DownloadManager from "./DownloadManager/DownloadManager";
 
 import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
 import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey, selectIsAnyCardClicked } from "../store/ui/other";
@@ -14,7 +11,15 @@ import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, s
 import { hasClassInAncestors } from "./Card";
 import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState } from "../store/entities/packs";
 import { useAppDispatch, useAppSelector } from "../hooks/useStore";
+import LoadingSpinner from "./LoadingSpinner";
 
+
+const CardsView = lazy(() => import('./Card/CardsView'));
+const DeckView = lazy(() => import('./Deck/DeckView'));
+const Instructions = lazy(() => import('./Instructions'));
+const Navigation = lazy(() => import('./Navigation'));
+const CardFiltersView = lazy(() => import('./Filter/CardFiltersSection'));
+const DownloadManager = lazy(() => import('./DownloadManager/DownloadManager'));
 
 const isSelectXButton = (element: HTMLElement) => {
   if(element.classList?.toString().includes("-indicatorContainer")){
@@ -27,8 +32,6 @@ const isSelectXButton = (element: HTMLElement) => {
 }
 const MainLayout = () => {
   const dispatch = useAppDispatch();
-  //const deckId = new URLSearchParams(window.location.search).get("deckId");
-  //const { deck, isDeckLoading, isDeckFetching } = useDeckQuery(deckId || "43333");  // @ToDo: remove hardcoded deckId to ""
 
   // Redux values
   const selectedNavigationOptionKey = useAppSelector(selectNavigationOptionKey);
@@ -38,10 +41,7 @@ const MainLayout = () => {
   const elementsPerPage: number = useAppSelector(selectPaginationElementsPerPage);
   const packsState: PackSliceState = useAppSelector(selectPackState);
   const isAnyCardClicked: boolean = useAppSelector(selectIsAnyCardClicked);
-  //const packStatusDict: PackStatusDict = useAppSelector(selectPackStatusDict);
 
-  // Filters
-  // @ToDo: move to Redux
 
   // Manage local storage
   useEffect(() => { removeOldLocalStorageItems(); }, []); // [] means this effect will run once after the first render
@@ -103,25 +103,35 @@ const MainLayout = () => {
   return (
     <>
       <main id="main-section" className={mainClassNames.join(" ")}>
-        <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
-        {currentDeck ? <DeckView deck={currentDeck} /> : (
-          cards.length > 0 ? <CardsView /> : <Instructions />
-        )}
-        {/*isDeckLoading || isDeckFetching ? <div className="d-flex justify-content-center mt-4">
-            <LoadingSpinner />
-          </div> : <>
-          {deck ? <DeckView deck={deck} /> : <>
-            <CardsView /> : <Instructions />
-          </>}
-        </>*/}
-        <CardFiltersView
-          id="filters" 
-          className="bg-dark shadow d-flex flex-column p-3 filter-container"
-          selectedFilters={{}/*selectedFilters*/} 
-          setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
-          />
+        <Suspense fallback={<LoadingSpinner />}>
+          <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
+        </Suspense>
+        {currentDeck ? (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DeckView deck={currentDeck} />
+          </Suspense>
+        ) : (
+          cards.length > 0 ? (
+          <Suspense fallback={<LoadingSpinner />}>
+             <CardsView />
+          </Suspense>
+          ) : (
+          <Suspense fallback={<LoadingSpinner/>}>
+            <Instructions />
+          </Suspense>
+        ))}
+        <Suspense fallback={<LoadingSpinner />}>
+          <CardFiltersView
+            id="filters" 
+            className="bg-dark shadow d-flex flex-column p-3 filter-container"
+            selectedFilters={{}/*selectedFilters*/} 
+            setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
+            />
+        </Suspense>
       </main>
-      <Navigation />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Navigation />
+      </Suspense>
     </>
   )
 }

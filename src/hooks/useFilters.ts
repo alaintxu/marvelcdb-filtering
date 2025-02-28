@@ -156,16 +156,6 @@ const useFilters = (cards: MCCard[]) => {
     [cards, selectedFilters]
   );
 
-  /*useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    // Foreach key of MCCard class get query Params
-    let queryParamSelectedFilters: SelectedFilters = {};
-    for (const [key, value] of queryParams.entries()) {
-      queryParamSelectedFilters[key] = value.split(",");
-      setSelectedFilters(queryParamSelectedFilters);
-    }
-  }, []);*/
-
   useEffect(() => {
     let filterString = "";
     for(let [key, values] of Object.entries(selectedFilters)){

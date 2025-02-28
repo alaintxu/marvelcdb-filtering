@@ -1,3 +1,4 @@
+/*
 import { useTranslation } from "react-i18next";
 import useDataQuery from "./useDataQuery";
 import { TFunction } from "i18next";
@@ -24,14 +25,6 @@ export interface Deck {
 }
 
 const extractIdFromDeckUrl = (deckUrl: string): number => {
-    /* 
-    ** Extract id using regex.
-    ** Deck URL examples: 
-    ** https://marvelcdb.com/decklist/view/46643/x-treme-measures-1.0 => 46643 
-    ** https://es.marvelcdb.com/decklist/view/12345/whatever => 12345
-    ** 46643 => 46643
-    ** 12345 => 12345
-    */
     const numberRegex = /^\d+$/;
     const urlRegex = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
     const match = deckUrl.match(urlRegex);
@@ -99,3 +92,4 @@ const useDeckQuery = (deckUrl: string) => {
 }
 
 export default useDeckQuery
+*/

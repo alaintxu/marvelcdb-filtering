@@ -1,3 +1,4 @@
+/*
 import { useTranslation } from "react-i18next";
 import useDataQuery from "./useDataQuery";
 import { Pack } from "../store/entities/packs";
@@ -25,3 +26,4 @@ const usePacksQuery = () => {
 }
 
 export default usePacksQuery
+*/

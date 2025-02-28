@@ -1,6 +1,6 @@
+/*
 import { useQuery } from "@tanstack/react-query";
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 const useDataQuery = <T>(baseURL: string, endpoint: string, queryKey: string[], requestConfig?: RequestInit) => {
   const { data, error, isLoading, isFetching } = useQuery<T, Error>({
     queryKey: queryKey,
@@ -22,3 +22,4 @@ const useDataQuery = <T>(baseURL: string, endpoint: string, queryKey: string[], 
 };
 
 export default useDataQuery;
+*/

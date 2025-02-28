@@ -2,18 +2,7 @@ import { BsDownload } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
 import { loadPackCards, selectAllPacks } from '../../../store/entities/packs';
-import { AppDispatch } from '../../../store/configureStore';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
-
-function delayedDispatch(dispatch: AppDispatch, action: any, delay: number) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            dispatch(action);
-            resolve(void 0);
-        }, delay);
-    }
-    );
-}
 
 const DownloadAllButton = () => {
     const { t } = useTranslation('global');
@@ -36,13 +25,13 @@ const DownloadAllButton = () => {
                 //dispatch(packStatusDictSet({}));
                 if (!packs) return
 
-                const batchSize = 3;
+                const batchSize = 5;
                 for (let i = 0; i < packs.length; i += batchSize) {
                     const batch = packs.slice(i, i + batchSize);
                     //await Promise.all(batch.map(async (pack) => delayedDispatch(dispatch, loadPackCards(pack.code), 1000)));
                     await Promise.all(
                         batch.map(
-                            async (pack) => dispatch(loadPackCards(pack.code))
+                            async (pack) => dispatch<any>(loadPackCards(pack.code))
                         )
                     );
                 }
