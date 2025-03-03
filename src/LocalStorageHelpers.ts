@@ -22,12 +22,12 @@ export function saveToLocalStorageCompressed<T>(itemName: string, elementToSave:
         console.warn(`compression is disabled (${itemName})`);
         return saveToLocalStorage(itemName, elementToSave);
     }
-    const start = performance.now();
+    //const start = performance.now();
     try {
         const compressed = compress(elementToSave);
         localStorage.setItem(itemName, compressed);
-        console.info(`saveToLocalStorageCompressed ${itemName} in ms`, (performance.now() - start));
-        console.info(`Local storage size in KB`, localStorageSize());
+        //console.info(`saveToLocalStorageCompressed ${itemName} in ms`, (performance.now() - start));
+        //console.info(`Local storage size in KB`, localStorageSize());
         return true;
     } catch (e) {
         console.error(`Error compressing cards to local storage`, e);
@@ -40,7 +40,7 @@ export function getFromLocalStorageCompressed<T>(itemName: string): T | undefine
         console.warn(`compression is disabled (${itemName})`);
         return getFromLocalStorage(itemName);
     }
-    const start = performance.now();
+    //const start = performance.now();
     try {
         const localStorageString = localStorage.getItem(itemName);
         
@@ -51,9 +51,8 @@ export function getFromLocalStorageCompressed<T>(itemName: string): T | undefine
 
         const decompressed = decompress<T>(localStorageString);
 
-        console.info(`getFromLocalStorageCompressed ${itemName} in ms`, (performance.now() - start));
-        console.info(`Local storage size in KB`, localStorageSize());
-        //return parsed;
+        //console.info(`getFromLocalStorageCompressed ${itemName} in ms`, (performance.now() - start));
+        //console.info(`Local storage size in KB`, localStorageSize());
         return decompressed as T;
     } catch (e) {
         console.error(`Error decompressing cards from local storage`, e);
@@ -62,7 +61,7 @@ export function getFromLocalStorageCompressed<T>(itemName: string): T | undefine
 };
 
 export function getFromLocalStorage<T>(itemName: string): T | undefined {
-    const start = performance.now();
+    //const start = performance.now();
     try {
         const localStorageString = localStorage.getItem(itemName);
         if (!localStorageString) return; // no itemName in localStorage
@@ -84,8 +83,8 @@ export function getFromLocalStorage<T>(itemName: string): T | undefined {
         if (localStorageString === 'false') return false as unknown as T;
         if (localStorageString === 'null') return null as unknown as T;
 
-        console.info(`getFromLocalStorage ${itemName} in ms`, (performance.now() - start));
-        console.info(`Local storage size in KB`, localStorageSize());
+        //console.info(`getFromLocalStorage ${itemName} in ms`, (performance.now() - start));
+        //console.info(`Local storage size in KB`, localStorageSize());
         return localStorageString as T;
     } catch {
         console.error(`Error getting ${itemName} from local storage`);
@@ -95,11 +94,11 @@ export function getFromLocalStorage<T>(itemName: string): T | undefined {
 }
 
 export function saveToLocalStorage(itemName: string, elementToSave: number | boolean | string | object ): boolean {
-    const start = performance.now();
+    //const start = performance.now();
     try {
         localStorage.setItem(itemName, JSON.stringify(elementToSave));
-        console.info(`saveToLocalStorage ${itemName} in ms`, (performance.now() - start));
-        console.info(`Local storage size in KB`, localStorageSize());
+        //console.info(`saveToLocalStorage ${itemName} in ms`, (performance.now() - start));
+        //console.info(`Local storage size in KB`, localStorageSize());
         return true
     } catch (e) {
         console.error(`Error saving ${itemName} to local storage`, e);
@@ -107,12 +106,12 @@ export function saveToLocalStorage(itemName: string, elementToSave: number | boo
     return false;
 };
 
-let localStorageSize = function () {
-    let _lsTotal = 0,_xLen, _x;
-    for (_x in localStorage) {
-    if (!localStorage.hasOwnProperty(_x)) continue;
-        _xLen = (localStorage[_x].length + _x.length) * 2;
-        _lsTotal += _xLen;
-    }
-  return  (_lsTotal / 1024).toFixed(2);
- }
+// let localStorageSize = function () {
+//     let _lsTotal = 0,_xLen, _x;
+//     for (_x in localStorage) {
+//     if (!localStorage.hasOwnProperty(_x)) continue;
+//         _xLen = (localStorage[_x].length + _x.length) * 2;
+//         _lsTotal += _xLen;
+//     }
+//   return  (_lsTotal / 1024).toFixed(2);
+//  }

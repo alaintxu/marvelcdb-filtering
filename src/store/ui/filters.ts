@@ -78,26 +78,30 @@ export type FiltersByTypes = {
     "string": {
         [key in keyof MCCard]?: string
     },
+    "dotted": {
+        [key in keyof MCCard]?: string[]
+    }
 }
 
 type FiltersState = {
     quickFilter: string,
     filters: FiltersByTypes,
-    traits: string[]
 }
+
+const initialState = {
+    quickFilter: "",
+    filters: {
+        "boolean": {},
+        "multiselect": {},
+        "number": {},
+        "string": {},
+        "dotted": {},
+    } as FiltersByTypes,
+} as FiltersState;
 
 const slice = createSlice({
     name: 'filters',
-    initialState: {
-        quickFilter: "",
-        filters: {
-            "boolean": {},
-            "multiselect": {},
-            "number": {},
-            "string": {},
-        } as FiltersByTypes,
-        traits: [] as string[],
-    } as FiltersState,
+    initialState: initialState,
     reducers: {
         quickFilterSet: (state: FiltersState, action: PayloadAction<string>) => {
             state.quickFilter = action.payload;
@@ -114,18 +118,12 @@ const slice = createSlice({
             state.filters[filterType][fieldCode] = values;
             return state;
         },
-        filterTraitsUpdated: (state: FiltersState, action: PayloadAction<string[]>) => {
-            state.traits = action.payload;
-            return state;
-        },
+        // filterTraitsUpdated: (state: FiltersState, action: PayloadAction<string[]>) => {
+        //     state.traits = action.payload;
+        //     return state;
+        // },
         resetFilters: (state: FiltersState) => {
-            state.filters = {
-                "boolean": {},
-                "multiselect": {},
-                "number": {},
-                "string": {},
-            };
-            state.traits = [];
+            state = initialState;
             return state;
         }
     }

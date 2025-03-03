@@ -74,12 +74,6 @@ const slice = createSlice({
     name: 'cards',
     initialState: initialState, //getCardsFromLocalStorage(),
     reducers: {
-        // cardsAdded: (cards: MCCard[], action) => {
-        //     const newCards: MCCard[] = action.payload;
-        //     cards = [...cards, ...cleanCards(newCards)];
-        //     // saveCardsToLocalStorage(cards);
-        //     return cards;
-        // },
         removeAllCards: (cards: MCCard[]) => {
             cards = [];
             return cards;
@@ -102,58 +96,15 @@ const slice = createSlice({
             //cards = [...sortCards(cards, "code")];
             return cards;
         },
-        // cardPackAdded: (cards:MCCard[], action) => {
-        //     const packCode = action.payload.packCode;
-        //     const newCards: MCCard[] = action.payload.newCards;
-        //     // Remove old cards of the pack
-        //     cards = cards.filter(
-        //         (card: MCCard) => card.pack_code !== packCode
-        //     );
-        //     cards = [...cards, ...cleanCards(newCards)];
-        //     // saveCardsToLocalStorage(cards);
-        //     return cards;
-        // },
-        // cardsSet: (cards: MCCard[], action) => {
-        //     const newCards: MCCard[] = action.payload;
-        //     cards = cleanCards(newCards);
-        //     // saveCardsToLocalStorage(cards);
-        //     return cards;
-
-        // },
-        // cardsSorted: (cards: MCCard[], action) => {
-        //     const fieldName: keyof MCCard = action.payload;
-        //     cards = cards.sort((a, b) => {
-        //         const aValue = a[fieldName];
-        //         const bValue = b[fieldName];
-        //         if (typeof aValue === "string" && typeof bValue === "string") {
-        //             return aValue.localeCompare(bValue);
-        //         } else if (typeof aValue === "number" && typeof bValue === "number") {
-        //             return aValue - bValue;
-        //         } else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-        //             return aValue ? 1 : -1;
-        //         } else if (aValue == null && bValue == null) {
-        //             return 0;
-        //         } else if (aValue == null) {
-        //             return -1;
-        //         } else if (bValue == null) {
-        //             return 1;
-        //         }
-        //         return 0;
-        //     })
-        // }
     }
 });
 
 /* Reducer exports */
 export default slice.reducer;
 export const { 
-    //cardsAdded, 
     cardPackRemoved,
     cardsReceived,
-    // cardPackAdded,
-    // cardsSet,
     removeAllCards,
-    //cardsSorted
 } = slice.actions;
 
 
@@ -204,7 +155,31 @@ export const selectUniqueFieldOptions = (fieldCode: keyof MCCard, fieldName: key
             }
         }
         );
-        return Array.from(values);
+        return values.sort((a, b) => a.label.localeCompare(b.label));
+    }
+);
+
+export const selectUniqueDottedFieldOptions = (fieldCode: keyof MCCard) => createSelector(
+    selectAllCards,
+    (cards) => {
+        const foundCodes = new Set<string>();
+        const values: FieldOption[] = [];
+        cards.forEach((card: MCCard) => {
+            if (card[fieldCode]) {
+                const fullString = card[fieldCode] as string;
+                const splitString = fullString.split(". ");
+                for(const uncleanString of splitString) {
+                    // Add a dot if it does not end with it
+                    const label = uncleanString.endsWith(".") ? uncleanString : uncleanString + "."
+                    const value = label.toLocaleLowerCase();
+                    if (!foundCodes.has(value)) {
+                        values.push({ value: value, label: label });
+                        foundCodes.add(value);
+                    }
+                }
+            }
+        });
+        return values.sort((a, b) => a.label.localeCompare(b.label));
     }
 );
 

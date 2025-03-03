@@ -16,7 +16,6 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
   return cards.filter((card) => {
-    // @ToDo: dotted filters (traits)
     for (const key of Object.keys(filters['boolean'])) {
       const mcKey = key as keyof MCCard;
       const filterValue = filters['boolean'][mcKey];
@@ -51,6 +50,21 @@ const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
       const filterValue = normalizeString(filters['string'][mcKey]);
       const cardValue = normalizeString(card[mcKey]);
       if (filterValue!==undefined && typeof cardValue === 'string' && cardValue.includes(filterValue) === false) {
+        // Card value does not match filter
+        return false;
+      }
+    }
+    for (const key of Object.keys(filters['dotted'])) {
+      const mcKey = key as keyof MCCard;
+      const filterValues = filters['dotted'][mcKey];
+      const cardValue = card[mcKey] ? card[mcKey] as string : "";
+      if (filterValues!==undefined && !cardValue) {
+        // Card does not have value for this field
+        return false;
+      } 
+      const unifiedCardValue = cardValue.endsWith('.') ? cardValue : cardValue+'.';
+      if (filterValues!==undefined && filterValues.length && !filterValues.some(value => unifiedCardValue.toLowerCase().includes(value))) {
+        // Card value does not match filter
         return false;
       }
     }

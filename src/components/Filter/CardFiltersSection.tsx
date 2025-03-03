@@ -14,7 +14,8 @@ import StringFilterRedux from "./StringFilterRedux";
 import BooleanFilterRedux from "./BooleanFilterRedux";
 
 import { 
-  resetFilters, 
+  resetFilters,
+  DOTTED_FILTERS,
   KEY_VALUE_FILTERS, 
   STRING_FILTERS, 
   NUMBER_FILTERS, 
@@ -24,6 +25,7 @@ import {
 import IconForConcept from "../IconForConcept";
 import NumberOfFiltersBadge from "./NumberOfFiltersBadge";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import DottedMultiselectFilterRedux from "./DottedMultiselectFilterRedux";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -53,6 +55,7 @@ const CardFiltersView = ({
     mode: "onChange",
   });
 
+  const dottedFilterNumber = useAppSelector(selectNumberOfFiltersByType("dotted"));
   const multiselectFilterNumber = useAppSelector(selectNumberOfFiltersByType("multiselect"));
   const stringFilterNumber = useAppSelector(selectNumberOfFiltersByType("string"));
   const numberFilterNumber = useAppSelector(selectNumberOfFiltersByType("number"));
@@ -61,16 +64,22 @@ const CardFiltersView = ({
 
   return (
     <section {...rest}>
+      {/* Heading */}
       <h3 className="d-flex align-items-center gap-2">
         <IconForConcept concept="filter" />
         {t('filters')}
         <NumberOfFiltersBadge className="ms-auto bg-light text-dark" />
       </h3>
+
+      {/* Pagination filter */}
       <PaginationElementsPerPageFilter
           title={t("cards_per_page")}
           iconType={TbCards}
           />
+
+      {/* Filters */}
       <form className="accordion" id="filterAccordion">
+        {/* Multiselect filters */}
         <div className="accordion-item bg-dark">
           <h2 className="accordion-header">
             <button
@@ -82,7 +91,7 @@ const CardFiltersView = ({
               aria-controls="multiselectFilterCollapse">
               <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
                 <GoMultiSelect />
-                {multiselectFilterNumber > 0 && multiselectFilterNumber}
+                {multiselectFilterNumber+dottedFilterNumber > 0 && multiselectFilterNumber+dottedFilterNumber}
               </span>
               {t("multiselect_filters_title")} 
             </button>
@@ -91,6 +100,16 @@ const CardFiltersView = ({
               id="multiselectFilterCollapse"
               className="accordion-collapse collapse p-4" 
               data-bs-parent="#filterAccordion">
+
+            {DOTTED_FILTERS.map((field_base) => {
+              return (
+                <DottedMultiselectFilterRedux
+                    key={`dotted_filter_${field_base}`}
+                    control={control}
+                    fieldCode={field_base as keyof MCCard}
+                />
+              );
+            })}
             {KEY_VALUE_FILTERS.map((field_base) => {
               return (
                 <MultiselectFilterRedux
@@ -102,6 +121,8 @@ const CardFiltersView = ({
             })}
           </div>
         </div>
+
+        {/* String filters */}
         <div className="accordion-item bg-dark">
           <h2 className="accordion-header">
             <button
@@ -131,6 +152,8 @@ const CardFiltersView = ({
             ))}
           </div>
         </div>
+
+        {/* Number filters */}
         <div className="accordion-item bg-dark">
           <h2 className="accordion-header">
             <button
@@ -162,6 +185,8 @@ const CardFiltersView = ({
             </div>
           </div>
         </div>
+
+        {/* Boolean filters */}
         <div className="accordion-item bg-dark">
           <h2 className="accordion-header">
             <button
@@ -192,6 +217,8 @@ const CardFiltersView = ({
             ))}</div>
           </div>
         </div>
+
+        {/* Reset button */}
         <button
           type="reset" 
           title={t("reset")}

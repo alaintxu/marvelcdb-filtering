@@ -1,6 +1,7 @@
 {
     "quick_search": "Quick search",
     "traits": "Traits",
+    "real_traits": "Traits (original)",
     "faction_code": "Faction (code)",
     "pack_code": "Pack (code)",
     "type_code": "Type (code)",
@@ -12,10 +13,16 @@
     "cards_per_page": "Cards per page",
 
     "name": "Name",
-    "real_name": "Real name",
+    "real_name": "Name (original)",
     "text": "Text",
-    "real_text": "Real text",
+    "back_text": "Back text",
+    "real_text": "Text (original)",
     "subname": "Subname",
+    "flavor": "Flavor text",
+    "back_flavor": "Back flavor text",
+    "illustrator": "Illustrator",
+    "octgn_id": "OCTGN ID",
+    "code": "Code",
 
     "attack": "Attack",
     "base_threat": "Base threat",
