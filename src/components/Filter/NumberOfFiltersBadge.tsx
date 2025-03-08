@@ -1,5 +1,5 @@
-import { HTMLAttributes } from 'react'
-import { selectNumberOfFilters } from '../../store/ui/filters';
+import { HTMLAttributes, useMemo } from 'react'
+import { selectNumberOfFilters, selectQuickFilter } from '../../store/ui/filters';
 import { useAppSelector } from '../../hooks/useStore';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {}
@@ -7,10 +7,15 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {}
 const NumberOfFiltersBadge = ({className, ...rest}: Props) => {
 
     const numberOfFilters: number = useAppSelector(selectNumberOfFilters);
-    if (numberOfFilters === 0) return null;
+    const quickFilter = useAppSelector(selectQuickFilter);
+    const badgeNumber = useMemo(() => {
+        return quickFilter ? numberOfFilters + 1 : numberOfFilters;
+    }, [numberOfFilters, quickFilter]);
+    
+    if (badgeNumber === 0) return null;
     return (
         <span className={`badge bg-secondary ${className}`} {...rest}>
-            {numberOfFilters}
+            {badgeNumber}
         </span>
 
     )

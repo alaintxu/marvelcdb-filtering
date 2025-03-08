@@ -7,11 +7,45 @@ import { MCCard, selectAllCards } from "../../store/entities/cards";
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 import IconForConcept from "../IconForConcept";
 import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other";
-import { FiltersByTypes, selectFilters, selectQuickFilter } from "../../store/ui/filters";
+import { FiltersByTypes, selectFilters, selectHideDuplicates, selectQuickFilter } from "../../store/ui/filters";
 import TopActions from "../TopActions";
 import { normalizeString, quickFilterCardList } from "../Filter/QuickSearchFilter";
 import { sortCards } from "../../store/entities/cardsModificationUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+
+const filterDuplicates = (cards: MCCard[], hideDuplicates: boolean=true): MCCard[] => {
+  if (!hideDuplicates) return cards;
+  let uniqueCards: MCCard[] = [];
+  cards.forEach((card) => {
+    const existingCard = uniqueCards.find((uniqueCard) => {
+      if (uniqueCard.code === card.code) return true;
+      if (uniqueCard.duplicate_of_code && uniqueCard.duplicate_of_code === card.code) return true;
+      if (card.duplicate_of_code && uniqueCard.code === card.duplicate_of_code) return true;
+      if (card.duplicate_of_code && uniqueCard.duplicate_of_code && uniqueCard.duplicate_of_code === card.duplicate_of_code) return true;
+      return false;
+    });
+
+    const newQuantity = existingCard ? (card.quantity || 1) + (existingCard.quantity || 1) : card.quantity || 1;
+
+    if (!existingCard) {
+      uniqueCards.push({
+        ...card,
+        quantity: newQuantity
+      });
+    } else {
+      if (card.code === existingCard.duplicate_of_code) {
+        uniqueCards = uniqueCards.filter((uniqueCard) => uniqueCard.code !== existingCard.code);
+        uniqueCards.push({
+          ...card,
+          quantity: newQuantity}
+        );
+      }
+      // update quantity
+      existingCard.quantity = newQuantity;
+    }
+  });
+  return uniqueCards;
+}
 
 
 const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
@@ -84,6 +118,7 @@ const CardsView = () => {
   const showAllCardData = useAppSelector(selectShowAllCardData);
   const flipAllCards = useAppSelector(selectFlipAllCards);
   const quickFilter = useAppSelector(selectQuickFilter);
+  const hideDuplicates = useAppSelector(selectHideDuplicates);
   const filters: FiltersByTypes = useAppSelector(selectFilters);
 
 
@@ -94,9 +129,10 @@ const CardsView = () => {
   useEffect(() => {
     const filteredCards = filterCards(cards, filters);
     const quickFilteredCards = quickFilterCardList(filteredCards, quickFilter);
-    const sortedCards = sortCards(quickFilteredCards);
+    const uniqueCards = filterDuplicates(quickFilteredCards, hideDuplicates);
+    const sortedCards = sortCards(uniqueCards);
     setFilteredCards(sortedCards);
-  }, [cards, quickFilter, filters]);
+  }, [cards, quickFilter, filters, hideDuplicates]);
 
   useEffect(() => {
     dispatch(paginationTotalElementsUpdated(filteredCards?.length || 0));

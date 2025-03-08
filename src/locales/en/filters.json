@@ -1,5 +1,8 @@
 {
     "quick_search": "Quick search",
+    "show_duplicates": "Show duplicates",
+    "hide_duplicates": "Hide duplicates",
+
     "traits": "Traits",
     "real_traits": "Traits (original)",
     "faction_code": "Faction (code)",

@@ -75,8 +75,8 @@ const slice = createSlice({
     }
 });
 
-export const selectPagination = (state: RootState) => state.ui.pagination;
-export const selectPaginationElementsPerPage = (state: RootState) => state.ui.pagination.elementsPerPage;
+export const selectPagination = (state: RootState): PaginationState => state.ui.pagination;
+export const selectPaginationElementsPerPage = (state: RootState): number => state.ui.pagination.elementsPerPage;
 
 export default slice.reducer;
 export const { 

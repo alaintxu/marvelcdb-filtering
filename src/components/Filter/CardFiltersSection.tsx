@@ -26,6 +26,7 @@ import IconForConcept from "../IconForConcept";
 import NumberOfFiltersBadge from "./NumberOfFiltersBadge";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import DottedMultiselectFilterRedux from "./DottedMultiselectFilterRedux";
+import HideDuplicatesFilter from "./HideDuplicatesFilter";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -76,6 +77,9 @@ const CardFiltersView = ({
           title={t("cards_per_page")}
           iconType={TbCards}
           />
+
+      {/* Hide duplicates filter */}
+      <HideDuplicatesFilter className="mb-4" />
 
       {/* Filters */}
       <form className="accordion" id="filterAccordion">
