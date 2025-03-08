@@ -10,6 +10,7 @@ import { selectCurrentDeck } from '../store/entities/decks';
 import { selectIsAnyPackDownloading } from '../store/entities/packs';
 import NumberOfFiltersBadge from './Filter/NumberOfFiltersBadge';
 import { useAppDispatch, useAppSelector } from '../hooks/useStore';
+import CardStatusCountBadge from './DownloadManager/Packs/CardStatusCountBadge';
 
 
 type IconDict = {
@@ -33,10 +34,10 @@ const Navigation = () => {
     let additionalElement: ReactNode;
     switch (key) {
       case "download_manager":
-        additionalElement = <PackStatusCountBadge />;
+        additionalElement = <><PackStatusCountBadge /><CardStatusCountBadge /></>;
         break;
       case "card_list":
-        additionalElement = !currentDeck ? <CardPaginationNumberBadge /> : <></>;
+        additionalElement = !currentDeck ? <><CardPaginationNumberBadge /></> : <></>;
         break;
       case "filters":
         additionalElement = <NumberOfFiltersBadge />;
@@ -74,7 +75,7 @@ const Navigation = () => {
               <LoadingSpinner small />
             </>}
             {additionalText && <>
-                &nbsp;
+                <br/>
                 {getAdditionalElement(navigationOptionKey)}
             </>}
           </button>

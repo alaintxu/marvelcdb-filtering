@@ -1,5 +1,8 @@
 {
     "quick_search": "Búsqueda rápida",
+    "show_duplicates": "Mostrar repetidas",
+    "hide_duplicates": "Esconder repetidas",
+
     "traits": "Rasgos",
     "real_traits": "Rasgos (originales)",
     "faction_code": "Facción (código)",

@@ -85,11 +85,13 @@ export type FiltersByTypes = {
 
 type FiltersState = {
     quickFilter: string,
+    hideDuplicates: boolean,
     filters: FiltersByTypes,
 }
 
 const initialState = {
     quickFilter: "",
+    hideDuplicates: true,
     filters: {
         "boolean": {},
         "multiselect": {},
@@ -124,6 +126,10 @@ const slice = createSlice({
         // },
         resetFilters: (state: FiltersState) => {
             state = initialState;
+            return state;
+        },
+        hideDuplicatesSet: (state: FiltersState, action: PayloadAction<boolean>) => {
+            state.hideDuplicates = action.payload;
             return state;
         }
     }
@@ -170,11 +176,17 @@ export const selectFilterValues = (type: keyof FiltersState["filters"], field: k
 export const selectTrait = createSelector(
     selectFiltersSlice,
     (filters) => filters.traits
-)
+);
+
+export const selectHideDuplicates = createSelector(
+    selectFiltersSlice,
+    (filters) => filters.hideDuplicates
+);
 
 export default slice.reducer;
 export const {
     quickFilterSet,
+    hideDuplicatesSet,
     filterUpdated,
     resetFilters,
 } = slice.actions;

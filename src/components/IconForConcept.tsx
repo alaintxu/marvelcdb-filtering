@@ -5,7 +5,7 @@ import { FaEraser } from "react-icons/fa6"
 import { ImStack } from "react-icons/im"
 import { MdClose, MdDownloadForOffline, MdError, MdErrorOutline, MdFileDownloadDone, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
 import { RiArchiveStackFill, RiArchiveStackLine, RiStackedView } from "react-icons/ri"
-import { TbPlayCardStar, TbPlayCardStarFilled } from "react-icons/tb"
+import { TbCards, TbPlayCardStar, TbPlayCardStarFilled } from "react-icons/tb"
 
 
 export type Props = {
@@ -56,6 +56,9 @@ export type Concepts = {
   sendDownloadFill: IconType;
   show: IconType;
   showFill: IconType;
+
+  single_card: IconType;
+  multiple_cards: IconType;
 };
 
 const conceptIcons: Concepts = {
@@ -101,6 +104,9 @@ const conceptIcons: Concepts = {
     sendDownloadFill: MdSendAndArchive,
     show: BsEye,
     showFill: BsEyeFill,
+
+    single_card: TbPlayCardStar,
+    multiple_cards: TbCards,
 }
 
 
