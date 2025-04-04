@@ -1,8 +1,6 @@
 {
     "name": "Node.js & TypeScript",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-
-    "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
     "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
 	"runArgs": ["--sysctl", "net.ipv6.conf.all.disable_ipv6=1"],
 	"customizations": {

@@ -30,6 +30,12 @@ function getBackImage(card: MCCard) {
   if (card.linked_card?.imagesrc)
     return marvelcdb_basepath + card.linked_card.imagesrc;
 
+  if (card.type_code == "main_scheme" && card.linked_card?.code)
+    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/"+card.linked_card.code+".webp";
+
+  if (["evidence_means","evidence_motive","evidence_opportunity"].includes(card.type_code))
+    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/"+card.type_code+".webp";
+
   if (card.type_code == "villain")
     return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_purple.webp";
 
