@@ -38,7 +38,7 @@ const calculateFlipped = (manualFlipped: boolean | undefined, flipAllCards: bool
   return isMainScheme ? !isFlipped : isFlipped;
 }
 
-const isCardHorizontal = (card: MCCard) => {
+const isCardHorizontal = (card: MCCard, flipped: boolean) => {
   const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
   const front_horizontal = horizontal_types.includes(card.type_code);
   let back_horizontal = front_horizontal;
@@ -47,7 +47,7 @@ const isCardHorizontal = (card: MCCard) => {
     back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
   }
 
-  return front_horizontal || back_horizontal;
+  return flipped ? back_horizontal : front_horizontal;
 }
 
 
@@ -62,7 +62,10 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     () => calculateFlipped(manualFlipped, flipAllCards, isMainScheme)
     , [manualFlipped, flipAllCards, isMainScheme]
   );
-  const isHorizontal = useMemo(() => isCardHorizontal(card), [card]);
+  const isHorizontal = useMemo(
+    () => isCardHorizontal(card, manualFlipped || flipAllCards)
+    , [card, manualFlipped, flipAllCards]
+  );
 
   useEffect(() => {
     setManualFlipped(undefined);
