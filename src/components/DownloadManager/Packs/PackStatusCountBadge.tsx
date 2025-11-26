@@ -14,7 +14,7 @@ const PackStatusCountBadge = () => {
     <span className={`badge bg-${packsError? "danger" : packStatusVariant} ms-1 d-inline-flex align-items-center gap-2`}>
         {areLoading && <LoadingSpinner small />}
         <span>{numberOfDownloadedPacks} / {packs.length}</span>
-        {packsError && <IconForConcept concept="exclamationCircle" />}
+        {packsError && <IconForConcept concept="error" />}
         <IconForConcept concept="pack" /> 
     </span>
   )

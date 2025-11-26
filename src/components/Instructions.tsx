@@ -13,7 +13,7 @@ const Instructions = () => {
         </h1>
         <div className='card-text'>
           <div className="alert alert-warning d-flex align-items-center gap-3" role="alert">
-            <IconForConcept concept="exclamationOctagon" />
+            <IconForConcept concept="warning" />
             <div>
               <Markdown>
                 {t('alert_md')}
@@ -21,7 +21,7 @@ const Instructions = () => {
             </div>
           </div>
           <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
-            <IconForConcept concept="questionCircle" />
+            <IconForConcept concept="info" />
             <div>
               <Markdown>
                 {t('instructions_md')}
@@ -29,7 +29,7 @@ const Instructions = () => {
             </div>
           </div>
           <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
-            <IconForConcept concept="questionCircle" />
+            <IconForConcept concept="info" />
             <div>
               <Markdown>
                 {t('reset_help_md')}
