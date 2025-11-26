@@ -1,4 +1,3 @@
-import { HTMLAttributes } from "react"
 import { IconType } from "react-icons"
 import { BsArrowsCollapse, BsArrowsExpand, BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCheckCircleFill, BsCloudArrowDown, BsDownload, BsExclamationTriangle, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsImage, BsInfoCircleFill, BsPersonFill, BsPhone, BsPhoneFill, BsPhoneFlip, BsQuestionCircleFill, BsSearch, BsStack, BsTranslate, BsTrash, BsXCircleFill } from "react-icons/bs"
 import { FaArrowRotateLeft, FaChevronDown, FaEraser, FaFileExport, FaFileImport, FaTag } from "react-icons/fa6"
@@ -7,12 +6,10 @@ import { ImStack } from "react-icons/im"
 import { MdCategory, MdCheckBox, MdCheckBoxOutlineBlank, MdClose, MdDownloadForOffline, MdError, MdErrorOutline, MdFileDownloadDone, MdIndeterminateCheckBox, MdNumbers, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
 import { RiArchiveStackFill, RiArchiveStackLine, RiStackedView } from "react-icons/ri"
 import { TbBracketsContain, TbCards, TbPlayCardStar, TbPlayCardStarFilled } from "react-icons/tb"
+import {createIconComponent, IconComponentProps} from '@draperez/react-components';
 import styles from './IconForConcept.module.css';
 
 export type { IconType };
-
-
-
 const conceptIcons = {
     bookmark: BsBookmarkFill,
     bookmarkNo: BsBookmark,
@@ -94,21 +91,10 @@ const conceptIcons = {
     warning: BsExclamationTriangle,
 } satisfies Record<string, IconType>
 
-
-
-
 export type Concepts = typeof conceptIcons;
 
-export type Props = {
-    // get concept options from conceptIcons keys
-    concept: keyof Concepts,
-} & HTMLAttributes<SVGAElement>
+const IconForConcept = createIconComponent(conceptIcons, styles.icon);
 
-const IconForConcept = ({concept, ...rest}: Props) => {
-    const Icon = conceptIcons[concept] || (() => <></>);
-  return (
-    <Icon  {...rest} className={`${styles.icon} ${rest.className || ""}`} />
-  )
-}
+export type Props = IconComponentProps<typeof conceptIcons>;
 
-export default IconForConcept
+export default IconForConcept;

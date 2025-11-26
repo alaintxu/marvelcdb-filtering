@@ -12,7 +12,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@draperez/react-components": "^2.0.0",
+    "@draperez/react-components": "^2.1.0",
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^2.11.0",
     "@types/jsonpack": "^1.1.6",
