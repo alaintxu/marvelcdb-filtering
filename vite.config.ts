@@ -18,5 +18,8 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  base: '/marvelcdb-filtering'
+  base: '/marvelcdb-filtering',
+  build: {
+    outDir: 'marvelcdb-filtering'
+  }
 })
