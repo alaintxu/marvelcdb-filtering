@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { BsArrowsCollapse, BsArrowsExpand, BsExclamationTriangle } from "react-icons/bs";
 import LoadingSpinner from '../../LoadingSpinner';
 import { loadPacks, Pack, selectAllPacks, selectArePacksLoading, selectIsAnyPackDownloading, selectPacksError } from '../../../store/entities/packs';
 import { selectShowPackList, showPackListToggled } from '../../../store/ui/other';
@@ -11,6 +10,7 @@ import DownloadAllButton from '../Packs/DownloadAllButton';
 import { useEffect } from 'react';
 import PackStatusCountBadge from './PackStatusCountBadge';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import IconForConcept from '../../IconForConcept';
 
 const PacksSection = () => {
     const { t, i18n } = useTranslation('global');
@@ -32,7 +32,7 @@ const PacksSection = () => {
     <section id="pack-section">
         <PacksData />
         {packsError && <div className="alert alert-danger text-center" role="alert">
-          <BsExclamationTriangle />
+          <IconForConcept concept="warning" />
           &nbsp;
           {packsError}
         </div>}
@@ -46,7 +46,7 @@ const PacksSection = () => {
           <LanguageSelect />
 
           <div className="alert alert-warning text-center" role="alert">
-            <BsExclamationTriangle />
+            <IconForConcept concept="warning" />
             &nbsp;
             {t('language-redownload')}
           </div>
@@ -60,7 +60,7 @@ const PacksSection = () => {
             type='button'
             className="btn btn-secondary"
             onClick={() => dispatch(showPackListToggled())}>
-            {showPackList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
+            {showPackList ? <IconForConcept concept="collapse" /> : <IconForConcept concept="expand" />}
             &nbsp;
             {t("pack_list")}
             {isAnyPackDownloading && (

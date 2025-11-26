@@ -1,7 +1,4 @@
 import { lazy, Suspense, useEffect } from "react";
-// import CardFiltersView from "./Filter/CardFiltersSection";
-// import Navigation from "./Navigation";
-// import DownloadManager from "./DownloadManager/DownloadManager";
 
 import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
 import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey, selectIsAnyCardClicked } from "../store/ui/other";
@@ -17,7 +14,7 @@ import LoadingSpinner from "./LoadingSpinner";
 const CardsView = lazy(() => import('./Card/CardsView'));
 const DeckView = lazy(() => import('./Deck/DeckView'));
 const Instructions = lazy(() => import('./Instructions'));
-const Navigation = lazy(() => import('./Navigation'));
+const Navigation = lazy(() => import('./Navigation/Navigation'));
 const CardFiltersView = lazy(() => import('./Filter/CardFiltersSection'));
 const DownloadManager = lazy(() => import('./DownloadManager/DownloadManager'));
 

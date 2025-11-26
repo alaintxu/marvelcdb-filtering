@@ -4,7 +4,6 @@ import { selectAllDecks } from "../../../store/entities/decks";
 import DeckListItem from "./DeckListItem";
 import IconForConcept from "../../IconForConcept";
 import { selectShowDeckList, showDeckListToggled } from '../../../store/ui/other';
-import { BsArrowsCollapse, BsArrowsExpand } from "react-icons/bs";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 
 
@@ -20,7 +19,7 @@ const DeckList = () => {
             type='button'
             className="btn btn-secondary"
             onClick={() => dispatch(showDeckListToggled())}>
-            {showDeckList ? <BsArrowsCollapse /> : <BsArrowsExpand />}
+            {showDeckList ? <IconForConcept concept="collapse" /> : <IconForConcept concept="expand" />}
             &nbsp;
             {t("deck_list")}
             <span className='badge bg-light text-dark ms-2 d-inline-flex align-items-center'>

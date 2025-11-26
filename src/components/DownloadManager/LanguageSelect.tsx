@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { checkLanguageString, I18N_LANGS } from '../../i18n'
-import { BsTranslate } from 'react-icons/bs'
 import { useEffect } from 'react'
+import IconForConcept from '../IconForConcept'
 
 type Props = {
   onLanguageUpdated?: (newLanguage: string) => void
@@ -19,7 +19,7 @@ const LanguageSelect = ({onLanguageUpdated}: Props) => {
   return (
     <div className="input-group mb-1">
       <label className="input-group-text" htmlFor="langSelect">
-        <BsTranslate />
+        <IconForConcept concept="translate" />
         &nbsp;
         {t('language')}
       </label>

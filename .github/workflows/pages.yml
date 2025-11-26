@@ -28,7 +28,7 @@ jobs:
       - name: Create page artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: marvelcdb-filtering
       - run: echo "🍏 This job's status is ${{ job.status }}."
   deploy:
     needs: build

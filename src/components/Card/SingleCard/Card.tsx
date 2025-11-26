@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CardImage, { getCardImage } from "./CardImage"
 import { Modal } from "../../Modal"
-import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
 import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
 
 import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/other";
 import CardTop from "./CardTop";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
+import IconForConcept from "../../IconForConcept";
 
 export type MCCardKeys = keyof MCCard;
 
@@ -58,14 +58,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const isMainScheme = card.type_code === "main_scheme";
 
-  const flipped = useMemo(
-    () => calculateFlipped(manualFlipped, flipAllCards, isMainScheme)
-    , [manualFlipped, flipAllCards, isMainScheme]
-  );
-  const isHorizontal = useMemo(
-    () => isCardHorizontal(card, manualFlipped || flipAllCards)
-    , [card, manualFlipped, flipAllCards]
-  );
+  const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
+  const isHorizontal = isCardHorizontal(card, manualFlipped || flipAllCards);
 
   useEffect(() => {
     setManualFlipped(undefined);
@@ -110,13 +104,13 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="mc-card__content">
           <header>
-            <CardTop card={!flipped ? card : card.linked_card}/>
+            <CardTop card={!flipped ? card : card.linked_card} />
             <span className="mc-card__actions d-flex justify-content-end gap-1">
               <a className="btn btn-secondary shadowed"
                 href={getCardImage(card, flipped, i18n.language)}
                 target="_blank"
                 title={`Abre imagen de '${card.name}' (pestaña nueva)`}>
-                <BsImage />
+                <IconForConcept concept="image" />
               </a>
               <button
                 className={`btn btn-secondary shadowed`}
@@ -124,13 +118,13 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 type="button"
                 data-bs-toggle="modal"
                 data-bs-target={`#${modal_json_id}`}>
-                <BsFiletypeJson />
+                <IconForConcept concept="jsonFile" />
               </button>
               <button
                 className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
                 onClick={() => setManualFlipped((prev) => prev === undefined ? !flipAllCards : !prev)}
                 title="Gira la carta">
-                <BsPhoneFlip />
+                <IconForConcept concept="cardFlip" />
               </button>
             </span>
           </header>
@@ -164,7 +158,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
               {card.base_threat !== undefined && card.base_threat > 0 &&
                 <span className="mc-card__threat shadowed" title="Amenaza base">
                   {card.base_threat}
-                  {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <BsPersonFill title={`${card.base_threat} por jugador`} />}
+                  {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <IconForConcept concept="person" title={`${card.base_threat} por jugador`} />}
                 </span>
               }
             </> : <>

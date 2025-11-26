@@ -1,6 +1,6 @@
 import { Modal, ModalButton } from '../Modal';
 import { useTranslation } from 'react-i18next';
-import { FaArrowRotateLeft } from 'react-icons/fa6';
+import IconForConcept from '../IconForConcept';
 
 
 export const resetApp = () => {
@@ -13,7 +13,7 @@ const ResetAppButton = () => {
     return (
             <>
             <ModalButton className='btn btn-danger' modal_id='modal-reset-app'>
-                <FaArrowRotateLeft />
+                <IconForConcept concept="reset" />
                 &nbsp;
                 {t('reset_app')}
                 </ModalButton>

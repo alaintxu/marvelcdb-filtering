@@ -3,10 +3,6 @@ import { useForm } from "react-hook-form";
 import { SelectedFilters } from "../../hooks/useFilters";
 import { HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
-import { FaEraser } from "react-icons/fa6";
-import { MdNumbers, MdCheckBox } from "react-icons/md";
-import { TbBracketsContain, TbCards } from "react-icons/tb";
-import { GoMultiSelect } from "react-icons/go";
 import PaginationElementsPerPageFilter from "./PaginationElementsPerPageFilter";
 import MultiselectFilterRedux from "./MultiselectFilterRedux";
 import NumberFilterRedux from "./NumberFilterRedux";
@@ -75,7 +71,6 @@ const CardFiltersView = ({
       {/* Pagination filter */}
       <PaginationElementsPerPageFilter
           title={t("cards_per_page")}
-          iconType={TbCards}
           />
 
       {/* Hide duplicates filter */}
@@ -94,7 +89,7 @@ const CardFiltersView = ({
               aria-expanded="false" 
               aria-controls="multiselectFilterCollapse">
               <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <GoMultiSelect />
+                <IconForConcept concept="multiselect" />
                 {multiselectFilterNumber+dottedFilterNumber > 0 && multiselectFilterNumber+dottedFilterNumber}
               </span>
               {t("multiselect_filters_title")} 
@@ -137,7 +132,7 @@ const CardFiltersView = ({
               aria-expanded="false" 
               aria-controls="accordionStringFilters">
               <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <TbBracketsContain />
+                <IconForConcept concept="brackets" />
                 {stringFilterNumber > 0 && stringFilterNumber}
               </span>
               {t("contains_filters_title")}
@@ -168,7 +163,7 @@ const CardFiltersView = ({
               aria-expanded="false" 
               aria-controls="accordionNumberFilters">
               <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <MdNumbers/>
+                <IconForConcept concept="numbers" />
                 {numberFilterNumber > 0 && numberFilterNumber}
               </span>
               {t("number_filters_title")}
@@ -201,7 +196,7 @@ const CardFiltersView = ({
               aria-expanded="false" 
               aria-controls="accordionBooleanFilters">
               <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <MdCheckBox />
+                <IconForConcept concept="checkbox" />
                 {booleanFilterNumber > 0 && booleanFilterNumber}
               </span>
               {t("boolean_filters_title")}
@@ -230,7 +225,7 @@ const CardFiltersView = ({
             dispatch(resetFilters());
             reset();
         }}>
-          <FaEraser /> {t("reset_filters")}
+          <IconForConcept concept="erase" /> {t("reset_filters")}
         </button>
       </form>
     </section>

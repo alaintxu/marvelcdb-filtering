@@ -288,11 +288,6 @@ img {
     }
 }
 
-#main-navigation {
-    width: '100%';
-    background-color: black;
-}
-
 #mc-card-list-actions {
     position: fixed;
     top: 1em;

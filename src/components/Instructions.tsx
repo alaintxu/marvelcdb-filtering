@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
-import { BsExclamationOctagonFill, BsQuestionCircleFill } from 'react-icons/bs';
+import IconForConcept from './IconForConcept';
 
 const Instructions = () => {
   const { t } = useTranslation('instructions');
@@ -13,7 +13,7 @@ const Instructions = () => {
         </h1>
         <div className='card-text'>
           <div className="alert alert-warning d-flex align-items-center gap-3" role="alert">
-            <BsExclamationOctagonFill />
+            <IconForConcept concept="exclamationOctagon" />
             <div>
               <Markdown>
                 {t('alert_md')}
@@ -21,7 +21,7 @@ const Instructions = () => {
             </div>
           </div>
           <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
-            <BsQuestionCircleFill />
+            <IconForConcept concept="questionCircle" />
             <div>
               <Markdown>
                 {t('instructions_md')}
@@ -29,7 +29,7 @@ const Instructions = () => {
             </div>
           </div>
           <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
-            <BsQuestionCircleFill />
+            <IconForConcept concept="questionCircle" />
             <div>
               <Markdown>
                 {t('reset_help_md')}

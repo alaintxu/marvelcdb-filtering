@@ -1,10 +1,10 @@
 
-import { BsTrash } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
 import { selectAllPacks, unloadPackCards } from '../../../store/entities/packs';
 import { removeAllCards } from '../../../store/entities/cards';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import IconForConcept from '../../IconForConcept';
 
 const RemoveAllButton = () => {
     const { t } = useTranslation('global');
@@ -13,7 +13,7 @@ const RemoveAllButton = () => {
     return (
         <>
             <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
-                <BsTrash />
+                <IconForConcept concept="delete" />
                 &nbsp;
                 {t('remove_all')}
             </ModalButton>

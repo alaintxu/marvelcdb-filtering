@@ -1,8 +1,8 @@
-import { BsDownload } from 'react-icons/bs';
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
 import { loadPackCards, selectAllPacks } from '../../../store/entities/packs';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import IconForConcept from '../../IconForConcept';
 
 const DownloadAllButton = () => {
     const { t } = useTranslation('global');
@@ -12,7 +12,7 @@ const DownloadAllButton = () => {
     return (
         <>
             <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
-                <BsDownload />
+                <IconForConcept concept="downloadSimple" />
                 &nbsp;
                 {t('download_all')}
             </ModalButton>
