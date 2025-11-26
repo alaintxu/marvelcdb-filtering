@@ -1,4 +1,5 @@
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import lazyHorizontal from '../../../assets/mc-lazy-horizontal.webp';
 import lazyVertical from '../../../assets/mc-lazy-vertical.webp';
 import { MCCard } from "../../../store/entities/cards";

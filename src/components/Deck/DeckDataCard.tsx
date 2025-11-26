@@ -1,7 +1,4 @@
 import { removeCurrentDeck, MarvelDeck } from "../../store/entities/decks"
-import { FaTag, FaChevronDown } from 'react-icons/fa6'
-import { MdCategory } from 'react-icons/md'
-import { TbCards } from 'react-icons/tb'
 import { useTranslation } from 'react-i18next'
 import Markdown from 'react-markdown'
 import { selectCardByCode } from "../../store/entities/cards"
@@ -42,11 +39,11 @@ const DeckDataCard = ({ deck }: Props) => {
 
         <div id="deck-tags" className="d-flex flex-wrap align-items-center gap-2">
           {deck.aspect && <span className={`badge bg-${aspectColor}`}>
-            <MdCategory /> {t(`aspect.${deck.aspect}`)}
+            <IconForConcept concept="category" /> {t(`aspect.${deck.aspect}`)}
           </span>}
           {deck.tags && deck.tags.map((tag) => (
             <span key={tag} className='badge bg-dark'>
-              <FaTag /> {t(`tag.${tag}`)}
+              <IconForConcept concept="tag" /> {t(`tag.${tag}`)}
             </span>
           ))}
           {/*<span className='badge bg-light text-dark me-1' title={t('user-id')}>
@@ -54,11 +51,11 @@ const DeckDataCard = ({ deck }: Props) => {
             </span>*/}
           <span className='badge bg-light text-dark' title={t('deck-id')}>
             <a href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
-              <TbCards /> {deck.id}
+              <IconForConcept concept="multiple_cards" /> {deck.id}
             </a>
           </span>
           <span className='badge bg-light text-dark' title={t('number_of_cards')}>
-            <TbCards /> {numberOfCards}
+            <IconForConcept concept="multiple_cards" /> {numberOfCards}
           </span>
         </div>
 
@@ -69,7 +66,7 @@ const DeckDataCard = ({ deck }: Props) => {
 
           <div className="col-12 col-md-6">
             <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-description" aria-expanded="false" aria-controls="deck-description">
-              <FaChevronDown /> {t('description')}
+              <IconForConcept concept="chevronDown" /> {t('description')}
             </button>
             <div className="collapse" id="deck-description">
               <div className="border border-light rounded p-2 my-2">
@@ -82,7 +79,7 @@ const DeckDataCard = ({ deck }: Props) => {
 
           <div className="col-12 col-md-6">
             <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-json" aria-expanded="false" aria-controls="deck-json">
-              <FaChevronDown /> <IconForConcept concept='jsonFile' />
+              <IconForConcept concept="chevronDown" /> <IconForConcept concept='jsonFile' />
             </button>
             <div className="collapse" id="deck-json">
               <div className="border border-light rounded p-2 my-2">

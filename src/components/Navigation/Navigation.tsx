@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import styles from './Navigation.module.css';
 
 import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../../store/ui/other';
@@ -50,8 +49,8 @@ const Navigation = () => {
   
 
   return (
-    <nav id="main-navigation" className={styles.container}>
-      <div className={`btn-group d-flex gap-1 ${styles.btnGroup}`} role="group" aria-label="Navigation">
+    <nav id="main-navigation" className={styles.nav}>
+      <div className={styles.navGroup} role="group" aria-label="Navigation">
         {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
           const additionalText = getAdditionalElement(navigationOptionKey);
           const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
@@ -60,9 +59,8 @@ const Navigation = () => {
             type="button"
             className={`
               main-navigation-item
-              btn 
-              ${styles.item}
-              ${isActive ? styles.active : ''}
+              ${styles.navItem}
+              ${isActive ? styles.navItemActive : styles.navItemInactive}
             `}
             onClick={() => {
               if (navigationOptionKey !== selectedNavigationOptionKey)
@@ -71,7 +69,7 @@ const Navigation = () => {
                 dispatch(navigationOptionKeySet("card_list"));
 
             }}>
-            <span className={styles.content}>
+            <span className={styles.navItemContent}>
               {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
               {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
                 &nbsp;

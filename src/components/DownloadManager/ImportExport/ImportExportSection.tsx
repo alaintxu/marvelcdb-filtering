@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaFileImport, FaFileExport } from "react-icons/fa6";
 import IconForConcept from '../../IconForConcept';
 
 const ImportExportSection = () => {
@@ -60,12 +59,12 @@ const ImportExportSection = () => {
   return (
     <section className='d-flex flex-column mt-1 gap-1'>
         <h3 className='fs-4 mb-4'>
-          <IconForConcept concept="jsonFile" className='me-2' />
+          <IconForConcept concept="jsonFile" className='inline me-2' />
           {t(`import_export`)}
         </h3>
         <div className="mb-3 px-3">
         <label htmlFor="importFileInput" className="form-label">
-            <FaFileImport />
+            <IconForConcept concept="import" className='inline mb-1 me-1'/>
             &nbsp;
             {t(`import`)}
         </label>
@@ -73,7 +72,7 @@ const ImportExportSection = () => {
         </div>
         <div className="mb-3 px-3">
         <button type="button" className='btn btn-secondary' onClick={exportToJSONFile}>
-            <FaFileExport />
+            <IconForConcept concept="export" />
             &nbsp;
             {t('export')}
         </button>

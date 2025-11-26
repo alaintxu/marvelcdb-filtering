@@ -1,7 +1,6 @@
-import { BsPersonFill } from "react-icons/bs";
 import comicWebp from "../../../assets/comic.webp";
 import { MCCard } from '../../../store/entities/cards'
-import { TbCards } from "react-icons/tb";
+import IconForConcept from "../../IconForConcept";
 
 type Props = {
     card: MCCard | undefined,
@@ -18,7 +17,7 @@ const CardTop = ({ card }: Props) => {
             {(card.threat || card.threat == 0) &&
                 <span className="mc-card__threat shadowed">
                     {card.threat}
-                    {card.threat_fixed !== undefined && card.threat_fixed == false && <BsPersonFill title={`${card.threat} por jugador`} />}
+                    {card.threat_fixed !== undefined && card.threat_fixed == false && <IconForConcept concept="person" title={`${card.threat} por jugador`} />}
                 </span>
             }
             <span className="mc-card__name shadowed flex-grow-1" style={{ backgroundImage: comicWebp }}>
@@ -33,7 +32,7 @@ const CardTop = ({ card }: Props) => {
 
             {(card.quantity ?? 1) > 1 &&
                 <span className="bg-light text-dark shadowed d-flex align-items-center rounded px-1" title="Número de copias">
-                    <TbCards />x{card.quantity}
+                    <IconForConcept concept="multiple_cards" />x{card.quantity}
                 </span>
             }
         </div>
