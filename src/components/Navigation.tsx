@@ -59,7 +59,7 @@ const Navigation = () => {
             className={`
               main-navigation-item
               btn 
-              btn-${isActive ? '' : 'outline-'}light 
+              marvel-nav-item
               ${isActive ? 'active' : ''}
             `}
             onClick={() => {
@@ -69,15 +69,17 @@ const Navigation = () => {
                 dispatch(navigationOptionKeySet("card_list"));
 
             }}>
-            {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
-            {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
-              &nbsp;
-              <LoadingSpinner small />
-            </>}
-            {additionalText && <>
-                <br/>
-                {getAdditionalElement(navigationOptionKey)}
-            </>}
+            <span className="marvel-nav-content">
+              {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
+              {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
+                &nbsp;
+                <LoadingSpinner small />
+              </>}
+              {additionalText && <>
+                  <br/>
+                  {getAdditionalElement(navigationOptionKey)}
+              </>}
+            </span>
           </button>
         })}
       </div>
