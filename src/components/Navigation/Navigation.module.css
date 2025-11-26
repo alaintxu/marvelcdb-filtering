@@ -13,7 +13,7 @@
     uppercase font-extrabold border-none rounded-none
     bg-transparent text-white cursor-pointer
     font-['Impact','Arial_Narrow','Helvetica_Neue',sans-serif]
-    p-2 text-[0.7rem] m-0 skew-x-0
+    p-2 text-[0.7rem] m-0 skew-x-0 flex-1
     min-[480px]:px-4 min-[480px]:py-2 min-[480px]:text-[0.8rem] min-[480px]:tracking-[0.5px] min-[480px]:-skew-x-[20deg]
     min-[480px]:first:-ml-4 min-[480px]:first:pl-6
     min-[480px]:last:-mr-4 min-[480px]:last:pr-6
