@@ -1,16 +1,18 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../store/ui/other';
-import LoadingSpinner from './LoadingSpinner';
-import PackStatusCountBadge from './DownloadManager/Packs/PackStatusCountBadge';
-import CardPaginationNumberBadge from './Card/CardPaginationNumberBadge';
-import IconForConcept from './IconForConcept';
-import { selectCurrentDeck } from '../store/entities/decks';
-import { selectIsAnyPackDownloading } from '../store/entities/packs';
-import NumberOfFiltersBadge from './Filter/NumberOfFiltersBadge';
-import { useAppDispatch, useAppSelector } from '../hooks/useStore';
-import CardStatusCountBadge from './DownloadManager/Packs/CardStatusCountBadge';
+import styles from './Navigation.module.css';
+
+import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../../store/ui/other';
+import LoadingSpinner from '../LoadingSpinner';
+import PackStatusCountBadge from '../DownloadManager/Packs/PackStatusCountBadge';
+import CardPaginationNumberBadge from '../Card/CardPaginationNumberBadge';
+import IconForConcept from '../IconForConcept';
+import { selectCurrentDeck } from '../../store/entities/decks';
+import { selectIsAnyPackDownloading } from '../../store/entities/packs';
+import NumberOfFiltersBadge from '../Filter/NumberOfFiltersBadge';
+import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
+import CardStatusCountBadge from '../DownloadManager/Packs/CardStatusCountBadge';
 
 
 type IconDict = {
@@ -48,8 +50,8 @@ const Navigation = () => {
   
 
   return (
-    <nav id="main-navigation">
-      <div className="btn-group d-flex" role="group" aria-label="Navigation">
+    <nav id="main-navigation" className={styles.container}>
+      <div className={`btn-group d-flex gap-1 ${styles.btnGroup}`} role="group" aria-label="Navigation">
         {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
           const additionalText = getAdditionalElement(navigationOptionKey);
           const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
@@ -59,8 +61,8 @@ const Navigation = () => {
             className={`
               main-navigation-item
               btn 
-              marvel-nav-item
-              ${isActive ? 'active' : ''}
+              ${styles.item}
+              ${isActive ? styles.active : ''}
             `}
             onClick={() => {
               if (navigationOptionKey !== selectedNavigationOptionKey)
@@ -69,7 +71,7 @@ const Navigation = () => {
                 dispatch(navigationOptionKeySet("card_list"));
 
             }}>
-            <span className="marvel-nav-content">
+            <span className={styles.content}>
               {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
               {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
                 &nbsp;

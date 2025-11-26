@@ -1,0 +1,71 @@
+.container {
+    width: 100%;
+    background-color: #202020;
+    padding: 0;
+    border-bottom: 4px solid #EC1D24;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden; /* Prevent horizontal scroll from skewed elements */
+}
+
+.item {
+    font-family: 'Impact', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+    color: white !important;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 1rem 2rem;
+    transition: all 0.2s ease;
+    background-color: transparent !important;
+    position: relative;
+    margin: 0;
+    transform: skewX(-20deg);
+
+    @media (max-width: 768px) {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 0.5rem 0.5rem;
+        font-size: 0.7rem;
+        margin: 0;
+        transform: skewX(0deg); /* Remove skew on very small screens to save space */
+    }
+
+    &:first-child {
+        margin-left: -1rem;
+        padding-left: 1.5rem;
+    }
+    &:last-child {
+        margin-right: -1rem;
+        padding-right: 1.5rem;
+    }
+}
+
+.content {
+    transform: skewX(20deg);
+    display: inline-block;
+
+    @media (max-width: 480px) {
+        transform: skewX(0deg); /* Remove skew on very small screens to save space */
+    }
+}
+
+.item:hover {
+    background-color: #333 !important;
+}
+
+.item.active {
+    background-color: #EC1D24 !important;
+    color: white;
+}
+
+/* Fix for bootstrap btn-group */
+.btnGroup {
+    width: 100%;
+    justify-content: center;
+}
