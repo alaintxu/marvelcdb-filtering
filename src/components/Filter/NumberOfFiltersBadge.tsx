@@ -1,17 +1,15 @@
-import { HTMLAttributes, useMemo } from 'react'
+import { HTMLAttributes } from 'react'
 import { selectNumberOfFilters, selectQuickFilter } from '../../store/ui/filters';
 import { useAppSelector } from '../../hooks/useStore';
 
-interface Props extends HTMLAttributes<HTMLSpanElement> {}
+interface Props extends HTMLAttributes<HTMLSpanElement> { }
 
-const NumberOfFiltersBadge = ({className, ...rest}: Props) => {
+const NumberOfFiltersBadge = ({ className, ...rest }: Props) => {
 
     const numberOfFilters: number = useAppSelector(selectNumberOfFilters);
     const quickFilter = useAppSelector(selectQuickFilter);
-    const badgeNumber = useMemo(() => {
-        return quickFilter ? numberOfFilters + 1 : numberOfFilters;
-    }, [numberOfFilters, quickFilter]);
-    
+    const badgeNumber = quickFilter ? numberOfFilters + 1 : numberOfFilters;
+
     if (badgeNumber === 0) return null;
     return (
         <span className={`badge bg-secondary ${className}`} {...rest}>

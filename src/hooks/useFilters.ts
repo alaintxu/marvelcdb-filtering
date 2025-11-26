@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { MCCard } from "../store/entities/cards";
 
@@ -151,14 +151,11 @@ const filterCardsBySelectedFilters = (cards: MCCard[], selectedFilters: Selected
 const useFilters = (cards: MCCard[]) => {
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({});
 
-  const filteredCards = useMemo(
-    () => filterCardsBySelectedFilters(cards, selectedFilters),
-    [cards, selectedFilters]
-  );
+  const filteredCards = filterCardsBySelectedFilters(cards, selectedFilters);
 
   useEffect(() => {
     let filterString = "";
-    for(let [key, values] of Object.entries(selectedFilters)){
+    for (let [key, values] of Object.entries(selectedFilters)) {
       filterString += `${key}=${values.join(",")}&`
     }
     window.history.pushState(null, "", `?${filterString}`);

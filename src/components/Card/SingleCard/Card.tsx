@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CardImage, { getCardImage } from "./CardImage"
 import { Modal } from "../../Modal"
 import { BsFiletypeJson, BsPhoneFlip, BsPersonFill, BsImage } from "react-icons/bs";
@@ -58,14 +58,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const isMainScheme = card.type_code === "main_scheme";
 
-  const flipped = useMemo(
-    () => calculateFlipped(manualFlipped, flipAllCards, isMainScheme)
-    , [manualFlipped, flipAllCards, isMainScheme]
-  );
-  const isHorizontal = useMemo(
-    () => isCardHorizontal(card, manualFlipped || flipAllCards)
-    , [card, manualFlipped, flipAllCards]
-  );
+  const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
+  const isHorizontal = isCardHorizontal(card, manualFlipped || flipAllCards);
 
   useEffect(() => {
     setManualFlipped(undefined);
@@ -110,7 +104,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
         <CardImage card={card} horizontal={isHorizontal} />
         <div className="mc-card__content">
           <header>
-            <CardTop card={!flipped ? card : card.linked_card}/>
+            <CardTop card={!flipped ? card : card.linked_card} />
             <span className="mc-card__actions d-flex justify-content-end gap-1">
               <a className="btn btn-secondary shadowed"
                 href={getCardImage(card, flipped, i18n.language)}

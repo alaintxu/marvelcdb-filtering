@@ -1,37 +1,37 @@
 import { useTranslation } from "react-i18next";
 
 import { quickFilterSet, selectQuickFilter } from "../../store/ui/filters";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import IconForConcept from "../IconForConcept";
 import { MCCard } from "../../store/entities/cards";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 
-    /*
-        card_set_code: string;
-        card_set_name: string;
-        card_set_type_name_code: string;
-        code: string;
-        duplicate_of_code?: string;
-        duplicate_of_name?: string;
-        faction_code: string;
-        faction_name: string;
-        flavor?: string;
-        linked_card?: MCCard;
-        linked_to_code: string;
-        linked_to_name: string;
-        name: string;
-        pack_code: string;
-        pack_name: string;
-        real_name: string;
-        real_text?: string;
-        real_traits?: string;
-        spoiler?: number;
-        subname?: string;
-        text?: string;
-        traits?: string;
-        type_name: string;
-    */
+/*
+    card_set_code: string;
+    card_set_name: string;
+    card_set_type_name_code: string;
+    code: string;
+    duplicate_of_code?: string;
+    duplicate_of_name?: string;
+    faction_code: string;
+    faction_name: string;
+    flavor?: string;
+    linked_card?: MCCard;
+    linked_to_code: string;
+    linked_to_name: string;
+    name: string;
+    pack_code: string;
+    pack_name: string;
+    real_name: string;
+    real_text?: string;
+    real_traits?: string;
+    spoiler?: number;
+    subname?: string;
+    text?: string;
+    traits?: string;
+    type_name: string;
+*/
 export const QUICK_SEARCH_FIELDS: Array<keyof MCCard> = [
     // Strings
     'back_flavor',
@@ -39,13 +39,13 @@ export const QUICK_SEARCH_FIELDS: Array<keyof MCCard> = [
     'card_set_name',
     'faction_name',
     'flavor',
-    'name', 
+    'name',
     'real_name',
     'pack_name',
-    'subname', 
-    'traits', 
-    'real_traits', 
-    'text', 
+    'subname',
+    'traits',
+    'real_traits',
+    'text',
     'real_text',
     'type_name',
     // Numbers
@@ -63,13 +63,13 @@ export const normalizeString = (value?: any) => {
     if (!value) {
         return "";
     }
-    if(typeof value !== 'string') {
+    if (typeof value !== 'string') {
         value = value.toString();
     }
     return value.normalize('NFD')
-    .replace(/([aeio])\u0301|(u)[\u0301\u0308]/gi,"$1$2")
-    .normalize()
-    .toLowerCase();
+        .replace(/([aeio])\u0301|(u)[\u0301\u0308]/gi, "$1$2")
+        .normalize()
+        .toLowerCase();
 }
 
 export const quickFilterCardList = (cards: MCCard[], quickFilter: string) => {
@@ -86,7 +86,7 @@ export const quickFilterCardList = (cards: MCCard[], quickFilter: string) => {
                 case 'string':
                     return normalizeString(value).includes(lowerCaseQuickFilter);
                 case 'number':
-                    if(isNumber) return value === numberQuickFilter;
+                    if (isNumber) return value === numberQuickFilter;
             }
             return false;
         });
@@ -100,7 +100,7 @@ const QuickSearchFilter = () => {
     const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const [quickFilterValue, setQuickFilterValue] = useState(quickFilter);
 
-    const delayedDispatch = useCallback((value: string) => {
+    const delayedDispatch = (value: string) => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
@@ -108,7 +108,7 @@ const QuickSearchFilter = () => {
             dispatch(quickFilterSet(value));
             timeoutRef.current = null;
         }, 500);
-    }, [dispatch]);
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
@@ -121,24 +121,24 @@ const QuickSearchFilter = () => {
         dispatch(quickFilterSet(""));
     };
 
-  return (
-    <div className="input-group mx-2" id="quick-search-filter">
-        <label htmlFor="quick-search-input" className="input-group-text">
-            <IconForConcept concept="search" />
-        </label>
-        <input
-            id="quick-search-input"
-            type="text" 
-            className="form-control search-input" 
-            placeholder={t('quick_search')}
-            value={quickFilterValue}
-            onChange={handleChange}
+    return (
+        <div className="input-group mx-2" id="quick-search-filter">
+            <label htmlFor="quick-search-input" className="input-group-text">
+                <IconForConcept concept="search" />
+            </label>
+            <input
+                id="quick-search-input"
+                type="text"
+                className="form-control search-input"
+                placeholder={t('quick_search')}
+                value={quickFilterValue}
+                onChange={handleChange}
             />
-        <button className="btn btn-outline-danger" onClick={resetValue} type="button">
-            <IconForConcept concept="erase" />
-        </button>
-    </div>
-  )
+            <button className="btn btn-outline-danger" onClick={resetValue} type="button">
+                <IconForConcept concept="erase" />
+            </button>
+        </div>
+    )
 }
 
 export default QuickSearchFilter
