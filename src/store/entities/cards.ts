@@ -67,6 +67,8 @@ export type MCCard = {
     url?: string;
 };
 
+type CardTranslation = Pick<MCCard, "code" | "flavor" | "name" | "real_name" | "real_text" | "real_traits" | "subname" | "text" | "traits">;
+
 const initialState: MCCard[] = [];
 
 /* Reducer */
@@ -89,13 +91,32 @@ const slice = createSlice({
         cardsReceived: (cards: MCCard[], action: PayloadAction<MCCard[]>) => {
             const newCards: MCCard[] = action.payload;
             if (newCards.length === 0) return cards;
+
+            // Remove old cards so they are not duplicated.
+            const newCardCodes = new Set(newCards.map(card => card.code));
             cards = cards.filter(
-                (card: MCCard) => card.pack_code !== newCards[0].pack_code
+                (card: MCCard) => !newCardCodes.has(card.code)
             );
+
+            // Merge new cards with old ones
             cards = [...cards, ...cleanCards(newCards)];
             //cards = [...sortCards(cards, "code")];
             return cards;
         },
+        cardsTranslationsReceived(state, action: PayloadAction<CardTranslation[]>) {
+            const translations: CardTranslation[] = action.payload;
+            for (let translation of translations) {
+                const index = state.findIndex((card: MCCard) => card.code === translation.code);
+                if (index !== -1) {
+                    state[index] = { ...state[index], ...translation };
+                }
+            }
+            return state;
+        },
+        cardsTranslationsRequestFailed(state, action: PayloadAction<string>) {
+            console.error(`Error loading cards translations for pack ${action.payload}`);
+            return state;
+        }
     }
 });
 
@@ -105,6 +126,8 @@ export const {
     cardPackRemoved,
     cardsReceived,
     removeAllCards,
+    cardsTranslationsReceived,
+    cardsTranslationsRequestFailed
 } = slice.actions;
 
 
@@ -151,7 +174,7 @@ export const selectUniqueFieldOptions = (fieldCode: keyof MCCard, fieldName: key
         cards.forEach((card: MCCard) => {
             if (card[fieldCode] && !foundCodes.has(card[fieldCode] as string) && card[fieldName]) {
                 values.push({ value: card[fieldCode] as string, label: card[fieldName] as string });
-                foundCodes.add(card[fieldCode] as string);0
+                foundCodes.add(card[fieldCode] as string);
             }
         }
         );

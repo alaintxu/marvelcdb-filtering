@@ -4,10 +4,10 @@ import { apiCallBegan } from '../api';
 //import moment from 'moment';
 import { Dispatch } from '@reduxjs/toolkit';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
-import { cardsReceived, MCCard } from './cards';
+import { cardsReceived, cardsTranslationsReceived, cardsTranslationsRequestFailed, MCCard } from './cards';
 import i18n from '../../i18n';
 
-const PACK_CARDS_URL = '/cards/';
+// const PACK_CARDS_URL = '/cards/';
 //const PACKS_CACHE_TIME_IN_MINUTES = 10;
 export const LOCAL_STORAGE_PACKS_KEY = "packs";
 
@@ -217,11 +217,47 @@ export const translatePacks = () => (dispatch: Dispatch<any>) => {
 export const loadPackCards = (packCode: string) => (dispatch: Dispatch<any>) => {
     return dispatch(
         apiCallBegan({
-            url: PACK_CARDS_URL + packCode + '.json',
+            //url: PACK_CARDS_URL + packCode + '.json',
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/pack/${packCode}.json`,
             onStart: packCardsRequested.type,
             onStartPayload: packCode,
             onSuccess: [packCardsReceived.type, cardsReceived.type],
             onError: packCardsRequestFailed.type,
+            afterSuccessDispatch: translateCards(packCode),
+            onErrorPayload: packCode
+        })
+    );
+}
+
+export const translateCards = (packCode: string) => (dispatch: Dispatch<any>) => {
+    return dispatch(
+        apiCallBegan({
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/pack/${packCode}.json`,
+            onSuccess: cardsTranslationsReceived.type,
+            onError: cardsTranslationsRequestFailed.type,
+            afterSuccessDispatch: loadPackCardsEncounter(packCode),
+            onErrorPayload: packCode
+        })
+    );
+}
+
+export const loadPackCardsEncounter = (packCode: string) => (dispatch: Dispatch<any>) => {
+    return dispatch(
+        apiCallBegan({
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/pack/${packCode}_encounter.json`,
+            onSuccess: cardsReceived.type,
+            onError: packCardsRequestFailed.type,
+            onErrorPayload: packCode
+        })
+    );
+}
+
+export const translatePackCardsEncounter = (packCode: string) => (dispatch: Dispatch<any>) => {
+    return dispatch(
+        apiCallBegan({
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/cards_encounter/${packCode}.json`,
+            onSuccess: cardsTranslationsReceived.type,
+            onError: cardsTranslationsRequestFailed.type,
             onErrorPayload: packCode
         })
     );
