@@ -25,7 +25,7 @@ const DownloadAllButton = () => {
                 //dispatch(packStatusDictSet({}));
                 if (!packs) return
 
-                const batchSize = 5;
+                const batchSize = 500;
                 for (let i = 0; i < packs.length; i += batchSize) {
                     const batch = packs.slice(i, i + batchSize);
                     //await Promise.all(batch.map(async (pack) => delayedDispatch(dispatch, loadPackCards(pack.code), 1000)));

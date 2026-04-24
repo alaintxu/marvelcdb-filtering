@@ -1,12 +1,10 @@
 import * as jsonpack from 'jsonpack';
 
 export function removeOldLocalStorageItems(): void {
-    localStorage.removeItem("pagination_status");
-    localStorage.removeItem("pack_status");
-    localStorage.removeItem("cards");
+    localStorage.removeItem("cards_compressed");
 }
 
-const COMPRESSION_ENABLED = true;
+const COMPRESSION_ENABLED = false;
 
 function compress<T>(elementToCompress: T): string {
     return jsonpack.pack(elementToCompress as object);

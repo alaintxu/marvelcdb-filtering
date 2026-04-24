@@ -34,11 +34,13 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         onStart,
         onStartPayload,
         onSuccess,
+        afterSuccessDispatch,
         onError,
         onErrorPayload
     } = action.payload;
 
-    const full_url = `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
+
+    const full_url = url.startsWith('https://cdn.jsdelivr.net/gh') ? url : `${i18n.t('base_path', {ns: 'global'})}/api/public${url}`;
 
     dispatchCheckingArray(onStart, dispatch, onStartPayload);
     next(action); // In order to show api action in redux dev tools
@@ -62,6 +64,10 @@ const api: Middleware<ApiMiddlewareParams> = ({ dispatch }) => (next) => async (
         const responseData = await response.json();
         dispatch(apiActions.apiCallSuccess(responseData));
         dispatchCheckingArray(onSuccess, dispatch, responseData);
+
+        if (afterSuccessDispatch) {
+            dispatch(afterSuccessDispatch);
+        }
     } catch (error: any) {
         dispatchError(dispatch, (error as Error).message || "?", onError, onErrorPayload);
     }

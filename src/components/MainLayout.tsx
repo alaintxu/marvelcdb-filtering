@@ -1,12 +1,12 @@
 import { lazy, Suspense, useEffect } from "react";
 
-import { LOCAL_STORAGE_CARDS_KEY, MCCard, selectAllCards } from "../store/entities/cards";
+import { MCCard, selectAllCards } from "../store/entities/cards";
 import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey, selectIsAnyCardClicked } from "../store/ui/other";
-import { removeOldLocalStorageItems, saveToLocalStorage, saveToLocalStorageCompressed } from "../LocalStorageHelpers";
+import { removeOldLocalStorageItems, saveToLocalStorage } from "../LocalStorageHelpers";
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
 import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck } from "../store/entities/decks";
 import { hasClassInAncestors } from "./Card";
-import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState } from "../store/entities/packs";
+import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState, loadPackCards, selectAllPacks } from "../store/entities/packs";
 import { useAppDispatch, useAppSelector } from "../hooks/useStore";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -37,7 +37,9 @@ const MainLayout = () => {
   const decks: MarvelDecksDict = useAppSelector(selectAllDecks);
   const elementsPerPage: number = useAppSelector(selectPaginationElementsPerPage);
   const packsState: PackSliceState = useAppSelector(selectPackState);
+  const allPacks = useAppSelector(selectAllPacks);
   const isAnyCardClicked: boolean = useAppSelector(selectIsAnyCardClicked);
+  const isAnyPackSelected: boolean = allPacks.some(pack => pack.download_status === "downloaded");
 
 
   // Manage local storage
@@ -46,7 +48,20 @@ const MainLayout = () => {
   useEffect(() => { if (packsState)     saveToLocalStorage(LOCAL_STORAGE_PACKS_KEY, packsState);                  }, [packsState]);
   useEffect(() => {                     saveToLocalStorage(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, elementsPerPage); }, [elementsPerPage]);
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
-  useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);                       }, [cards]);
+  //useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);                       }, [cards]);
+
+  // Auto-fetch cards for packs marked as "downloaded" but with no cards in store
+  // This handles return visits when packs are persisted but cards are not
+  useEffect(() => {
+    if (packsState.loading || cards.length > 0) return; // Wait for packs to load and don't re-fetch if cards already exist
+    
+    const downloadedPacks = allPacks.filter(pack => pack.download_status === "downloaded");
+    if (downloadedPacks.length > 0) {
+      downloadedPacks.forEach(pack => {
+        dispatch<any>(loadPackCards(pack.code));
+      });
+    }
+  }, [packsState.loading, allPacks, cards.length, dispatch]);
 
   // Listener
   useEffect(() => {
@@ -109,7 +124,7 @@ const MainLayout = () => {
         {currentDeck ? (
             <DeckView deck={currentDeck} />
         ) : (
-          cards.length > 0 ? (
+          isAnyPackSelected? (
              <CardsView />
           ) : (
             <Instructions />

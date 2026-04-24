@@ -9,6 +9,7 @@ export const apiCallBegan = createAction<{
     onStartPayload?: any;
 
     onSuccess?: string | string[];
+    afterSuccessDispatch?: any;
 
     onError?: string | string[];
     onErrorPayload?: any;

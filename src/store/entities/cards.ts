@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
-import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
+//import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 import {cleanCards} from "./cardsModificationUtils";
 import { FieldOption } from "../ui/filters";
 
-export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
+//export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
 export const CARD_PACK_URL = '/cards/';
 
 export type MCCard = {
@@ -67,7 +67,7 @@ export type MCCard = {
     url?: string;
 };
 
-const initialState: MCCard[] = getFromLocalStorageCompressed<MCCard[]>(LOCAL_STORAGE_CARDS_KEY) || [] as MCCard[];
+const initialState: MCCard[] = [];
 
 /* Reducer */
 const slice = createSlice({

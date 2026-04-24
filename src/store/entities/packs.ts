@@ -5,26 +5,47 @@ import { apiCallBegan } from '../api';
 import { Dispatch } from '@reduxjs/toolkit';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
 import { cardsReceived, MCCard } from './cards';
+import i18n from '../../i18n';
 
-const PACKS_URL = '/packs/';
 const PACK_CARDS_URL = '/cards/';
 //const PACKS_CACHE_TIME_IN_MINUTES = 10;
 export const LOCAL_STORAGE_PACKS_KEY = "packs";
 
 export type Pack = {
-    name: string;
+    /* GHJson style */
+    cgdb_id: number;
     code: string;
+    date_release: string;
+    name: string;
+    octgn_id: string;
+    pack_type_code: string;
     position: number;
-    available: string;
-    known: number;
-    total: number;
-    url: string;
-    id: number;
+    size: number;
     // Additional fields
     download_date?: number;
     download_status?: "unselected" | "selected" | "downloading" | "downloaded" | "error";
     error?: string;
 }
+
+export type PackTranslation = {
+    code: string;
+    name: string;
+}
+
+// export type Pack = {
+//     name: string;
+//     code: string;
+//     position: number;
+//     available: string;
+//     known: number;
+//     total: number;
+//     url: string;
+//     id: number;
+//     // Additional fields
+//     download_date?: number;
+//     download_status?: "unselected" | "selected" | "downloading" | "downloaded" | "error";
+//     error?: string;
+// }
 
 export type PackSliceState = {
     list: Pack[];
@@ -87,6 +108,19 @@ const slice = createSlice({
             }
             return state;
         },
+        packTranslationsReceived(state, action: PayloadAction<PackTranslation[]>) {
+            const translations: PackTranslation[] = action.payload;
+            for (let translation of translations) {
+                const index = state.list.findIndex((pack: Pack) => pack.code === translation.code);
+                if (index !== -1) {
+                    state.list[index].name = translation.name;
+                }
+            }
+            state.loading = false;
+            state.lastFetch = Date.now();
+            state.error = null;
+            return state;
+        },
         packsRequested(state) {
             state.error = "";
             state.loading = true;
@@ -107,6 +141,7 @@ const slice = createSlice({
                     state.list.push(newPack);
                 }
             }
+
             state.loading = false;
             state.lastFetch = Date.now();
             state.error = null;
@@ -136,7 +171,8 @@ const {
     packsRequestFailed,
     packCardsReceived,
     packCardsRequested,
-    packCardsRequestFailed
+    packCardsRequestFailed,
+    packTranslationsReceived: packTranslationReceived
 } = slice.actions; // Do not export, as they are events and not commands. Events should be internal.
 
 export const {
@@ -157,9 +193,21 @@ export const loadPacks = () => (dispatch: Dispatch<any>) => {
     // if (diffInMinutes < PACKS_CACHE_TIME_IN_MINUTES) return;
     return dispatch(
         apiCallBegan({
-            url: PACKS_URL,
+            //url: PACKS_URL,
+            url: 'https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/packs.json',
             onStart: packsRequested.type,
             onSuccess: packsReceived.type,
+            afterSuccessDispatch: translatePacks(),
+            onError: packsRequestFailed.type
+        })
+    );
+}
+
+export const translatePacks = () => (dispatch: Dispatch<any>) => {
+    return dispatch(
+        apiCallBegan({
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/packs.json`,
+            onSuccess: packTranslationReceived.type,
             onError: packsRequestFailed.type
         })
     );
