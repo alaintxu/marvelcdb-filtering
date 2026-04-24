@@ -13,13 +13,17 @@ export const KEY_VALUE_FILTERS: string[] = [
 ];
 
 export const NUMBER_FILTERS: string[] = [
+    "resource_physical",
+    "resource_mental",
+    "resource_energy",
+    "resource_wild",
     "cost",
-    "thwart",
     "attack",
+    "thwart",
     "defense",
+    "health",
     "threat",
     "hand_size",
-    "health",
     "base_threat",
     "quantity",
     "position",

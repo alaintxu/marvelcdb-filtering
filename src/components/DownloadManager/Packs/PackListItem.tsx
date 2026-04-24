@@ -33,7 +33,7 @@ const PackListItem = ({pack}: Props) => {
                 if (pack.download_status === "downloaded"){
                     dispatch(unloadPackCards(pack.code));
                 } else {
-                    await dispatch<any>(loadPackCards(pack.code));
+                    await dispatch<any>(loadPackCards(pack.code, pack.pack_type_code));
                 }
             }}>
             <span style={{ textAlign: "left" }}>
@@ -45,7 +45,7 @@ const PackListItem = ({pack}: Props) => {
                 {pack.download_status === "downloaded" && <>
                 <span   className='badge bg-success me-2'
                         title={pack.download_date ? new Date(pack.download_date).toLocaleString() : ""}>
-                    {pack.total}
+                    {pack.size}
                     <IconForConcept concept="downloadDone" />
                 </span>
                 </>}

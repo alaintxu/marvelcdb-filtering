@@ -39,6 +39,10 @@
     "spoiler": "Spoiler",
     "threat": "Amenaza",
     "thwart": "Intervención",
+    "resource_physical": "Recurso físico",
+    "resource_mental": "Recurso mental",
+    "resource_energy": "Recurso de energía",
+    "resource_wild": "Recurso comodín",
     
     "attack_star": "* en ataque",
     "base_threat_fixed": "Amenaza base fija",

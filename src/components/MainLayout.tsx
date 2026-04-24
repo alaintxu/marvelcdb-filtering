@@ -58,7 +58,7 @@ const MainLayout = () => {
     const downloadedPacks = allPacks.filter(pack => pack.download_status === "downloaded");
     if (downloadedPacks.length > 0) {
       downloadedPacks.forEach(pack => {
-        dispatch<any>(loadPackCards(pack.code));
+        dispatch<any>(loadPackCards(pack.code, pack.pack_type_code));
       });
     }
   }, [packsState.loading, allPacks, cards.length, dispatch]);

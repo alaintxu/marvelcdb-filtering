@@ -27,10 +27,7 @@ export type Pack = {
     error?: string;
 }
 
-export type PackTranslation = {
-    code: string;
-    name: string;
-}
+export type PackTranslation = Pick<Pack, "code" | "name">;
 
 // export type Pack = {
 //     name: string;
@@ -108,16 +105,23 @@ const slice = createSlice({
             }
             return state;
         },
-        packTranslationsReceived(state, action: PayloadAction<PackTranslation[]>) {
+        packTranslationReceived(state, action: PayloadAction<PackTranslation[]>) {
             const translations: PackTranslation[] = action.payload;
+            const now = Date.now();
             for (let translation of translations) {
                 const index = state.list.findIndex((pack: Pack) => pack.code === translation.code);
                 if (index !== -1) {
-                    state.list[index].name = translation.name;
+                    state.list[index] = {
+                        ...state.list[index],
+                        ...translation,
+                        download_status: "downloaded",
+                        download_date: now,
+                        error: ""
+                    }
                 }
             }
             state.loading = false;
-            state.lastFetch = Date.now();
+            state.lastFetch = now;
             state.error = null;
             return state;
         },
@@ -172,7 +176,7 @@ const {
     packCardsReceived,
     packCardsRequested,
     packCardsRequestFailed,
-    packTranslationsReceived: packTranslationReceived
+    packTranslationReceived,
 } = slice.actions; // Do not export, as they are events and not commands. Events should be internal.
 
 export const {
@@ -214,7 +218,10 @@ export const translatePacks = () => (dispatch: Dispatch<any>) => {
 }
 
 
-export const loadPackCards = (packCode: string) => (dispatch: Dispatch<any>) => {
+export const loadPackCards = (packCode: string, packTypeCode: string) => (dispatch: Dispatch<any>) => {
+    if( packTypeCode === "scenario" ){
+        return dispatch(loadPackCardsEncounter(packCode));
+    }
     return dispatch(
         apiCallBegan({
             //url: PACK_CARDS_URL + packCode + '.json',

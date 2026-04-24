@@ -39,6 +39,10 @@
     "spoiler": "Spoiler",
     "threat": "Threat",
     "thwart": "Thwart",
+    "resource_physical": "Physical resource",
+    "resource_mental": "Mental resource",
+    "resource_energy": "Energy resource",
+    "resource_wild": "Wild resource",
     
     "attack_star": "* in attack",
     "base_threat_fixed": "Base thread fixed",

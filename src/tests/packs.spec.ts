@@ -208,7 +208,7 @@ describe("packsSlice", () => {
             );
 
             // Act
-            await testStore.dispatch<any>(loadPackCards("core"));
+            await testStore.dispatch<any>(loadPackCards("core", "core"));
 
             // Assert
             expect(fetchMock).toHaveBeenCalledTimes(1);

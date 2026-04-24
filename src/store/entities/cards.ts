@@ -85,7 +85,6 @@ const slice = createSlice({
             cards = cards.filter(
                 (card: MCCard) => card.pack_code !== packCode
             );
-            // saveCardsToLocalStorage(cards);
             return cards;
         },
         cardsReceived: (cards: MCCard[], action: PayloadAction<MCCard[]>) => {
