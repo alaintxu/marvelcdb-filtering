@@ -17,6 +17,7 @@ export type MCCard = {
     backimagesrc?: string;
     base_threat?: number;
     base_threat_fixed?: boolean;
+    set_code: string;
     card_set_code: string;
     card_set_name: string;
     card_set_type_name_code: string;
@@ -67,7 +68,7 @@ export type MCCard = {
     url?: string;
 };
 
-type CardTranslation = Pick<MCCard, "code" | "flavor" | "name" | "real_name" | "real_text" | "real_traits" | "subname" | "text" | "traits">;
+type CardTranslation = Pick<MCCard, "code" | "flavor" | "name"| "subname" | "text" | "traits">;
 
 const initialState: MCCard[] = [];
 

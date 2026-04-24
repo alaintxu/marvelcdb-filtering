@@ -2,6 +2,7 @@ import * as jsonpack from 'jsonpack';
 
 export function removeOldLocalStorageItems(): void {
     localStorage.removeItem("cards_compressed");
+    localStorage.removeItem("packs");
 }
 
 const COMPRESSION_ENABLED = false;

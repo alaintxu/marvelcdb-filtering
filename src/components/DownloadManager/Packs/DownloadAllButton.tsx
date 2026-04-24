@@ -1,13 +1,12 @@
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { loadPackCards, selectAllPacks } from '../../../store/entities/packs';
-import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import { useAppDispatch } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
+import { selectAllPackCodesAndDownload } from '../../../store/ui/selectedPacks';
 
 const DownloadAllButton = () => {
     const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
-    const packs = useAppSelector(selectAllPacks);
 
     return (
         <>
@@ -21,21 +20,7 @@ const DownloadAllButton = () => {
                 title={t(`modal.download_all_packs.title`)}
                 modal_id='modal-select-all'
                 onAccept={async () => {
-                //dispatch(cardsSet([]));
-                //dispatch(packStatusDictSet({}));
-                if (!packs) return
-
-                const batchSize = 500;
-                for (let i = 0; i < packs.length; i += batchSize) {
-                    const batch = packs.slice(i, i + batchSize);
-                    await Promise.all(
-                        batch.map(
-                            async (pack) => dispatch<any>(loadPackCards(pack.code, pack.pack_type_code))
-                        )
-                    );
-                    //await new Promise((resolve) => setTimeout(resolve, 1000));
-                }
-                
+                    await dispatch<any>(selectAllPackCodesAndDownload());
                 }}>
                 <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
             </Modal>

@@ -1,15 +1,13 @@
 
 import { Modal, ModalButton } from '../../Modal';
 import { useTranslation } from 'react-i18next';
-import { selectAllPacks, unloadPackCards } from '../../../store/entities/packs';
-import { removeAllCards } from '../../../store/entities/cards';
-import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import { useAppDispatch } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
+import { clearSelectedPacksAndCards } from '../../../store/ui/selectedPacks';
 
 const RemoveAllButton = () => {
     const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
-    const packs = useAppSelector(selectAllPacks);
     return (
         <>
             <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
@@ -23,10 +21,7 @@ const RemoveAllButton = () => {
                 title={t(`modal.delete_all_packs.title`)}
                 modal_id='modal-remove-all'
                 onAccept={() => { 
-                    for(const pack of packs){
-                        dispatch(unloadPackCards(pack.code));
-                        dispatch(removeAllCards())
-                    }
+                    dispatch<any>(clearSelectedPacksAndCards());
                 }} >
                 <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
             </Modal >

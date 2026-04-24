@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import { MCCard, selectAllCards } from "../store/entities/cards";
 import { cardCodeAllUnclicked, navigationOptionKeySet, selectNavigationOptionKey, selectIsAnyCardClicked } from "../store/ui/other";
@@ -6,7 +7,11 @@ import { removeOldLocalStorageItems, saveToLocalStorage } from "../LocalStorageH
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
 import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck } from "../store/entities/decks";
 import { hasClassInAncestors } from "./Card";
-import { LOCAL_STORAGE_PACKS_KEY, PackSliceState, selectPackState, loadPackCards, selectAllPacks } from "../store/entities/packs";
+import { loadPacks } from "../store/entities/packs";
+import { loadFactions } from "../store/entities/factions";
+import { loadCardTypes } from "../store/entities/cardTypes";
+import { loadCardSets } from "../store/entities/cardSets";
+import { LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, downloadSelectedPackCards, selectSelectedPackCodes } from "../store/ui/selectedPacks";
 import { useAppDispatch, useAppSelector } from "../hooks/useStore";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -29,6 +34,7 @@ const isSelectXButton = (element: HTMLElement) => {
 }
 const MainLayout = () => {
   const dispatch = useAppDispatch();
+  const { i18n } = useTranslation();
 
   // Redux values
   const selectedNavigationOptionKey = useAppSelector(selectNavigationOptionKey);
@@ -36,32 +42,31 @@ const MainLayout = () => {
   const cards: MCCard[] = useAppSelector(selectAllCards);
   const decks: MarvelDecksDict = useAppSelector(selectAllDecks);
   const elementsPerPage: number = useAppSelector(selectPaginationElementsPerPage);
-  const packsState: PackSliceState = useAppSelector(selectPackState);
-  const allPacks = useAppSelector(selectAllPacks);
+  const selectedPackCodes = useAppSelector(selectSelectedPackCodes);
   const isAnyCardClicked: boolean = useAppSelector(selectIsAnyCardClicked);
-  const isAnyPackSelected: boolean = allPacks.some(pack => pack.download_status === "downloaded");
+  const isAnyPackSelected: boolean = selectedPackCodes.length > 0;
+  
+  
 
 
   // Manage local storage
+  useEffect(() => {
+    dispatch<any>(loadPacks());
+    dispatch<any>(loadFactions());
+    dispatch<any>(loadCardTypes());
+    dispatch<any>(loadCardSets());
+  }, [dispatch, i18n.language]);
+
   useEffect(() => { removeOldLocalStorageItems(); }, []); // [] means this effect will run once after the first render
-  //useEffect(() => { if (packStatusDict) saveToLocalStorage(LOCAL_STORAGE_PACK_STATUS_KEY, packStatusDict);        }, [packStatusDict]);
-  useEffect(() => { if (packsState)     saveToLocalStorage(LOCAL_STORAGE_PACKS_KEY, packsState);                  }, [packsState]);
+  useEffect(() => { saveToLocalStorage(LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, selectedPackCodes);                 }, [selectedPackCodes]);
   useEffect(() => {                     saveToLocalStorage(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, elementsPerPage); }, [elementsPerPage]);
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
   //useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);                       }, [cards]);
 
-  // Auto-fetch cards for packs marked as "downloaded" but with no cards in store
-  // This handles return visits when packs are persisted but cards are not
+  // Auto-fetch cards for selected packs with no cards in store.
   useEffect(() => {
-    if (packsState.loading || cards.length > 0) return; // Wait for packs to load and don't re-fetch if cards already exist
-    
-    const downloadedPacks = allPacks.filter(pack => pack.download_status === "downloaded");
-    if (downloadedPacks.length > 0) {
-      downloadedPacks.forEach(pack => {
-        dispatch<any>(loadPackCards(pack.code, pack.pack_type_code));
-      });
-    }
-  }, [packsState.loading, allPacks, cards.length, dispatch]);
+    dispatch<any>(downloadSelectedPackCards());
+  }, [cards.length, dispatch, selectedPackCodes]);
 
   // Listener
   useEffect(() => {

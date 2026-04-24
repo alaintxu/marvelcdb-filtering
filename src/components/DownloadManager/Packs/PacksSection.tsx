@@ -1,19 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import LoadingSpinner from '../../LoadingSpinner';
-import { loadPacks, Pack, selectAllPacks, selectArePacksLoading, selectIsAnyPackDownloading, selectPacksError } from '../../../store/entities/packs';
+import { Pack, selectAllPacks, selectArePacksLoading, selectIsAnyPackDownloading, selectPacksError } from '../../../store/entities/packs';
 import { selectShowPackList, showPackListToggled } from '../../../store/ui/other';
 import PackListItem from '../Packs/PackListItem';
 import LanguageSelect from '../LanguageSelect';
 import PacksData from '../Packs/PacksData';
 import RemoveAllButton from '../Packs/RemoveAllButton';
 import DownloadAllButton from '../Packs/DownloadAllButton';
-import { useEffect } from 'react';
 import PackStatusCountBadge from './PackStatusCountBadge';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
 
 const PacksSection = () => {
-    const { t, i18n } = useTranslation('global');
+  const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
 
     const packs: Pack[] = useAppSelector(selectAllPacks);
@@ -23,11 +22,6 @@ const PacksSection = () => {
     const showPackList = useAppSelector(selectShowPackList);
     const isAnyPackDownloading = useAppSelector(selectIsAnyPackDownloading);
 
-
-
-    useEffect(() => {
-      dispatch<any>(loadPacks());
-    }, [i18n.language, dispatch]);
   return (
     <section id="pack-section">
         <PacksData />

@@ -23,6 +23,8 @@ import NumberOfFiltersBadge from "./NumberOfFiltersBadge";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import DottedMultiselectFilterRedux from "./DottedMultiselectFilterRedux";
 import HideDuplicatesFilter from "./HideDuplicatesFilter";
+import { selectIsAnyPackDownloading } from "../../store/entities/packs";
+import LoadingSpinner from "../LoadingSpinner";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -46,6 +48,8 @@ const CardFiltersView = ({
   selectedFilters, setSelectedFilters,
   ...rest
 }: Props) => {
+
+  const isAnyPackDownloading: boolean = useAppSelector(selectIsAnyPackDownloading);
   const dispatch = useAppDispatch();
   const { t } = useTranslation("filters");
   const { control, reset } = useForm<MCCard>({
@@ -57,6 +61,14 @@ const CardFiltersView = ({
   const stringFilterNumber = useAppSelector(selectNumberOfFiltersByType("string"));
   const numberFilterNumber = useAppSelector(selectNumberOfFiltersByType("number"));
   const booleanFilterNumber = useAppSelector(selectNumberOfFiltersByType("boolean"));
+
+  if(isAnyPackDownloading){
+    return (
+      <section {...rest}>
+        <LoadingSpinner />
+      </section>
+    );
+  }
 
 
   return (
@@ -118,6 +130,14 @@ const CardFiltersView = ({
                 />
               );
             })}
+            <MultiselectFilterRedux
+                control={control}
+                fieldCode={"pack_code"}
+            />
+            <MultiselectFilterRedux
+                control={control}
+                fieldCode={"set_code"}
+            />
           </div>
         </div>
 

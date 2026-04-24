@@ -3,10 +3,10 @@ import { RootState } from "../configureStore";
 import { MCCard } from "../entities/cards";
 
 export const KEY_VALUE_FILTERS: string[] = [
-    "type_", // "type_code" -> "type_name"
-    "faction_", // "faction_code" -> "faction_name"
-    "pack_", // "pack_code" -> "pack_name"
-    "card_set_", // "card_set_code" -> "card_set_name"
+    "type_", // From card type entity
+    "faction_", // From faction entity
+    "pack_", // From pack entity
+    "set_", // From card set entity
     "", // "code" -> "name"
     //"linked_to_", // "linked_to_code" -> "linked_to_name"
     //"duplicate_of_", // "duplicate_of_code" -> "duplicate_of_name"
@@ -46,7 +46,7 @@ export const BOOLEAN_FILTERS: string[] = [
 
 export const DOTTED_FILTERS: string[] = [
     "traits",
-    "real_traits",
+    //"real_traits",
 ];
 
 export const STRING_FILTERS: string[] = [

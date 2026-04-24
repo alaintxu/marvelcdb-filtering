@@ -8,6 +8,10 @@ import { MCCard, selectUniqueFieldOptions } from "../../store/entities/cards";
 
 import { FieldOption, filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import { selectPackOptions } from "../../store/entities/packs";
+import { selectCardSetOptions } from "../../store/entities/cardSets";
+import { selectFactionOptions } from "../../store/entities/factions";
+import { selectCardTypeOptions } from "../../store/entities/cardTypes";
 
 interface Props {
   control: Control<MCCard>;
@@ -17,7 +21,13 @@ interface Props {
 const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
   const dispatch = useAppDispatch();
   const fieldName = fieldCode.replace("code", "name") as keyof MCCard;
-  const uniqueFieldCodeNames: FieldOption[] = useAppSelector(selectUniqueFieldOptions(fieldCode, fieldName));
+  const uniqueFieldCodeNames: FieldOption[] = useAppSelector(
+    fieldCode === "pack_code" ? (state) => selectPackOptions(state) :
+    fieldCode === "set_code" ? (state) => selectCardSetOptions(state) :
+    fieldCode === "faction_code" ? (state) => selectFactionOptions(state) :
+    fieldCode === "type_code" ? (state) => selectCardTypeOptions(state) :
+    selectUniqueFieldOptions(fieldCode, fieldName)
+  );
 
   const options: OptionsOrGroups<unknown, GroupBase<unknown>> = uniqueFieldCodeNames.map((option: FieldOption) => {
     return { value: option.value, label: option.label };

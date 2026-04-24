@@ -3,13 +3,12 @@ import { RootState } from '../configureStore';
 import { apiCallBegan } from '../api';
 //import moment from 'moment';
 import { Dispatch } from '@reduxjs/toolkit';
-import { getFromLocalStorage } from '../../LocalStorageHelpers';
 import { cardsReceived, cardsTranslationsReceived, cardsTranslationsRequestFailed, MCCard } from './cards';
 import i18n from '../../i18n';
 
 // const PACK_CARDS_URL = '/cards/';
 //const PACKS_CACHE_TIME_IN_MINUTES = 10;
-export const LOCAL_STORAGE_PACKS_KEY = "packs";
+type PackLoadStatus = "idle" | "downloading" | "downloaded" | "error";
 
 export type Pack = {
     /* GHJson style */
@@ -21,10 +20,6 @@ export type Pack = {
     pack_type_code: string;
     position: number;
     size: number;
-    // Additional fields
-    download_date?: number;
-    download_status?: "unselected" | "selected" | "downloading" | "downloaded" | "error";
-    error?: string;
 }
 
 export type PackTranslation = Pick<Pack, "code" | "name">;
@@ -49,35 +44,37 @@ export type PackSliceState = {
     loading: boolean;
     lastFetch: number;
     error: string | null;
+    packCardLoadByCode: Record<string, {
+        status: PackLoadStatus;
+        download_date?: number;
+        error?: string;
+    }>;
 }
 
 const initialState: PackSliceState = {
     list: [],
     loading: true,
     lastFetch: 0,
-    error: null
+    error: null,
+    packCardLoadByCode: {}
 }
 
 /* Reducer */
 const slice = createSlice({
     name: 'packs',
-    initialState: getFromLocalStorage<PackSliceState>(LOCAL_STORAGE_PACKS_KEY) || {...initialState, list: [...initialState.list]} as PackSliceState,
+    initialState,
     reducers: {
         unloadPackCards: (state, action: PayloadAction<string>) => {
             const packCode = action.payload;
-            const pack = state.list.find((pack: Pack) => pack.code === packCode);
-            if (pack) {
-                pack.download_status = "unselected";
-                pack.download_date = 0;
-            }
+            delete state.packCardLoadByCode[packCode];
             // @ToDo: Remove cards from store
             return state;
         },
         packCardsRequested: (state, action: PayloadAction<string>) => {
             const packCode = action.payload;
-            const packIndex = state.list.findIndex((pack: Pack) => pack.code === packCode);
-            if (packIndex === -1) return state;
-            state.list[packIndex].download_status = "downloading";
+            state.packCardLoadByCode[packCode] = {
+                status: "downloading"
+            };
             return state;
         },
         packCardsReceived: (state, action: PayloadAction<MCCard[]>) => {
@@ -85,24 +82,22 @@ const slice = createSlice({
             if (cards.length === 0) return state;
 
             const packCode = cards[0].pack_code;
-            const index = state.list.findIndex((pack: Pack) => pack.code === packCode);
-            if (index !== -1) {
-                state.list[index].download_status = "downloaded";
-                state.list[index].download_date = Date.now();
-                state.list[index].error = "";
-                // @ToDo: Remove old cards and add new cards to store
-            }
+            state.packCardLoadByCode[packCode] = {
+                status: "downloaded",
+                download_date: Date.now(),
+                error: ""
+            };
+            // @ToDo: Remove old cards and add new cards to store
             return state;
         },
         packCardsRequestFailed: (state, action: PayloadAction<{error: string, errorPayload: string}>) => {
             const packCode = action.payload.errorPayload;
             const error = action.payload.error;
-            const index = state.list.findIndex((pack: Pack) => pack.code === packCode);
-            if (index !== -1) {
-                state.list[index].download_status = "error";
-                state.list[index].download_date = 0;
-                state.list[index].error = error;
-            }
+            state.packCardLoadByCode[packCode] = {
+                status: "error",
+                download_date: 0,
+                error
+            };
             return state;
         },
         packTranslationReceived(state, action: PayloadAction<PackTranslation[]>) {
@@ -113,10 +108,7 @@ const slice = createSlice({
                 if (index !== -1) {
                     state.list[index] = {
                         ...state.list[index],
-                        ...translation,
-                        download_status: "downloaded",
-                        download_date: now,
-                        error: ""
+                        ...translation
                     }
                 }
             }
@@ -136,11 +128,7 @@ const slice = createSlice({
             for (let newPack of newPacks) {
                 const index = state.list.findIndex((oldPack: Pack) => oldPack.code === newPack.code);
                 if (index !== -1) {
-                    state.list[index] = {
-                        ...newPack,
-                        download_date: state.list[index].download_date,
-                        download_status: state.list[index].download_status
-                    }
+                    state.list[index] = newPack;
                 }else{
                     state.list.push(newPack);
                 }
@@ -195,13 +183,15 @@ export const loadPacks = () => (dispatch: Dispatch<any>) => {
 
     // const diffInMinutes = moment().diff(moment(lastFetch), 'minutes');
     // if (diffInMinutes < PACKS_CACHE_TIME_IN_MINUTES) return;
+    const afterSuccessDispatch = i18n.language === "en" ? undefined : translatePacks();
+
     return dispatch(
         apiCallBegan({
             //url: PACKS_URL,
             url: 'https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/packs.json',
             onStart: packsRequested.type,
             onSuccess: packsReceived.type,
-            afterSuccessDispatch: translatePacks(),
+            afterSuccessDispatch: afterSuccessDispatch,
             onError: packsRequestFailed.type
         })
     );
@@ -222,6 +212,7 @@ export const loadPackCards = (packCode: string, packTypeCode: string) => (dispat
     if( packTypeCode === "scenario" ){
         return dispatch(loadPackCardsEncounter(packCode));
     }
+    const afterSuccessDispatch = i18n.language === "en" ? undefined : translateCards(packCode);
     return dispatch(
         apiCallBegan({
             //url: PACK_CARDS_URL + packCode + '.json',
@@ -230,7 +221,7 @@ export const loadPackCards = (packCode: string, packTypeCode: string) => (dispat
             onStartPayload: packCode,
             onSuccess: [packCardsReceived.type, cardsReceived.type],
             onError: packCardsRequestFailed.type,
-            afterSuccessDispatch: translateCards(packCode),
+            afterSuccessDispatch: afterSuccessDispatch,
             onErrorPayload: packCode
         })
     );
@@ -249,12 +240,14 @@ export const translateCards = (packCode: string) => (dispatch: Dispatch<any>) =>
 }
 
 export const loadPackCardsEncounter = (packCode: string) => (dispatch: Dispatch<any>) => {
+    const afterSuccessDispatch = i18n.language === "en" ? undefined : translatePackCardsEncounter(packCode);
     return dispatch(
         apiCallBegan({
             url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/pack/${packCode}_encounter.json`,
             onSuccess: cardsReceived.type,
             onError: packCardsRequestFailed.type,
-            onErrorPayload: packCode
+            onErrorPayload: packCode,
+            afterSuccessDispatch: afterSuccessDispatch
         })
     );
 }
@@ -262,7 +255,7 @@ export const loadPackCardsEncounter = (packCode: string) => (dispatch: Dispatch<
 export const translatePackCardsEncounter = (packCode: string) => (dispatch: Dispatch<any>) => {
     return dispatch(
         apiCallBegan({
-            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/cards_encounter/${packCode}.json`,
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/packs/${packCode}_encounter.json`,
             onSuccess: cardsTranslationsReceived.type,
             onError: cardsTranslationsRequestFailed.type,
             onErrorPayload: packCode
@@ -318,18 +311,23 @@ export const selectPacksError = createSelector(
 );
 
 export const selectPackStatusByCode = (packCode: string) => createSelector(
-    selectPackByCode(packCode),
-    (pack: Pack | undefined) => pack?.download_status
+    selectPackState,
+    (packState: PackSliceState) => packState.packCardLoadByCode[packCode]?.status || "idle"
+);
+
+export const selectPackDownloadDateByCode = (packCode: string) => createSelector(
+    selectPackState,
+    (packState: PackSliceState) => packState.packCardLoadByCode[packCode]?.download_date
 );
 
 export const selectIsAnyPackDownloading = createSelector(
-    selectAllPacks,
-    (packs: Pack[]) => packs.some((pack: Pack) => pack.download_status === "downloading")
+    selectPackState,
+    (packState: PackSliceState) => Object.values(packState.packCardLoadByCode).some((stateByCode) => stateByCode.status === "downloading")
 );
 
 export const selectNumberOfDownloadedPacks = createSelector(
-    selectAllPacks,
-    (packs: Pack[]) => packs.filter((pack: Pack) => pack.download_status === "downloaded").length
+    selectPackState,
+    (packState: PackSliceState) => Object.values(packState.packCardLoadByCode).filter((stateByCode) => stateByCode.status === "downloaded").length
 );
 
 export const selectPackStatusBootstrapVariant = createSelector(
@@ -343,4 +341,9 @@ export const selectPackStatusBootstrapVariant = createSelector(
         if (packRatio < 0.25) return "danger";
         return "warning";
     }
+);
+
+export const selectPackOptions = createSelector(
+    selectAllPacks,
+    (packs: Pack[]) => packs.map((pack: Pack) => ({ value: pack.code, label:pack.name }))
 );
