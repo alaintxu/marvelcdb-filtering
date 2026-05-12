@@ -73,7 +73,8 @@ const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
       const cardValue = card[mcKey]?.toString();
       if (filterValues!==undefined && filterValues.length){
         // Filter is set and has values
-        if (cardValue === undefined || filterValues.includes(cardValue) === false) {
+        const filterValuesSet = new Set(filterValues);
+        if (cardValue === undefined || !filterValuesSet.has(cardValue)) {
           // Card value does not match filter
           return false;
         }
