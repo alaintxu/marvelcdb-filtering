@@ -7,7 +7,7 @@ import { removeOldLocalStorageItems, saveToLocalStorage } from "../LocalStorageH
 import { LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, selectPaginationElementsPerPage } from "../store/ui/pagination";
 import { LOCAL_STORAGE_DECKS_KEY, MarvelDeck, MarvelDecksDict, selectAllDecks, selectCurrentDeck } from "../store/entities/decks";
 import { hasClassInAncestors } from "./Card";
-import { loadPacks } from "../store/entities/packs";
+import { loadPacks, selectArePacksLoading } from "../store/entities/packs";
 import { loadFactions } from "../store/entities/factions";
 import { loadCardTypes } from "../store/entities/cardTypes";
 import { loadCardSets } from "../store/entities/cardSets";
@@ -43,6 +43,7 @@ const MainLayout = () => {
   const decks: MarvelDecksDict = useAppSelector(selectAllDecks);
   const elementsPerPage: number = useAppSelector(selectPaginationElementsPerPage);
   const selectedPackCodes = useAppSelector(selectSelectedPackCodes);
+  const arePacksLoading: boolean = useAppSelector(selectArePacksLoading);
   const isAnyCardClicked: boolean = useAppSelector(selectIsAnyCardClicked);
   const isAnyPackSelected: boolean = selectedPackCodes.length > 0;
   
@@ -66,7 +67,7 @@ const MainLayout = () => {
   // Auto-fetch cards for selected packs with no cards in store.
   useEffect(() => {
     dispatch<any>(downloadSelectedPackCards());
-  }, [cards.length, dispatch, selectedPackCodes]);
+  }, [arePacksLoading, cards.length, dispatch, selectedPackCodes]);
 
   // Listener
   useEffect(() => {
