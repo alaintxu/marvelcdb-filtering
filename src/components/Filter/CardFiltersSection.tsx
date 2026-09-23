@@ -130,15 +130,7 @@ const CardFiltersView = ({
                 />
               );
             })}
-            <MultiselectFilterRedux
-                control={control}
-                fieldCode={"pack_code"}
-            />
-            <MultiselectFilterRedux
-                control={control}
-                fieldCode={"set_code"}
-            />
-          </div>
+            </div>
         </div>
 
         {/* String filters */}
