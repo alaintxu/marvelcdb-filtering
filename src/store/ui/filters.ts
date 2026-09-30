@@ -22,7 +22,7 @@ export const NUMBER_FILTERS: string[] = [
     "thwart",
     "defense",
     "health",
-    "threat",
+    //"threat",
     "hand_size",
     "base_threat",
     "quantity",
@@ -52,14 +52,14 @@ export const DOTTED_FILTERS: string[] = [
 export const STRING_FILTERS: string[] = [
     "name",
     "text",
-    "back_text",
+    //"back_text",  // Solo hay uno
     "subname",
     "flavor",
-    "back_flavor",
+    "code",
+    //"back_flavor",  // No hay ninguno
     "illustrator",
     "real_name",
     "real_text",
-    "code",
     "octgn_id",
 ];
 
