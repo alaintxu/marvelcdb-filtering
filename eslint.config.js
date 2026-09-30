@@ -29,7 +29,7 @@ import reactCompiler from 'eslint-plugin-react-compiler'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import typescriptEslintParser from '@typescript-eslint/parser'
-import standard from '@eslint/js/src/configs/recommended.js'; // Corrected import
+import globals from 'globals'
 
 export default [
   eslint.configs.recommended,
@@ -43,9 +43,10 @@ export default [
         ecmaFeatures: { jsx: true },
       },
       globals: {
-        browser: true,
-        es2020: true,
-        node: true
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2020,
+        ...globals.jest
       },
     },
     plugins: {

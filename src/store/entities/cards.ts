@@ -1,11 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
-//import { getFromLocalStorageCompressed } from "../../LocalStorageHelpers";
 import {cleanCards} from "./cardsModificationUtils";
 import { FieldOption } from "../ui/filters";
 
-//export const LOCAL_STORAGE_CARDS_KEY = "cards_compressed";
 export const CARD_PACK_URL = '/cards/';
 
 export type MCCard = {
@@ -75,7 +73,7 @@ const initialState: MCCard[] = [];
 /* Reducer */
 const slice = createSlice({
     name: 'cards',
-    initialState: initialState, //getCardsFromLocalStorage(),
+    initialState: initialState,
     reducers: {
         removeAllCards: (cards: MCCard[]) => {
             cards = [];
@@ -103,6 +101,18 @@ const slice = createSlice({
             //cards = [...sortCards(cards, "code")];
             return cards;
         },
+        cardsRestored: (cards: MCCard[], action: PayloadAction<MCCard[]>) => {
+            // Restored from IndexedDB, already cleaned when saved.
+            // Separate action so the persistence middleware does not save them back.
+            const restoredCards: MCCard[] = action.payload;
+            if (restoredCards.length === 0) return cards;
+
+            const restoredCardCodes = new Set(restoredCards.map(card => card.code));
+            cards = cards.filter(
+                (card: MCCard) => !restoredCardCodes.has(card.code)
+            );
+            return [...cards, ...restoredCards];
+        },
         cardsTranslationsReceived(state, action: PayloadAction<CardTranslation[]>) {
             const translations: CardTranslation[] = action.payload;
             for (let translation of translations) {
@@ -122,9 +132,10 @@ const slice = createSlice({
 
 /* Reducer exports */
 export default slice.reducer;
-export const { 
+export const {
     cardPackRemoved,
     cardsReceived,
+    cardsRestored,
     removeAllCards,
     cardsTranslationsReceived,
     cardsTranslationsRequestFailed

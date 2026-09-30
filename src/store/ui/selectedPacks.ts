@@ -1,8 +1,10 @@
 import { createSelector, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 import { getFromLocalStorage } from '../../LocalStorageHelpers';
 import { RootState } from '../configureStore';
-import { loadPackCards, Pack, selectAllPacks, selectArePacksLoading, selectPackByCode, unloadPackCards } from '../entities/packs';
-import { removeAllCards, selectAllCards } from '../entities/cards';
+import { loadPackCards, Pack, packCardsHydrated, selectAllPacks, selectArePacksLoading, selectPackByCode, selectPackStatusByCode, unloadPackCards } from '../entities/packs';
+import { cardsRestored, MCCard, removeAllCards } from '../entities/cards';
+import { loadPersistedPacks } from '../persistence/cardsDb';
+import i18n from '../../i18n';
 
 export const LOCAL_STORAGE_SELECTED_PACK_CODES_KEY = 'selected_pack_codes';
 
@@ -99,7 +101,9 @@ export const selectAllPackCodesAndDownload = () => async (dispatch: Dispatch<any
 
     const batchSize = 500;
     for (let i = 0; i < packs.length; i += batchSize) {
-        const batch = packs.slice(i, i + batchSize);
+        const batch = packs
+            .slice(i, i + batchSize)
+            .filter((pack) => selectPackStatusByCode(pack.code)(getState()) === 'idle');
         await Promise.all(
             batch.map((pack) => dispatch(loadPackCards(pack.code, pack.pack_type_code)))
         );
@@ -117,19 +121,39 @@ export const clearSelectedPacksAndCards = () => (dispatch: Dispatch<any>, getSta
     dispatch(removeAllCards());
 };
 
+/* Restores previously downloaded packs from IndexedDB.
+   Returns the hydrated pack codes (empty if there was nothing to restore). */
+export const hydratePersistedCards = () => async (dispatch: Dispatch<any>): Promise<string[]> => {
+    const persistedPacks = await loadPersistedPacks(i18n.language || 'en');
+    const packCodes = Object.keys(persistedPacks);
+    if (packCodes.length === 0) return [];
+
+    const restoredCards: MCCard[] = [];
+    for (const packCode of packCodes) {
+        const persistedPack = persistedPacks[packCode];
+        restoredCards.push(...persistedPack.cards);
+        dispatch(packCardsHydrated({ packCode, download_date: persistedPack.savedAt }));
+    }
+    dispatch(cardsRestored(restoredCards));
+    return packCodes;
+};
+
 export const downloadSelectedPackCards = () => (dispatch: Dispatch<any>, getState: () => RootState) => {
     const state = getState();
     const arePacksLoading = selectArePacksLoading(state);
-    const cards = selectAllCards(state);
     const selectedPackCodes = selectSelectedPackCodes(state);
 
-    if (arePacksLoading || cards.length > 0 || selectedPackCodes.length === 0) return;
+    if (arePacksLoading || selectedPackCodes.length === 0) return;
 
     const selectedPacks = selectedPackCodes
         .map((packCode) => selectPackByCode(packCode)(state))
         .filter((pack): pack is Pack => !!pack);
 
-    selectedPacks.forEach((pack) => {
-        dispatch(loadPackCards(pack.code, pack.pack_type_code));
-    });
+    // Only fetch packs that are not already in the store or IndexedDB.
+    for (const pack of selectedPacks) {
+        const packStatus = selectPackStatusByCode(pack.code)(state);
+        if (packStatus === 'idle') {
+            dispatch(loadPackCards(pack.code, pack.pack_type_code));
+        }
+    }
 };

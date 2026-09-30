@@ -1,13 +1,14 @@
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import reducer from './reducer';
 import api from './middleware/api';
+import { persistenceMiddleware } from './middleware/persistence';
 
 export const createStore = (preloadedState?: any):EnhancedStore => configureStore({
     reducer: reducer,
     devTools: true,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false
-    }).concat(api),
+    }).concat(api, persistenceMiddleware.middleware),
     preloadedState
 });
 

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { MCCard, selectAllCards } from "../store/entities/cards";
@@ -11,7 +11,7 @@ import { loadPacks, selectArePacksLoading } from "../store/entities/packs";
 import { loadFactions } from "../store/entities/factions";
 import { loadCardTypes } from "../store/entities/cardTypes";
 import { loadCardSets } from "../store/entities/cardSets";
-import { LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, downloadSelectedPackCards, selectSelectedPackCodes } from "../store/ui/selectedPacks";
+import { LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, downloadSelectedPackCards, hydratePersistedCards, selectSelectedPackCodes } from "../store/ui/selectedPacks";
 import { useAppDispatch, useAppSelector } from "../hooks/useStore";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -50,6 +50,16 @@ const MainLayout = () => {
   
 
 
+  // Restore previously downloaded cards from IndexedDB before any auto-download.
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    dispatch<any>(hydratePersistedCards()).finally(() => {
+      if (!cancelled) setIsHydrated(true);
+    });
+    return () => { cancelled = true; };
+  }, [dispatch]);
+
   // Manage local storage
   useEffect(() => {
     dispatch<any>(loadPacks());
@@ -62,12 +72,12 @@ const MainLayout = () => {
   useEffect(() => { saveToLocalStorage(LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, selectedPackCodes);                 }, [selectedPackCodes]);
   useEffect(() => {                     saveToLocalStorage(LOCAL_STORAGE_ELEMENTS_PER_PAGE_KEY, elementsPerPage); }, [elementsPerPage]);
   useEffect(() => { if (decks)          saveToLocalStorage(LOCAL_STORAGE_DECKS_KEY,  decks);                      }, [decks]);
-  //useEffect(() => { if (cards)          saveToLocalStorageCompressed(LOCAL_STORAGE_CARDS_KEY, cards);                       }, [cards]);
 
-  // Auto-fetch cards for selected packs with no cards in store.
+  // Auto-fetch cards for selected packs not present in the store or IndexedDB.
   useEffect(() => {
+    if (!isHydrated) return;
     dispatch<any>(downloadSelectedPackCards());
-  }, [arePacksLoading, cards.length, dispatch, selectedPackCodes]);
+  }, [arePacksLoading, cards.length, dispatch, selectedPackCodes, isHydrated]);
 
   // Listener
   useEffect(() => {

@@ -1,20 +1,23 @@
-import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards, Pack } from "../store/entities/packs";
+import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards } from "../store/entities/packs";
 import { createStore, RootState, AppStore, /*StoreType*/ } from "../store/configureStore";
 import fetchMock from "jest-fetch-mock";
 
-const MOCK_BASE_PATH = "http://localhost:3000";
-jest.mock("i18next", () => ({
-    t: (key: string) => {
-        if (key === "base_path") return MOCK_BASE_PATH;
-        return key;
-    },
-    use: jest.fn(),
-    init: jest.fn()
-}));
+const JSDELIVR_PACK_CARDS_BASE_URL = "https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/pack/";
+jest.mock("i18next", () => {
+    const i18nMock: Record<string, unknown> = {
+        t: (key: string) => {
+            if (key === "base_path") return "http://localhost:3000";
+            return key;
+        },
+        use: () => i18nMock,
+        init: jest.fn(),
+        language: "en"
+    };
+    return i18nMock;
+});
 
 let store: AppStore;
-const packsUrl: string = `${MOCK_BASE_PATH}/api/public/packs/`
-const packCardsBaseUrl: string = `${MOCK_BASE_PATH}/api/public/cards/`;
+const packsUrl: string = "https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/packs.json";
 
 const packsSlice = (myStore?: AppStore) => (myStore ||store).getState().entities.packs;
 
@@ -80,12 +83,16 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "downloaded" },
-                            { code: "second", download_status: "downloaded" }
+                            { code: "core" },
+                            { code: "second" }
                         ],
                         loading: false,
                         lastFetch: 0,
-                        error: null
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "downloaded" },
+                            second: { status: "downloaded" }
+                        }
                     }
                 }
             };
@@ -98,12 +105,16 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "downloaded" },
-                            { code: "second", download_status: "downloading" }
+                            { code: "core" },
+                            { code: "second" }
                         ],
                         loading: false,
                         lastFetch: 0,
-                        error: null
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "downloaded" },
+                            second: { status: "downloading" }
+                        }
                     }
                 }
             };
@@ -118,9 +129,16 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "downloaded" },
-                            { code: "second", download_status: "downloaded" }
+                            { code: "core" },
+                            { code: "second" }
                         ],
+                        loading: false,
+                        lastFetch: 0,
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "downloaded" },
+                            second: { status: "downloaded" }
+                        }
                     }
                 }
             };
@@ -133,12 +151,22 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "unselected" },
-                            { code: "second", download_status: "selected" },
-                            { code: "third", download_status: "unselected" },
-                            { code: "fourth", download_status: "downloaded" },
-                            { code: "fifth", download_status: "error" }
+                            { code: "core" },
+                            { code: "second" },
+                            { code: "third" },
+                            { code: "fourth" },
+                            { code: "fifth" }
                         ],
+                        loading: false,
+                        lastFetch: 0,
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "idle" },
+                            second: { status: "idle" },
+                            third: { status: "idle" },
+                            fourth: { status: "downloaded" },
+                            fifth: { status: "error" }
+                        }
                     }
                 }
             };
@@ -151,11 +179,20 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "unselected" },
-                            { code: "second", download_status: "selected" },
-                            { code: "third", download_status: "unselected" },
-                            { code: "fourth", download_status: "downloaded" },
+                            { code: "core" },
+                            { code: "second" },
+                            { code: "third" },
+                            { code: "fourth" }
                         ],
+                        loading: false,
+                        lastFetch: 0,
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "idle" },
+                            second: { status: "idle" },
+                            third: { status: "idle" },
+                            fourth: { status: "downloaded" }
+                        }
                     }
                 }
             };
@@ -168,12 +205,22 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "unselected" },
-                            { code: "second", download_status: "selected" },
-                            { code: "third", download_status: "downloading" },
-                            { code: "fourth", download_status: "downloaded" },
-                            { code: "fourth", download_status: "error" },
+                            { code: "core" },
+                            { code: "second" },
+                            { code: "third" },
+                            { code: "fourth" },
+                            { code: "fifth" }
                         ],
+                        loading: false,
+                        lastFetch: 0,
+                        error: null,
+                        packCardLoadByCode: {
+                            core: { status: "idle" },
+                            second: { status: "idle" },
+                            third: { status: "downloading" },
+                            fourth: { status: "downloaded" },
+                            fifth: { status: "error" }
+                        }
                     }
                 }
             };
@@ -189,14 +236,18 @@ describe("packsSlice", () => {
                 entities: {
                     packs: {
                         list: [
-                            { code: "core", download_status: "selected" },
-                            { code: "second", download_status: "unselected" }
+                            { code: "core", pack_type_code: "core" },
+                            { code: "second", pack_type_code: "pack" }
                         ],
+                        loading: false,
+                        lastFetch: 0,
+                        error: null,
+                        packCardLoadByCode: {}
                     }
                 }
             });
             const packCode = "core";
-            const url = `${packCardsBaseUrl}${packCode}.json`;
+            const url = `${JSDELIVR_PACK_CARDS_BASE_URL}${packCode}.json`;
             const expectedPackCards = [
                 {"code": "card1", pack_code: packCode},
                 {"code": "card2", pack_code: packCode}
@@ -214,8 +265,7 @@ describe("packsSlice", () => {
             expect(fetchMock).toHaveBeenCalledTimes(1);
             expect(fetchMock).toHaveBeenCalledWith(url, expect.anything());
 
-            const packIndex = (packsSlice(testStore).list).findIndex((pack: Pack) => pack.code === packCode)
-            expect(packsSlice(testStore).list[packIndex].download_status).toEqual("downloaded");
+            expect(packsSlice(testStore).packCardLoadByCode[packCode].status).toEqual("downloaded");
         });
     });
 });

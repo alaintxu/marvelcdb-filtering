@@ -90,6 +90,15 @@ const slice = createSlice({
             // @ToDo: Remove old cards and add new cards to store
             return state;
         },
+        packCardsHydrated: (state, action: PayloadAction<{packCode: string, download_date: number}>) => {
+            const { packCode, download_date } = action.payload;
+            state.packCardLoadByCode[packCode] = {
+                status: "downloaded",
+                download_date,
+                error: ""
+            };
+            return state;
+        },
         packCardsRequestFailed: (state, action: PayloadAction<{error: string, errorPayload: string}>) => {
             const packCode = action.payload.errorPayload;
             const error = action.payload.error;
@@ -168,7 +177,8 @@ const {
 } = slice.actions; // Do not export, as they are events and not commands. Events should be internal.
 
 export const {
-    unloadPackCards
+    unloadPackCards,
+    packCardsHydrated
 } = slice.actions;
 
 
@@ -244,7 +254,9 @@ export const loadPackCardsEncounter = (packCode: string) => (dispatch: Dispatch<
     return dispatch(
         apiCallBegan({
             url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/pack/${packCode}_encounter.json`,
-            onSuccess: cardsReceived.type,
+            onStart: packCardsRequested.type,
+            onStartPayload: packCode,
+            onSuccess: [cardsReceived.type, packCardsReceived.type],
             onError: packCardsRequestFailed.type,
             onErrorPayload: packCode,
             afterSuccessDispatch: afterSuccessDispatch
@@ -255,7 +267,7 @@ export const loadPackCardsEncounter = (packCode: string) => (dispatch: Dispatch<
 export const translatePackCardsEncounter = (packCode: string) => (dispatch: Dispatch<any>) => {
     return dispatch(
         apiCallBegan({
-            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/packs/${packCode}_encounter.json`,
+            url: `https://cdn.jsdelivr.net/gh/zzorba/marvelsdb-json-data@master/translations/${i18n.language}/pack/${packCode}_encounter.json`,
             onSuccess: cardsTranslationsReceived.type,
             onError: cardsTranslationsRequestFailed.type,
             onErrorPayload: packCode

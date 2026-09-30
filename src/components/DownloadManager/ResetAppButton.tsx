@@ -1,11 +1,16 @@
 import { Modal, ModalButton } from '../Modal';
 import { useTranslation } from 'react-i18next';
 import IconForConcept from '../IconForConcept';
+import { clearPersistedCards } from '../../store/persistence/cardsDb';
 
 
 export const resetApp = () => {
-    localStorage.clear();
-    window.location.reload();
+    clearPersistedCards()
+        .catch((e) => console.error('Error clearing cards from IndexedDB', e))
+        .finally(() => {
+            localStorage.clear();
+            window.location.reload();
+        });
 }
 
 const ResetAppButton = () => {
