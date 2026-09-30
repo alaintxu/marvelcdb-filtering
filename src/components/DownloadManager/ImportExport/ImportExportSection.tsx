@@ -1,32 +1,28 @@
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import IconForConcept from '../../IconForConcept';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
+import { cardsReceived, MCCard, selectAllCards } from '../../../store/entities/cards';
 
 const ImportExportSection = () => {
     const { t } = useTranslation('global');
+    const dispatch = useAppDispatch();
+    const cards = useAppSelector(selectAllCards);
     const [importError, setImportError] = useState<string | null>(null);
     const [exportError, setExportError] = useState<string | null>(null);
 
 
   const exportToJSONFile = () => {
-    // const element = document.createElement("a");
-    // const cards_str = JSON.stringify(cards, null, 2);
-    // const file = new Blob([cards_str], { type: "application/json" });
-    // element.href = URL.createObjectURL(file);
-    // element.download = "cards.json";
-    // document.body.appendChild(element);
-    // element.click();
-    // document.body.removeChild(element);
-    try{
-      const data: { [key: string]: any } = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (!key) continue;
-        const item = JSON.parse(localStorage.getItem(key) || "");
-        if (!item) continue;
-        data[key] = item;
-      }
-      return JSON.stringify(data);
+    try {
+      const cards_str = JSON.stringify(cards, null, 2);
+      const file = new Blob([cards_str], { type: "application/json" });
+      const element = document.createElement("a");
+      element.href = URL.createObjectURL(file);
+      element.download = "cards.json";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      setExportError(null);
     } catch (error: any) {
       console.error("Error exporting JSON file", error);
       setExportError((error as Error).message);
@@ -41,14 +37,12 @@ const ImportExportSection = () => {
         fileReader.readAsText(file, "UTF-8");
         fileReader.onload = e => {
           const raw_data = (e.target as FileReader).result as string;
-          const data: { [key: string]: any } = JSON.parse(raw_data);
-          for (const key in data) {
-            localStorage.setItem(key, JSON.stringify(data[key] || ""));
+          const loadedCards: MCCard[] = JSON.parse(raw_data);
+          if (!Array.isArray(loadedCards)) {
+            throw new Error("Invalid file: expected a JSON array of cards");
           }
-          window.location.reload();
-          //const loadedCards: MCCard[] = JSON.parse(result) as MCCard[];
-          //dispatch(cardsAdded({ newCards: loadedCards }));
-          // @ToDo: import local storage and reload page?
+          dispatch(cardsReceived(loadedCards));
+          setImportError(null);
         }
       }
     } catch (error) {
