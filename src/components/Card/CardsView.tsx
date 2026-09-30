@@ -54,8 +54,11 @@ const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
       const mcKey = key as keyof MCCard;
       const filterValue = filters['boolean'][mcKey];
       const cardValue = card[mcKey];
-      if (filterValue!==undefined && cardValue !== filterValue) {
-        return false
+      if (filterValue !== undefined) {
+        const cardHasField = cardValue !== undefined;
+        if (cardHasField !== filterValue) {
+          return false;
+        }
       }
     }
     for (const key of Object.keys(filters['number'])) {
