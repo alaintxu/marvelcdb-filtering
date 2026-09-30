@@ -10,43 +10,8 @@ import { selectFlipAllCards, selectShowAllCardData } from "../../store/ui/other"
 import { FiltersByTypes, selectFilters, selectHideDuplicates, selectQuickFilter } from "../../store/ui/filters";
 import TopActions from "../TopActions";
 import { normalizeString, quickFilterCardList } from "../Filter/QuickSearchFilter";
-import { sortCards } from "../../store/entities/cardsModificationUtils";
+import { sortCards, filterDuplicates, resolveDuplicateCards } from "../../store/entities/cardsModificationUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
-
-const filterDuplicates = (cards: MCCard[], hideDuplicates: boolean=true): MCCard[] => {
-  if (!hideDuplicates) return cards;
-  let uniqueCards: MCCard[] = [];
-  cards.forEach((card) => {
-    const existingCard = uniqueCards.find((uniqueCard) => {
-      if (uniqueCard.code === card.code) return true;
-      if (uniqueCard.duplicate_of_code && uniqueCard.duplicate_of_code === card.code) return true;
-      if (card.duplicate_of_code && uniqueCard.code === card.duplicate_of_code) return true;
-      if (card.duplicate_of_code && uniqueCard.duplicate_of_code && uniqueCard.duplicate_of_code === card.duplicate_of_code) return true;
-      return false;
-    });
-
-    const newQuantity = existingCard ? (card.quantity || 1) + (existingCard.quantity || 1) : card.quantity || 1;
-
-    if (!existingCard) {
-      uniqueCards.push({
-        ...card,
-        quantity: newQuantity
-      });
-    } else {
-      if (card.code === existingCard.duplicate_of_code) {
-        uniqueCards = uniqueCards.filter((uniqueCard) => uniqueCard.code !== existingCard.code);
-        uniqueCards.push({
-          ...card,
-          quantity: newQuantity}
-        );
-      }
-      // update quantity
-      existingCard.quantity = newQuantity;
-    }
-  });
-  return uniqueCards;
-}
-
 
 const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
   return cards.filter((card) => {
@@ -141,7 +106,10 @@ const CardsView = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const filteredCards = filterCards(cards, filters);
+    // Duplicated cards are bare entries: fill them with the data
+    // of the original card so name, text and images are shown.
+    const resolvedCards = resolveDuplicateCards(cards);
+    const filteredCards = filterCards(resolvedCards, filters);
     const quickFilteredCards = quickFilterCardList(filteredCards, quickFilter);
     const uniqueCards = filterDuplicates(quickFilteredCards, hideDuplicates);
     const sortedCards = sortCards(uniqueCards);

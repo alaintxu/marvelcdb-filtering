@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { RootState } from "../configureStore";
-import {cleanCards} from "./cardsModificationUtils";
+import {cleanCards, normalizeDuplicateOfField} from "./cardsModificationUtils";
 import { FieldOption } from "../ui/filters";
 
 export const CARD_PACK_URL = '/cards/';
@@ -103,8 +103,10 @@ const slice = createSlice({
         },
         cardsRestored: (cards: MCCard[], action: PayloadAction<MCCard[]>) => {
             // Restored from IndexedDB, already cleaned when saved.
+            // Normalized in case they were saved before the raw
+            // "duplicate_of" field was mapped to "duplicate_of_code".
             // Separate action so the persistence middleware does not save them back.
-            const restoredCards: MCCard[] = action.payload;
+            const restoredCards: MCCard[] = normalizeDuplicateOfField(action.payload);
             if (restoredCards.length === 0) return cards;
 
             const restoredCardCodes = new Set(restoredCards.map(card => card.code));
