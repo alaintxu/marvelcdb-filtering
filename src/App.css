@@ -92,7 +92,8 @@ img {
 
     /* Card show data modifier */
     &.mc-card--clicked,
-    &.mc-card--show-data {
+    &.mc-card--show-data,
+    &.mc-card--loading {
         & .mc-card__image {
             filter: blur(1px);
             transition: 400ms filter linear;

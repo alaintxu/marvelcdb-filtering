@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import CardImage, { getCardImage } from "./CardImage"
+import { useCallback, useEffect, useState } from "react";
+import CardImage, { getCardImage, ImageFace, ImageLoadState } from "./CardImage"
 import { Modal } from "../../Modal"
 import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
@@ -56,29 +56,27 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
   const { i18n } = useTranslation('global');
   const isClicked = useAppSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
+  const [imageStates, setImageStates] = useState<Record<ImageFace, ImageLoadState>>({
+    front: "loading",
+    back: "loading"
+  });
   const isMainScheme = card.type_code === "main_scheme";
 
   const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
   const isHorizontal = isCardHorizontal(card, manualFlipped || flipAllCards);
 
+  const handleImageStateChange = useCallback((face: ImageFace, newState: ImageLoadState) => {
+    setImageStates((prev) => prev[face] === newState ? prev : { ...prev, [face]: newState });
+  }, []);
+
   useEffect(() => {
     setManualFlipped(undefined);
   }, [flipAllCards]);
 
-
-  // const isCardHorizontal = () => {
-  //   const horizontal_types = ["main_scheme", "side_scheme", "player_side_scheme"];
-  //   const front_horizontal = horizontal_types.includes(card.type_code);
-  //   let back_horizontal = front_horizontal;
-
-  //   if (card.linked_card) {
-  //     back_horizontal = card.linked_card && horizontal_types.includes(card.linked_card.type_code);
-  //   }
-
-
-  //   return flipped ? back_horizontal : front_horizontal;
-  // }
-
+  /* While the visible image is loading (or failed to load) the card data is shown */
+  const isImageLoading = flipped
+    ? imageStates.back !== "loaded"
+    : imageStates.front !== "loaded";
 
   const classNames = [
     "mc-card",
@@ -87,6 +85,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     isHorizontal ? "mc-card--horizontal" : "",
     showCardData ? "mc-card--show-data" : "",
     isClicked ? "mc-card--clicked" : "",
+    isImageLoading ? "mc-card--loading" : "",
   ]
   const modal_json_id = `modal-${card.code}-json`;
   return (
@@ -101,7 +100,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
         key={`mc-card-div-${card.code}`}
         onClick={() => dispatch(cardCodeClicked(card.code))/*setIsClicked((prev) => !prev)*/}
       >
-        <CardImage card={card} horizontal={isHorizontal} />
+        <CardImage card={card} horizontal={isHorizontal} onImageStateChange={handleImageStateChange} />
         <div className="mc-card__content">
           <header>
             <CardTop card={!flipped ? card : card.linked_card} />

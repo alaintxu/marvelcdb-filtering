@@ -245,5 +245,11 @@ describe("MainLayout render flow", () => {
         const packStates = store.getState().entities.packs.packCardLoadByCode;
         expect(packStates["green_goblin"]?.status).toBe("downloaded");
         expect(packStates["rhino"]?.status).toBe("downloaded");
+
+        // While the images have not loaded, the card data is shown (loading modifier).
+        // jsdom never fires image load events, so the modifier must stay applied.
+        const cardElement = container.querySelector(".mc-card");
+        expect(cardElement).not.toBeNull();
+        expect(cardElement?.classList.contains("mc-card--loading")).toBe(true);
     }, 20000);
 });

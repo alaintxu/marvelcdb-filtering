@@ -8,12 +8,17 @@ import { useState } from "react";
 
 type Props = {
   card: MCCard,
-  horizontal?: boolean
+  horizontal?: boolean,
+  onImageStateChange?: (face: ImageFace, state: ImageLoadState) => void
 }
 
+export type ImageFace = "front" | "back";
+export type ImageLoadState = "loading" | "loaded" | "error";
+export type ImageSrcStage = "primary" | "english";
+
 const marvelcdb_basepath = "https://es.marvelcdb.com";
-
-
+const marvelcdb_english_basepath = "https://marvelcdb.com";
+const marvelcdb_ocr_basepath = "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/";
 
 function getFrontImage(card: MCCard) {
   if (card.imagesrc) return marvelcdb_basepath + card.imagesrc;
@@ -32,91 +37,102 @@ function getBackImage(card: MCCard) {
     return marvelcdb_basepath + card.linked_card.imagesrc;
 
   if ((card.type_code == "main_scheme" || card.code.endsWith("a")) && card.linked_card?.code)
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/"+card.linked_card.code+".webp";
+    return marvelcdb_ocr_basepath + card.linked_card.code + ".webp";
 
   if (["evidence_means","evidence_motive","evidence_opportunity"].includes(card.type_code))
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/"+card.type_code+".webp";
+    return marvelcdb_ocr_basepath + card.type_code + ".webp";
 
   if (card.type_code == "villain")
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_purple.webp";
+    return marvelcdb_ocr_basepath + "back_purple.webp";
 
   if (card.faction_code == "encounter")
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_orange.webp";
+    return marvelcdb_ocr_basepath + "back_orange.webp";
 
-  return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/back_blue.webp";
+  return marvelcdb_ocr_basepath + "back_blue.webp";
 }
 
-function replaceImgSrcTranslation(imgSrc: string, lang: string) {
-  if (lang == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
-    const code = imgSrc.split("/").pop();
+/* Swaps the marvelcdb image for the translated (OCR) one when available */
+function localizeImageSrc(localizedSrc: string, lang: string) {
+  if (lang == "es" && localizedSrc.startsWith(marvelcdb_basepath)) {
+    const code = localizedSrc.split("/").pop();
     const codeNoExt = code?.split(".").shift();
-    return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + codeNoExt + ".webp";
+    return marvelcdb_ocr_basepath + codeNoExt + ".webp";
   }
-  return imgSrc;
+  return localizedSrc;
 }
 
-function getBackImageSrc(card: MCCard, lang: string) {
-  const imgSrc = getBackImage(card);
-  return replaceImgSrcTranslation(imgSrc, lang);
+/* Swaps the es.marvelcdb hosted image for the English (marvelcdb.com) one */
+function toEnglishImageSrc(localizedSrc: string) {
+  if (localizedSrc.startsWith(marvelcdb_basepath)) {
+    return marvelcdb_english_basepath + localizedSrc.slice(marvelcdb_basepath.length);
+  }
+  return localizedSrc;
 }
 
-function getFrontImageSrc(card: MCCard, lang: string) {
-  const imgSrc = getFrontImage(card);
-  return replaceImgSrcTranslation(imgSrc, lang);
+/*
+ * Resolves the image source for a card face.
+ * - "primary" stage: the localized (translated OCR) image when available.
+ * - "english" stage: fallback to the English marvelcdb.com image
+ *   (only when it differs from the primary one, e.g. after the primary failed to load).
+ */
+export function getCardImageSrc(card: MCCard, flipped: boolean, lang: string, stage: ImageSrcStage): string {
+  const localizedSrc = flipped ? getBackImage(card) : getFrontImage(card);
+  const primarySrc = localizeImageSrc(localizedSrc, lang);
+  if (stage === "english") {
+    const englishSrc = toEnglishImageSrc(localizedSrc);
+    if (englishSrc !== primarySrc) return englishSrc;
+  }
+  return primarySrc;
 }
 
 export function getCardImage(card: MCCard, flipped: boolean, lang: string) {
-  return  flipped ? getBackImageSrc(card, lang) : getFrontImageSrc(card, lang);
+  return getCardImageSrc(card, flipped, lang, "primary");
 }
 
-const CardImage = ({ card, horizontal }: Props) => {
+const CardImage = ({ card, horizontal, onImageStateChange }: Props) => {
   const { i18n } = useTranslation('global');
-  const [error, serError] = useState(false);
-
+  const [srcStages, setSrcStages] = useState<Record<ImageFace, ImageSrcStage>>({
+    front: "primary",
+    back: "primary"
+  });
 
   const placeholderImage = horizontal ? lazyHorizontal : lazyVertical;
 
-  const replaceImgSrcTranslation = (imgSrc: string) => {
-    if (!error && i18n.language == "es" && imgSrc.startsWith(marvelcdb_basepath)) {
-      const code = imgSrc.split("/").pop();
-      const codeNoExt = code?.split(".").shift();
-      return "https://cdn.jsdelivr.net/gh/alaintxu/mc-ocr@main/images/accepted/" + codeNoExt + ".webp";
+  const handleImageError = (face: ImageFace) => {
+    const flipped = face === "back";
+    if (srcStages[face] === "primary") {
+      // Retry with the English image. If there is no English alternative
+      // the src does not change, so the error is reported to avoid loops.
+      const localizedSrc = getCardImageSrc(card, flipped, i18n.language, "english");
+      if (localizedSrc !== getCardImageSrc(card, flipped, i18n.language, "primary")) {
+        setSrcStages((prev) => ({ ...prev, [face]: "english" }));
+        return;
+      }
     }
-    return imgSrc;
-  }
+    onImageStateChange?.(face, "error");
+  };
 
-  const getBackImageSrcTranslations = () => {
-    const imgSrc = getBackImageSrc(card, i18n.language);
-    return replaceImgSrcTranslation(imgSrc);
-  }
-
-  const getFrontImageSrcTranslations = () => {
-    const imgSrc = getFrontImageSrc(card, i18n.language);
-    return replaceImgSrcTranslation(imgSrc);
-  }
+  const renderFace = (face: ImageFace) => {
+    const flipped = face === "back";
+    return (
+      <LazyLoadImage
+        className={`mc-card__image ${face}-image ${card.type_code}`}
+        src={getCardImageSrc(card, flipped, i18n.language, srcStages[face])}
+        alt={card.name + ` card's ${face} image (` + card.code + ")"}
+        placeholderSrc={placeholderImage}
+        loading="lazy"
+        effect="blur"
+        afterLoad={() => onImageStateChange?.(face, "loaded")}
+        onError={() => handleImageError(face)}
+        title={face === "front" ? "" : undefined}
+      />
+    );
+  };
 
   return (
     <>
-      <LazyLoadImage
-        className={`mc-card__image front-image ${card.type_code}`}
-        src={getFrontImageSrcTranslations()}
-        alt={card.name + " card's front image (" + card.code + ")"}
-        placeholderSrc={placeholderImage}
-        loading="lazy"
-        effect="blur"
-        onError={() => serError(true)}
-        title=""
-      />
-
-      <LazyLoadImage
-        className={`mc-card__image back-image ${card.type_code}`}
-        src={getBackImageSrcTranslations()}
-        alt={card.name + " card's back image (" + card.code + ")"}
-        placeholderSrc={placeholderImage}
-        loading="lazy"
-        effect="blur"
-        onError={() => serError(true)}
-      />
+      {renderFace("front")}
+      {renderFace("back")}
     </>
   )
 }
