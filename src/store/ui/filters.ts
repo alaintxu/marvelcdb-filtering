@@ -35,13 +35,13 @@ export const BOOLEAN_FILTERS: string[] = [
     "is_unique",
     "permanent",
     "health_per_hero",
-    "thwart_star",
-    "attack_star",
+    "hidden",
     "threat_fixed",
     "base_threat_fixed",
-    "hidden",
-    "double_sided",
-    "escalation_threat_fixed",
+    //"escalation_threat_fixed", // No hay ninguno
+    "thwart_star",
+    "attack_star",
+    //"double_sided",  // Solo hay uno
 ];
 
 export const DOTTED_FILTERS: string[] = [
