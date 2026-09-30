@@ -68,6 +68,13 @@ export type FieldOption = {
     label: string
 }
 
+export type NumberFilterOperator = "<" | "=" | ">";
+
+export type NumberFilterState = {
+    value: number,
+    operator: NumberFilterOperator
+}
+
 
 export type FiltersByTypes = {
     "boolean": {
@@ -77,7 +84,7 @@ export type FiltersByTypes = {
         [key in keyof MCCard]?: string[]
     },
     "number": {
-        [key in keyof MCCard]?: number
+        [key in keyof MCCard]?: NumberFilterState
     },
     "string": {
         [key in keyof MCCard]?: string
@@ -117,7 +124,7 @@ const slice = createSlice({
             state: FiltersState, 
             action: PayloadAction<{ 
                 filterType: keyof FiltersState["filters"], 
-                fieldCode: keyof MCCard, values: boolean | string[] | number | string | undefined
+                fieldCode: keyof MCCard, values: boolean | string[] | NumberFilterState | string | undefined
             }>
         ) => {
             const { filterType, fieldCode, values } = action.payload;

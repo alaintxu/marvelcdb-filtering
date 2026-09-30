@@ -13,6 +13,7 @@
     "pack_name": "Pack",
     "type_name": "Type",
     "card_set_name": "Card set",
+    "set_name": "Card set",
     "cards_per_page": "Cards per page",
 
     "name": "Name",
@@ -64,5 +65,8 @@
     "filter_disabled": "Disable filter",
     "filter_true": "True",
     "filter_false": "False",
+    "filter_less_than": "Smaller than",
+    "filter_equal_to": "Equal to",
+    "filter_greater_than": "Greater than",
     "reset_filters": "Reset filters"
 }

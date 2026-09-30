@@ -63,11 +63,21 @@ const filterCards = (cards: MCCard[], filters: FiltersByTypes): MCCard[] => {
     }
     for (const key of Object.keys(filters['number'])) {
       const mcKey = key as keyof MCCard;
-      const filterValue = filters['number'][mcKey];
-      const cardValue = card[mcKey];
-      if (filterValue!==undefined && cardValue !== filterValue) {
-        // Card value does not match filter
-        return false;
+      const filter = filters['number'][mcKey];
+      if (filter !== undefined) {
+        const cardValue = card[mcKey];
+        if (typeof cardValue !== 'number') {
+          return false;
+        }
+        if (filter.operator === '<' && !(cardValue < filter.value)) {
+          return false;
+        }
+        if (filter.operator === '>' && !(cardValue > filter.value)) {
+          return false;
+        }
+        if (filter.operator === '=' && cardValue !== filter.value) {
+          return false;
+        }
       }
     }
     for (const key of Object.keys(filters['multiselect'])) {

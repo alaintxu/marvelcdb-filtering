@@ -1,6 +1,7 @@
 import { IconType } from "react-icons"
 import { BsArrowsCollapse, BsArrowsExpand, BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCheckCircleFill, BsCloudArrowDown, BsDownload, BsExclamationTriangle, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsImage, BsInfoCircleFill, BsPersonFill, BsPhone, BsPhoneFill, BsPhoneFlip, BsQuestionCircleFill, BsSearch, BsStack, BsTranslate, BsTrash, BsXCircleFill } from "react-icons/bs"
 import { FaArrowRotateLeft, FaChevronDown, FaEraser, FaFileExport, FaFileImport, FaTag } from "react-icons/fa6"
+import { PiArrowFatLineDown, PiArrowFatLineUp, PiEquals } from "react-icons/pi"
 import { GoMultiSelect } from "react-icons/go"
 import { ImStack } from "react-icons/im"
 import { MdCategory, MdCheckBox, MdCheckBoxOutlineBlank, MdClose, MdDownloadForOffline, MdError, MdErrorOutline, MdFileDownloadDone, MdIndeterminateCheckBox, MdNumbers, MdOutlineFileDownloadOff, MdOutlineSendAndArchive, MdSendAndArchive } from "react-icons/md"
@@ -89,6 +90,10 @@ const conceptIcons = {
     tag: FaTag,
     translate: BsTranslate,
     warning: BsExclamationTriangle,
+
+    lessThan: PiArrowFatLineDown,
+    equalTo: PiEquals,
+    greaterThan: PiArrowFatLineUp,
 } satisfies Record<string, IconType>
 
 export type Concepts = typeof conceptIcons;

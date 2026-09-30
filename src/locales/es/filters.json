@@ -13,6 +13,7 @@
     "pack_name": "Pack",
     "type_name": "Tipo",
     "card_set_name": "Conjunto de cartas",
+    "set_name": "Conjunto de cartas",
     "cards_per_page": "Cartas por página",
 
     "name": "Nombre",
@@ -64,5 +65,8 @@
     "filter_disabled": "Desactivar filtro",
     "filter_true": "Verdadero",
     "filter_false": "Falso",
+    "filter_less_than": "Menor que",
+    "filter_equal_to": "Igual que",
+    "filter_greater_than": "Mayor que",
     "reset_filters": "Restablecer filtros"
 }
