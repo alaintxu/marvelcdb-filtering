@@ -60,14 +60,26 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     front: "loading",
     back: "loading"
   });
+  const [imageRetryTokens, setImageRetryTokens] = useState<Record<ImageFace, number>>({
+    front: 0,
+    back: 0
+  });
   const isMainScheme = card.type_code === "main_scheme";
 
   const flipped = calculateFlipped(manualFlipped, flipAllCards, isMainScheme);
   const isHorizontal = isCardHorizontal(card, manualFlipped || flipAllCards);
+  const visibleImageFace: ImageFace = flipped ? "back" : "front";
+  const isVisibleImageLoading = imageStates[visibleImageFace] === "loading";
 
   const handleImageStateChange = useCallback((face: ImageFace, newState: ImageLoadState) => {
     setImageStates((prev) => prev[face] === newState ? prev : { ...prev, [face]: newState });
   }, []);
+
+  const handleImageRetry = () => {
+    const face = visibleImageFace;
+    setImageStates((prev) => ({ ...prev, [face]: "loading" }));
+    setImageRetryTokens((prev) => ({ ...prev, [face]: prev[face] + 1 }));
+  };
 
   useEffect(() => {
     setManualFlipped(undefined);
@@ -100,7 +112,12 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
         key={`mc-card-div-${card.code}`}
         onClick={() => dispatch(cardCodeClicked(card.code))/*setIsClicked((prev) => !prev)*/}
       >
-        <CardImage card={card} horizontal={isHorizontal} onImageStateChange={handleImageStateChange} />
+        <CardImage
+          card={card}
+          horizontal={isHorizontal}
+          retryTokens={imageRetryTokens}
+          onImageStateChange={handleImageStateChange}
+        />
         <div className="mc-card__content">
           <header>
             <CardTop card={!flipped ? card : card.linked_card} />
@@ -118,6 +135,15 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 data-bs-toggle="modal"
                 data-bs-target={`#${modal_json_id}`}>
                 <IconForConcept concept="jsonFile" />
+              </button>
+              <button
+                className="btn btn-secondary shadowed"
+                type="button"
+                disabled={isVisibleImageLoading}
+                onClick={handleImageRetry}
+                title={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}
+                aria-label={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}>
+                <IconForConcept concept={isVisibleImageLoading ? "hourglass" : "reset"} />
               </button>
               <button
                 className={`btn btn-${flipped ? "dark" : "light"} shadowed`}

@@ -9,6 +9,7 @@ import { useState } from "react";
 type Props = {
   card: MCCard,
   horizontal?: boolean,
+  retryTokens: Record<ImageFace, number>,
   onImageStateChange?: (face: ImageFace, state: ImageLoadState) => void
 }
 
@@ -89,7 +90,7 @@ export function getCardImage(card: MCCard, flipped: boolean, lang: string) {
   return getCardImageSrc(card, flipped, lang, "primary");
 }
 
-const CardImage = ({ card, horizontal, onImageStateChange }: Props) => {
+const CardImage = ({ card, horizontal, retryTokens, onImageStateChange }: Props) => {
   const { i18n } = useTranslation('global');
   const [srcStages, setSrcStages] = useState<Record<ImageFace, ImageSrcStage>>({
     front: "primary",
@@ -116,6 +117,7 @@ const CardImage = ({ card, horizontal, onImageStateChange }: Props) => {
     const flipped = face === "back";
     return (
       <LazyLoadImage
+        key={`${face}-${retryTokens[face]}`}
         className={`mc-card__image ${face}-image ${card.type_code}`}
         src={getCardImageSrc(card, flipped, i18n.language, srcStages[face])}
         alt={card.name + ` card's ${face} image (` + card.code + ")"}

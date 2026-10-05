@@ -1,5 +1,5 @@
 import { IconType } from "react-icons"
-import { BsArrowsCollapse, BsArrowsExpand, BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCheckCircleFill, BsCloudArrowDown, BsDownload, BsExclamationTriangle, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsImage, BsInfoCircleFill, BsPersonFill, BsPhone, BsPhoneFill, BsPhoneFlip, BsQuestionCircleFill, BsSearch, BsStack, BsTranslate, BsTrash, BsXCircleFill } from "react-icons/bs"
+import { BsArrowsCollapse, BsArrowsExpand, BsBookmark, BsBookmarkDashFill, BsBookmarkFill, BsBookmarkPlus, BsCheckCircleFill, BsCloudArrowDown, BsDownload, BsExclamationTriangle, BsEye, BsEyeFill, BsEyeSlash, BsEyeSlashFill, BsFiletypeJson, BsFunnel, BsHourglassSplit, BsImage, BsInfoCircleFill, BsPersonFill, BsPhone, BsPhoneFill, BsPhoneFlip, BsQuestionCircleFill, BsSearch, BsStack, BsTranslate, BsTrash, BsXCircleFill } from "react-icons/bs"
 import { FaArrowRotateLeft, FaChevronDown, FaEraser, FaFileExport, FaFileImport, FaTag } from "react-icons/fa6"
 import { PiArrowFatLineDown, PiArrowFatLineUp, PiEquals } from "react-icons/pi"
 import { GoMultiSelect } from "react-icons/go"
@@ -59,6 +59,7 @@ const conceptIcons = {
     filter: BsFunnel,
     hide: BsEyeSlash,
     hideFill: BsEyeSlashFill,
+    hourglass: BsHourglassSplit,
 
     image: BsImage,
     import: FaFileImport,
