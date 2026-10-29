@@ -3,11 +3,14 @@ import { useTranslation } from 'react-i18next';
 import IconForConcept from '../../IconForConcept';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { cardsReceived, MCCard, selectAllCards } from '../../../store/entities/cards';
+import { packCardsHydrated } from '../../../store/entities/packs';
+import { selectedPackCodesSet, selectSelectedPackCodes } from '../../../store/ui/selectedPacks';
 
 const ImportExportSection = () => {
     const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
     const cards = useAppSelector(selectAllCards);
+    const selectedPackCodes = useAppSelector(selectSelectedPackCodes);
     const [importError, setImportError] = useState<string | null>(null);
     const [exportError, setExportError] = useState<string | null>(null);
 
@@ -29,22 +32,22 @@ const ImportExportSection = () => {
     }
   }
 
-  const importFromJSONFile = (e: ChangeEvent<HTMLInputElement>) => {
+  const importFromJSONFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     try {
-      const fileReader = new FileReader();
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        fileReader.readAsText(file, "UTF-8");
-        fileReader.onload = e => {
-          const raw_data = (e.target as FileReader).result as string;
-          const loadedCards: MCCard[] = JSON.parse(raw_data);
-          if (!Array.isArray(loadedCards)) {
-            throw new Error("Invalid file: expected a JSON array of cards");
-          }
-          dispatch(cardsReceived(loadedCards));
-          setImportError(null);
-        }
+      const loadedCards: MCCard[] = JSON.parse(await file.text());
+      if (!Array.isArray(loadedCards)) {
+        throw new Error("Invalid file: expected a JSON array of cards");
       }
+      // Mark imported packs as loaded and select them so their cards are displayed
+      const packCodes = [...new Set(loadedCards.map((card) => card.pack_code))];
+      dispatch(cardsReceived(loadedCards));
+      for (const packCode of packCodes) {
+        dispatch(packCardsHydrated({ packCode, download_date: Date.now() }));
+      }
+      dispatch(selectedPackCodesSet([...new Set([...selectedPackCodes, ...packCodes])]));
+      setImportError(null);
     } catch (error) {
       console.error("Error importing JSON file", error);
       setImportError((error as Error).message);
@@ -64,7 +67,8 @@ const ImportExportSection = () => {
         </label>
         <input className="form-control bg-secondary text-light" type="file" id="importFileInput" onChange={importFromJSONFile} />
         </div>
-        <div className="mb-3 px-3">
+        <hr/>
+        <div className="px-3">
         <button type="button" className='btn btn-secondary' onClick={exportToJSONFile}>
             <IconForConcept concept="export" />
             &nbsp;
