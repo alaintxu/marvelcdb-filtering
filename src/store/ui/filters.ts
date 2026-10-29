@@ -184,11 +184,6 @@ export const selectFilterValues = (type: keyof FiltersState["filters"], field: k
     (filters) => filters[type][field]
 );
 
-export const selectTrait = createSelector(
-    selectFiltersSlice,
-    (filters) => filters.traits
-);
-
 export const selectHideDuplicates = createSelector(
     selectFiltersSlice,
     (filters) => filters.hideDuplicates

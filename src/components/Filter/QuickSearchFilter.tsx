@@ -4,6 +4,7 @@ import { quickFilterSet, selectQuickFilter } from "../../store/ui/filters";
 import React, { useState } from "react";
 import IconForConcept from "../IconForConcept";
 import { MCCard } from "../../store/entities/cards";
+import { normalizeString } from "../../store/entities/cardsFilterUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 
 
@@ -58,19 +59,6 @@ export const QUICK_SEARCH_FIELDS: Array<keyof MCCard> = [
     'threat',
     'thwart'
 ];
-
-export const normalizeString = (value?: any) => {
-    if (!value) {
-        return "";
-    }
-    if (typeof value !== 'string') {
-        value = value.toString();
-    }
-    return value.normalize('NFD')
-        .replace(/([aeio])\u0301|(u)[\u0301\u0308]/gi, "$1$2")
-        .normalize()
-        .toLowerCase();
-}
 
 export const quickFilterCardList = (cards: MCCard[], quickFilter: string) => {
     const numberQuickFilter = parseInt(quickFilter, 10);

@@ -1,6 +1,5 @@
 import { MCCard } from "../../store/entities/cards";
 import { useForm } from "react-hook-form";
-import { SelectedFilters } from "../../hooks/useFilters";
 import { HTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
 import PaginationElementsPerPageFilter from "./PaginationElementsPerPageFilter";
@@ -35,6 +34,10 @@ export type UniqueFilterOptions = {
   fieldName: keyof MCCard,
   fieldValueName: keyof MCCard,
   options: Map<string, string>
+}
+
+type SelectedFilters = {
+  [key: string]: string[]
 }
 
 type Props = {

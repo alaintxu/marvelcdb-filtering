@@ -9,7 +9,7 @@ export const sortCards = (cards: MCCard[], fieldName: keyof MCCard="code"): MCCa
         } else if (typeof aValue === "number" && typeof bValue === "number") {
             return aValue - bValue;
         } else if (typeof aValue === "boolean" && typeof bValue === "boolean") {
-            return aValue ? 1 : -1;
+            return Number(aValue) - Number(bValue);
         } else if (aValue == null && bValue == null) {
             return 0;
         } else if (aValue == null) {
