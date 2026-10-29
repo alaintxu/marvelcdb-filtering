@@ -129,14 +129,6 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 <IconForConcept concept="image" />
               </a>
               <button
-                className={`btn btn-secondary shadowed`}
-                title="Mostrar datos en crudo (JSON)"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target={`#${modal_json_id}`}>
-                <IconForConcept concept="jsonFile" />
-              </button>
-              <button
                 className="btn btn-secondary shadowed"
                 type="button"
                 disabled={isVisibleImageLoading}
@@ -144,6 +136,14 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 title={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}
                 aria-label={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}>
                 <IconForConcept concept={isVisibleImageLoading ? "hourglass" : "reset"} />
+              </button>
+              <button
+                className={`btn btn-secondary shadowed`}
+                title="Mostrar datos en crudo (JSON)"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target={`#${modal_json_id}`}>
+                <IconForConcept concept="jsonFile" />
               </button>
               <button
                 className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
