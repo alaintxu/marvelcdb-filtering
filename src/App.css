@@ -127,32 +127,30 @@ img {
         right: 0;
         transition: 400ms filter linear;
         border-radius: 1rem;
+    }
 
-        &.front-image {
-            transform: rotateY(0deg);
-            transition: transform 400ms ease-out 400ms;
-        }
+    /* Flip animation. Scoped under the lazy-load wrapper so it outranks the
+       `transition` set by react-lazy-load-image-component's blur.css on loaded images. */
+    .lazy-load-image-background>.mc-card__image.front-image {
+        transform: rotateY(0deg);
+        transition: transform 400ms ease-out 400ms;
+    }
 
-        &.back-image {
-            transform: rotateY(-90deg);
-            transition: transform 400ms ease-in;
-
-        }
+    .lazy-load-image-background>.mc-card__image.back-image {
+        transform: rotateY(-90deg);
+        transition: transform 400ms ease-in;
     }
 
     &.mc-card--flipped {
-        & .front-image {
+        & .lazy-load-image-background>.mc-card__image.front-image {
             transform: rotateY(90deg);
             transition: transform 400ms ease-in;
-
         }
 
-        & .back-image {
+        & .lazy-load-image-background>.mc-card__image.back-image {
             transform: rotateY(0deg);
             transition: transform 400ms ease-out 400ms;
-
         }
-
     }
 
     /* Card content element */
