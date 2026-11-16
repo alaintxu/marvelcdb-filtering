@@ -30,6 +30,7 @@ main things done to reduce the amount of calls to MarvelCDB:
 * Images are paginated.
 * Images are lazy loaded, so they are downloaded just when they are visible.
 * Filtering is done against local list of cards.
+* Instead of loading the data from MarvelCDB's API, data is downloaded from their GitHub repository.
 
 > Pack list is always downloaded just in case there was an update.
 
@@ -44,6 +45,7 @@ Principales medidas tomadas para reducir la cantidad de llamadas a MarvelCDB:
 * Las cartas están paginadas (no se muestran todas a la vez).
 * Las imágenes se cargan de forma diferida, por lo que se descargan justo cuando son visibles.
 * El filtrado se realiza contra una copia local de las cartas.
+* En vez de cargar los datos de la API de MarvelCDB, se descargan desde el repositorio de GitHub.
 
 > La lista de packs siempre se descarga de MarvelCDB por si ha habido alguna actualización.
 
