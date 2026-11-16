@@ -1,9 +1,10 @@
 /*
- * Explicit cascade layer order. Tailwind's layers come first so Astryx component
- * styles win over Tailwind preflight; Astryx keeps its own reset-first order.
+ * Explicit cascade layer order for Astryx. StyleX styles are injected outside
+ * these layers, so component styles keep priority over the design-system reset.
  */
-@layer theme, base, components, utilities, reset, astryx-base, astryx-theme;
+@layer reset, astryx-base, astryx-theme;
 
+@import "./styles/tokens.css";
 @import "@astryxdesign/core/reset.css";
 @import "@astryxdesign/core/astryx.css";
 @import "@astryxdesign/theme-neutral/theme.css";
@@ -48,14 +49,6 @@ img {
     box-sizing: border-box;
     display: block;
     max-width: 100%;
-}
-
-/*
- * The Astryx theme sets text tokens on bare elements. Keep the Bootstrap alert
- * text readable until those views are migrated to Astryx components.
- */
-:where(.alert) :where(p, small, code, pre) {
-    color: inherit;
 }
 
 #root {
@@ -234,10 +227,6 @@ img {
     }
 }
 
-.shadowed {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
 #download-manager,
 #filters {
     position: absolute;
@@ -277,40 +266,31 @@ img {
     height: 100%;
     position: relative;
     overflow-y: hidden;
+}
 
-    &>* {
-        height: 100%;
-        overflow-y: auto;
+#main-section > * {
+    height: 100%;
+    overflow-y: auto;
+}
+
+#main-section.main-section--download-manager #download-manager,
+#main-section.main-section--filters #filters {
+    transform: translateX(0) scale3d(1, 1, 1);
+}
+
+@media (min-width: 800px) {
+    #main-section.main-section--download-manager #mc-card-list {
+        margin-inline-start: 400px;
     }
 
-    &.main-section--download-manager {
-        & #download-manager {
-            transform: translateX(0) scale3d(1, 1, 1);
-        }
-
-        & #mc-card-list {
-            @media (min-width: 800px) {
-                margin-inline-start: 400px;
-            }
-        }
+    #main-section.main-section--filters #mc-card-list {
+        margin-inline-end: 400px;
     }
+}
 
-    &.main-section--filters {
-        & #filters {
-            transform: translateX(0) scale3d(1, 1, 1);
-        }
-
-        & #mc-card-list {
-            @media (min-width: 800px) {
-                margin-inline-end: 400px;
-            }
-        }
-
-        & #mc-card-list-actions {
-            right: calc(400px + 1.5em);
-            transition: right 400ms;
-        }
-    }
+#main-section.main-section--filters #mc-card-list-actions {
+    right: calc(400px + 1.5em);
+    transition: right 400ms;
 }
 
 #mc-card-list-actions {
@@ -340,11 +320,6 @@ img {
     margin-bottom: 0;
 }
 
-.two-column-grid {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: .5em;
-}
 /* Keep fades, drop spatial motion (card flip, panel slides, margin shifts). */
 @media (prefers-reduced-motion: reduce) {
     #download-manager,
@@ -361,8 +336,8 @@ img {
 
 /* Native disclosure widgets (filters accordion, deck details). */
 .mc-details {
-    border: 1px solid var(--bs-border-color, #495057);
-    border-radius: .375rem;
+    border: 1px solid var(--mc-border-strong);
+    border-radius: var(--mc-radius-md);
     margin-bottom: .5rem;
 
     &>summary {
@@ -394,7 +369,7 @@ img {
     }
 
     &>summary:focus-visible {
-        outline: 2px solid var(--bs-primary, #0d6efd);
+        outline: 2px solid var(--mc-brand);
         outline-offset: -2px;
     }
 }
@@ -404,7 +379,7 @@ img {
     border: 0;
     margin-bottom: 0;
 
-    &>summary.btn {
+    &>summary {
         display: inline-flex;
         align-items: center;
         gap: .5rem;

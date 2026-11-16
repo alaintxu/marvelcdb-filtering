@@ -1,5 +1,5 @@
-name: Test npm
-run-name: ${{ github.actor }} is testing NPM package using GitHub Actions 🚀
+name: Test bun
+run-name: ${{ github.actor }} is testing the package with bun using GitHub Actions 🚀
 on:
   push:
   pull_request:
@@ -15,15 +15,15 @@ jobs:
         steps:
             - name: Check out repository code
               uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - name: Set up bun
+              uses: oven-sh/setup-bun@v2
               with:
-                node-version: '22.x'
-                registry-url: 'https://registry.npmjs.org'
+                bun-version: '1.4.4'
             - name: Install dependencies
-              run: npm i
+              run: bun install --frozen-lockfile
             - name: jest test with Coverage
               continue-on-error: true
-              run: npx jest --json --outputFile=jest-results.json --coverage
+              run: bunx jest --json --outputFile=jest-results.json --coverage
             - name: Test results artifact
               uses: actions/upload-artifact@v4
               with:

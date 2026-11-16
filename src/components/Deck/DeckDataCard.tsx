@@ -1,13 +1,15 @@
 import { removeCurrentDeck, MarvelDeck } from "../../store/entities/decks"
 import { useTranslation } from 'react-i18next'
-import Markdown from 'react-markdown'
+import { Markdown } from '@astryxdesign/core/Markdown'
 import { selectCardByCode } from "../../store/entities/cards"
+import * as stylex from '@stylexjs/stylex'
 import CardGrid from "../Card/CardGrid"
 
 import DeckBookmarkAction from "./DeckBookmarkAction"
-import { aspectColorMap } from "../DownloadManager/Decks/DeckListItem"
 import IconForConcept from "../IconForConcept"
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore"
+import { ui } from "../../styles/ui"
+import { aspectStyle } from "../../styles/aspects"
 
 type Props = {
   deck: MarvelDeck,
@@ -16,73 +18,69 @@ type Props = {
 const DeckDataCard = ({ deck }: Props) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation('global');
-  const aspectColor = deck.aspect ? aspectColorMap[deck.aspect] : 'dark';
   const heroCard = useAppSelector(selectCardByCode(deck.hero_code));
   const numberOfCards = Object.values(deck.slots).reduce((acc, val) => acc + val, 0);
   return (
-    <div className="card text-light">
-      <div className={`card-header bg-${aspectColor} d-flex justify-content-between align-items-center gap-2`}>
-        <h1 className='d-flex align-items-center gap-2'>
+    <div {...stylex.props(ui.card)}>
+      <div {...stylex.props(ui.cardHeader, aspectStyle(deck.aspect))}>
+        <h1 {...stylex.props(ui.flex, ui.itemsCenter, ui.gap2, ui.m0)}>
           {deck.hero_name}
           <DeckBookmarkAction deck={deck} />
         </h1>
-        <button type="button" className="btn btn-outline-light" onClick={() => dispatch(removeCurrentDeck())}>
+        <button type="button" {...stylex.props(ui.button, ui.buttonOutlineLight)} onClick={() => dispatch(removeCurrentDeck())}>
           <IconForConcept concept='close' />
         </button>
       </div>
-      <div className='card-body bg-secondary'>
-        <h2 className="mb-4 card-title">
-          <a className="text-dark" href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
+      <div {...stylex.props(ui.cardBody, ui.bgSecondary, ui.textDark)}>
+        <h2 {...stylex.props(ui.cardTitle)}>
+          <a {...stylex.props(ui.textDark)} href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
             {deck.name}
           </a>
         </h2>
 
-        <div id="deck-tags" className="d-flex flex-wrap align-items-center gap-2">
-          {deck.aspect && <span className={`badge bg-${aspectColor}`}>
+        <div id="deck-tags" {...stylex.props(ui.flex, ui.flexWrap, ui.itemsCenter, ui.gap2)}>
+          {deck.aspect && <span {...stylex.props(ui.badge, aspectStyle(deck.aspect))}>
             <IconForConcept concept="category" /> {t(`aspect.${deck.aspect}`)}
           </span>}
           {deck.tags && deck.tags.map((tag) => (
-            <span key={tag} className='badge bg-dark'>
+            <span key={tag} {...stylex.props(ui.badge, ui.badgeDark)}>
               <IconForConcept concept="tag" /> {t(`tag.${tag}`)}
             </span>
           ))}
-          {/*<span className='badge bg-light text-dark me-1' title={t('user-id')}>
-              <FaUser /> {deck.user_id}
-            </span>*/}
-          <span className='badge bg-light text-dark' title={t('deck-id')}>
-            <a href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
+          <span {...stylex.props(ui.badge, ui.badgeLight)} title={t('deck-id')}>
+            <a {...stylex.props(ui.textDark)} href={`${t('base_path')}/decklist/view/${deck.id}`} target="_blank" rel="noreferrer">
               <IconForConcept concept="multiple_cards" /> {deck.id}
             </a>
           </span>
-          <span className='badge bg-light text-dark' title={t('number_of_cards')}>
+          <span {...stylex.props(ui.badge, ui.badgeLight)} title={t('number_of_cards')}>
             <IconForConcept concept="multiple_cards" /> {numberOfCards}
           </span>
         </div>
 
-        <div className="row mt-4">
-          <div className="col-12 col-md-6 mb-4">
+        <div {...stylex.props(ui.deckDetailsGrid)}>
+          <div>
             {heroCard && <CardGrid cards={[heroCard]} />}
           </div>
 
-          <div className="col-12 col-md-6">
+          <div>
             <details className="mc-details mc-details--button">
-              <summary className="btn btn-dark">
+              <summary {...stylex.props(ui.button, ui.buttonDark)}>
                 <IconForConcept concept="chevronDown" /> {t('description')}
               </summary>
-              <div className="border border-light rounded p-2 my-2">
-                <Markdown>
+              <div {...stylex.props(ui.border, ui.rounded, ui.p2, ui.my2)}>
+                <Markdown contentWidth="100%">
                   {deck.description_md}
                 </Markdown>
               </div>
             </details>
           </div>
 
-          <div className="col-12 col-md-6">
+          <div>
             <details className="mc-details mc-details--button">
-              <summary className="btn btn-dark">
+              <summary {...stylex.props(ui.button, ui.buttonDark)}>
                 <IconForConcept concept="chevronDown" /> <IconForConcept concept='jsonFile' />
               </summary>
-              <div className="border border-light rounded p-2 my-2">
+              <div {...stylex.props(ui.border, ui.rounded, ui.p2, ui.my2)}>
                 <pre>
                   {JSON.stringify(deck, null, 2)}
                 </pre>
@@ -90,13 +88,6 @@ const DeckDataCard = ({ deck }: Props) => {
             </details>
           </div>
         </div>
-        {/*<div className="d-flex flex-wrap align-items-center gap-1 mt-4">
-            {Object.entries(deck.slots).map(([cardId, quantity]) => (
-              <a className="badge bg-light text-dark" key={cardId} href={`${t('base_path')}/card/${cardId}`} target="_blank" rel="noreferrer">
-                {cardId} {quantity > 1 &&<span className='ms-1 badge bg-dark text-light'>x{quantity}</span>}
-              </a>
-            ))}
-          </div>*/}
       </div>
     </div>
   )

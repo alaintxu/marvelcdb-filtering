@@ -1,4 +1,4 @@
-import { loadPacks, selectIsAnyPackDownloading, selectPackStatusBootstrapVariant, loadPackCards } from "../store/entities/packs";
+import { loadPacks, selectIsAnyPackDownloading, selectPackStatusTone, loadPackCards } from "../store/entities/packs";
 import { createStore, RootState, AppStore, /*StoreType*/ } from "../store/configureStore";
 import fetchMock from "jest-fetch-mock";
 
@@ -123,7 +123,7 @@ describe("packsSlice", () => {
             expect(result).toBe(true);
         });
     });
-    describe("selectPackStatusBootstrapVariant", () => {
+    describe("selectPackStatusTone", () => {
         it("should return 'success' if all packs are downloaded", () => {
             const mockState: RootState = {
                 entities: {
@@ -142,7 +142,7 @@ describe("packsSlice", () => {
                     }
                 }
             };
-            const result = selectPackStatusBootstrapVariant(mockState);
+            const result = selectPackStatusTone(mockState);
 
             expect(result).toBe("success");
         });
@@ -170,7 +170,7 @@ describe("packsSlice", () => {
                     }
                 }
             };
-            const result = selectPackStatusBootstrapVariant(mockState);
+            const result = selectPackStatusTone(mockState);
 
             expect(result).toBe("danger");
         });
@@ -196,11 +196,11 @@ describe("packsSlice", () => {
                     }
                 }
             };
-            const result = selectPackStatusBootstrapVariant(mockState);
+            const result = selectPackStatusTone(mockState);
 
             expect(result).toBe("warning");
         });
-        it("should return 'dark' if any pack is downloading", () => {
+        it("should return 'neutral' if any pack is downloading", () => {
             const mockState: RootState = {
                 entities: {
                     packs: {
@@ -224,9 +224,9 @@ describe("packsSlice", () => {
                     }
                 }
             };
-            const result = selectPackStatusBootstrapVariant(mockState);
+            const result = selectPackStatusTone(mockState);
 
-            expect(result).toBe("dark");
+            expect(result).toBe("neutral");
         });
     });
     describe("loadPackCards", () => {

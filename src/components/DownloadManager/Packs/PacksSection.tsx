@@ -10,6 +10,8 @@ import DownloadAllButton from '../Packs/DownloadAllButton';
 import PackStatusCountBadge from './PackStatusCountBadge';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
+import * as stylex from '@stylexjs/stylex';
+import { ui } from '../../../styles/ui';
 
 const PacksSection = () => {
   const { t } = useTranslation('global');
@@ -25,48 +27,48 @@ const PacksSection = () => {
   return (
     <section id="pack-section">
         <PacksData />
-        {packsError && <div className="alert alert-danger text-center" role="alert">
+        {packsError && <div {...stylex.props(ui.alert, ui.alertDanger, ui.textCenter)} data-alert="true" role="alert">
           <IconForConcept concept="warning" />
           &nbsp;
           {packsError}
         </div>}
         <hr />
-        <h3 className='fs-4 mb-4'>
+        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.mb4, ui.flex, ui.itemsCenter)}>
           <img width={192} height={192} style={{ filter: "invert(1)", height: "1em", width: "auto", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
           &nbsp;
           {t(`import_marvelcdb`)}
         </h3>
-        <div className='px-3'>
+        <div {...stylex.props(ui.px3)}>
           <LanguageSelect />
 
-          <div className="alert alert-warning text-center" role="alert">
+          <div {...stylex.props(ui.alert, ui.alertWarning, ui.textCenter)} data-alert="true" role="alert">
             <IconForConcept concept="warning" />
             &nbsp;
             {t('language-redownload')}
           </div>
         </div>
-        <div className='d-flex justify-content-center px-3 mb-3'>
+        <div {...stylex.props(ui.flex, ui.justifyCenter, ui.px3, ui.mb3)}>
           <DownloadAllButton />
           <RemoveAllButton />
         </div>
-        <div id="packListAccordion" className='px-3 mb-3'>
+        <div id="packListAccordion" {...stylex.props(ui.px3, ui.mb3)}>
           <button
             type='button'
-            className="btn btn-secondary"
+            {...stylex.props(ui.button, ui.buttonSecondary)}
             onClick={() => dispatch(showPackListToggled())}>
             {showPackList ? <IconForConcept concept="collapse" /> : <IconForConcept concept="expand" />}
             &nbsp;
             {t("pack_list")}
             {isAnyPackDownloading && (
-              <LoadingSpinner small className='mx-2'/>
+              <LoadingSpinner small xstyle={ui.mx2}/>
             )}
             <PackStatusCountBadge />
           </button>
           {showPackList && <>
             {arePacksLoading ?
               <LoadingSpinner /> :
-              <div className='d-flex justify-content-center'>
-                <div className="btn-group-vertical mt-3" role="group" aria-label={t('pack_selection')}>
+              <div {...stylex.props(ui.flex, ui.justifyCenter)}>
+                <div {...stylex.props(ui.buttonGroupVertical, ui.mt3)} role="group" aria-label={t('pack_selection')}>
                   {packs?.map((pack) => <PackListItem key={pack.code} pack={pack} />)}
                 </div>
               </div>

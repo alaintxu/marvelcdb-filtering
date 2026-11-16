@@ -1,11 +1,60 @@
 {
   "version": 2,
   "skills": {
+    "astryx": {
+      "source": "akillness/jeo-skills",
+      "commit": "8fde8cea6b4842bb25e33b0f9a73fa041db33c79",
+      "sourceType": "github",
+      "skillPath": ".agent-skills/astryx/SKILL.md",
+      "computedHash": "3846bf66a61c5a01ce9bfef1b1cec317aa68783538159f7c961a974a6edd2b6b"
+    },
+    "design-systems": {
+      "source": "claude-dev-suite/claude-dev-suite",
+      "commit": "133ba99731744ee6c84fd892181471580f84d315",
+      "sourceType": "github",
+      "skillPath": "skills/ux/design-systems/SKILL.md",
+      "computedHash": "605ef062851e30de8bfe7858a2ac11519421f1c5561cc56bf6fe7527331f9580"
+    },
+    "interaction-design": {
+      "source": "claude-dev-suite/claude-dev-suite",
+      "commit": "133ba99731744ee6c84fd892181471580f84d315",
+      "sourceType": "github",
+      "skillPath": "skills/ux/interaction-design/SKILL.md",
+      "computedHash": "25c9fc3c6b9dbac6da45f98ac366c8553adf0646739809f6f378367d367a972e"
+    },
     "modern-web-guidance": {
       "source": "GoogleChrome/modern-web-guidance",
       "sourceType": "github",
       "skillPath": "skills/modern-web-guidance/SKILL.md",
       "computedHash": "9e69ce00dc314b64f6664031b70295ea46c7de93ac682c624808df6e48e08b66"
+    },
+    "react-19": {
+      "source": "claude-dev-suite/claude-dev-suite",
+      "commit": "133ba99731744ee6c84fd892181471580f84d315",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-frameworks/react-19/SKILL.md",
+      "computedHash": "4967772fe34b061883cc6193a8c64c667a8b30e55e26d11eb847d5d8707c6ec7"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "f711ed8b16162eaa712abbcdbbae6c926f86c57e60127735fecc3ad0dd85b3fa"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "7991ed4fbecdac23f47c1a40c243e00a212a9e7f3604db93959b3ae11dffe299"
+    },
+    "visual-hierarchy": {
+      "source": "claude-dev-suite/claude-dev-suite",
+      "commit": "133ba99731744ee6c84fd892181471580f84d315",
+      "sourceType": "github",
+      "skillPath": "skills/ux/visual-hierarchy/SKILL.md",
+      "computedHash": "9328516ebafff5a97f54aacdfb2a7bc1186198c09c51f618c550098446ff5bc1"
     }
   }
 }

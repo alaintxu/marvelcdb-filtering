@@ -5,6 +5,8 @@ import { MCCard, selectCardsByCodes } from "../../store/entities/cards"
 import CardGrid from "../Card/CardGrid"
 import { t } from "i18next"
 import { useAppSelector } from "../../hooks/useStore"
+import * as stylex from '@stylexjs/stylex'
+import { ui } from "../../styles/ui"
 
 
 
@@ -86,16 +88,17 @@ const DeckView = ({ deck }: Props) => {
   }, [deck]);
   
   return (
-    <section id="deck-view" className='p-3'>
+    <section id="deck-view" {...stylex.props(ui.p3)}>
       <DeckDataCard deck={deck} />
       {/* @ToDo: separate in modules */}
       {/* Not found cards */}
-      {notFoundCardCodes.length > 0 && <div className="alert alert-warning">
-        <p>{t('deck_cards_not_found')} <span className="badge bg-danger text-light">{notFoundCardCodes.length}</span></p>
+      {notFoundCardCodes.length > 0 && <div {...stylex.props(ui.alert, ui.alertWarning, ui.flexColumn, ui.itemsStart)} data-alert="true">
+        <p>{t('deck_cards_not_found')} <span {...stylex.props(ui.badge, ui.badgeDanger)}>{notFoundCardCodes.length}</span></p>
 
-        <div className="d-flex flex-wrap align-items-center gap-1 mt-4">
+        <div {...stylex.props(ui.flex, ui.flexWrap, ui.itemsCenter, ui.gap1, ui.mt4)}>
             {notFoundCardCodes.map((cardCode) => (
-              <a  className="badge bg-light text-dark" 
+              <a  {...stylex.props(ui.badge, ui.badgeLight)}
+
                   key={cardCode} 
                   href={`${t('base_path')}/card/${cardCode}`} 
                   target="_blank" rel="noreferrer">
@@ -106,24 +109,24 @@ const DeckView = ({ deck }: Props) => {
       </div>}
 
       {/* Index */}
-      <section id="card-index" className="row mt-4">
-        <div className="list-group col-12 col-sm-8 col-md-6 col-lg-4 m-auto">
+      <section id="card-index">
+        <div {...stylex.props(ui.listGroup, ui.deckIndex)}>
         {getSortedTypes(deckCards).map((typeCode) => (
             <a  href={`#cards-${typeCode.replace(/ /g, "-")}`} 
-                className="list-group-item list-group-item-dark list-group-item-action d-flex justify-content-between align-items-center"
+                {...stylex.props(ui.listGroupItem, ui.listGroupItemDark, ui.listGroupItemAction)}
                 key={typeCode}>
               {deckCards[typeCode][0].type_name}
-              <span className="ms-2 badge bg-primary rounded-pill">{deckCards[typeCode].length}</span>
+              <span {...stylex.props(ui.ms2, ui.badge, ui.badgeBrand)}>{deckCards[typeCode].length}</span>
             </a>
         ))}
         </div>
       </section>
       {/* Card grids by type */}
       {getSortedTypes(deckCards).map((typeCode) => (
-        <section key={typeCode} className="mt-4" id={`cards-${typeCode.replace(/ /g, "-")}`}>
-          <h2 className="text-center m-4">
+        <section key={typeCode} {...stylex.props(ui.mt4)} id={`cards-${typeCode.replace(/ /g, "-")}`}>
+          <h2 {...stylex.props(ui.sectionHeading)}>
             {deckCards[typeCode][0].type_name}
-            <span className="badge bg-info ms-2">{deckCards[typeCode].length}</span>
+            <span {...stylex.props(ui.badge, ui.badgeInfo)}>{deckCards[typeCode].length}</span>
           </h2>
           <CardGrid cards={deckCards[typeCode]} />
         </section>

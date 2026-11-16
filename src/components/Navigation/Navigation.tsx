@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './Navigation.module.css';
+import * as stylex from '@stylexjs/stylex';
+import { colors, fonts, shadows } from '../../styles/tokens.stylex';
 
 import { selectNavigationOptionKey, NavigationOptionsKey, navigationOptionKeySet } from '../../store/ui/other';
 import LoadingSpinner from '../LoadingSpinner';
@@ -13,6 +14,61 @@ import NumberOfFiltersBadge from '../Filter/NumberOfFiltersBadge';
 import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
 import CardStatusCountBadge from '../DownloadManager/Packs/CardStatusCountBadge';
 
+
+const styles = stylex.create({
+  nav: {
+    width: '100%',
+    boxSizing: 'border-box',
+    backgroundColor: colors.ink,
+    borderBlockEndStyle: 'solid',
+    borderBlockEndWidth: 4,
+    borderBlockEndColor: colors.brand,
+    boxShadow: shadows.sm,
+  },
+  navGroup: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    gap: '0.25rem',
+  },
+  navItem: {
+    position: 'relative',
+    flex: 1,
+    margin: 0,
+    padding: '0.5rem',
+    borderStyle: 'none',
+    borderRadius: 0,
+    backgroundColor: 'transparent',
+    color: colors.textInverse,
+    cursor: 'pointer',
+    fontFamily: fonts.display,
+    fontSize: '0.75rem',
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase',
+    transitionProperty: 'background-color, color',
+    transitionDuration: '200ms',
+    transitionTimingFunction: 'ease-in-out',
+    ':disabled': { cursor: 'not-allowed', opacity: 0.6 },
+    '@media (min-width: 480px)': {
+      paddingBlock: '0.5rem',
+      paddingInline: '1rem',
+      fontSize: '0.8rem',
+      transform: 'skewX(-20deg)',
+    },
+    '@media (min-width: 768px)': {
+      paddingBlock: '1rem',
+      paddingInline: '2rem',
+      fontSize: '1rem',
+      letterSpacing: '1px',
+    },
+  },
+  navItemActive: { backgroundColor: colors.brand, color: colors.textInverse },
+  navItemInactive: { ':hover': { backgroundColor: colors.inkElevated } },
+  navItemContent: {
+    display: 'inline-block',
+    '@media (min-width: 480px)': { transform: 'skewX(20deg)' },
+  },
+});
 
 type IconDict = {
   [optionKey: string]: ReactNode
@@ -55,8 +111,8 @@ const Navigation = () => {
   
 
   return (
-    <nav id="main-navigation" className={styles.nav}>
-      <div className={styles.navGroup} role="group" aria-label={t('navigation')}>
+    <nav id="main-navigation" data-panel="navigation" {...stylex.props(styles.nav)}>
+      <div {...stylex.props(styles.navGroup)} role="group" aria-label={t('navigation')}>
         {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
           const additionalText = getAdditionalElement(navigationOptionKey);
           const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
@@ -66,11 +122,7 @@ const Navigation = () => {
             type="button"
             aria-controls={panelId}
             aria-expanded={panelId ? navigationOptionKey === selectedNavigationOptionKey : undefined}
-            className={`
-              main-navigation-item
-              ${styles.navItem}
-              ${isActive ? styles.navItemActive : styles.navItemInactive}
-            `}
+            {...stylex.props(styles.navItem, isActive ? styles.navItemActive : styles.navItemInactive)}
             onClick={() => {
               if (navigationOptionKey !== selectedNavigationOptionKey)
                 dispatch(navigationOptionKeySet(navigationOptionKey));
@@ -78,7 +130,7 @@ const Navigation = () => {
                 dispatch(navigationOptionKeySet("card_list"));
 
             }}>
-            <span className={styles.navItemContent}>
+            <span {...stylex.props(styles.navItemContent)}>
               {navigaitonIcons[navigationOptionKey]} {t(navigationOptionKey)}
               {navigationOptionKey === "download_manager" && isAnyPackDownloading && <>
                 &nbsp;

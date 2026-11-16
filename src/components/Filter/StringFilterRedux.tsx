@@ -8,6 +8,8 @@ import { MCCard } from "../../store/entities/cards";
 import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import IconForConcept from "../IconForConcept";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 
 interface Props {
   control: Control<MCCard>;
@@ -20,27 +22,20 @@ const StringFilterRedux = ({ control, fieldCode }: Props) => {
   const { t } = useTranslation("filters");
 
   return (
-    <div key={`filter_${fieldCode}`} className="mb-3 form-group px-4">
-      <label
-        style={{
-          fontSize: "0.75rem",
-          fontWeight: "bold",
-          lineHeight: "2",
-          color: "white",
-        }}
-      >
+    <div key={`filter_${fieldCode}`} {...stylex.props(ui.fieldGroupInset)}>
+      <label {...stylex.props(ui.fieldLabel)}>
         {t(fieldCode)}
       </label>
       <br />
-      <div className="btn-group w-100" role="group" aria-label={t(fieldCode)}>
+      <div {...stylex.props(ui.buttonGroup, ui.wFull)} role="group" aria-label={t(fieldCode)}>
         <Controller
           name={fieldCode}
           control={control}
           defaultValue={storeValue}
           render={() => (
-            <div className="input-group">
+            <div {...stylex.props(ui.inputGroup)}>
               <input
-                className="form-control"
+                {...stylex.props(ui.formControl)}
                 type="text"
                 id={`filter_${fieldCode}_text`}
                 value={storeValue ?? ""}
@@ -52,7 +47,8 @@ const StringFilterRedux = ({ control, fieldCode }: Props) => {
               />
               <button 
                 type="button" 
-                className="btn btn-outline-danger" 
+                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
+
                 onClick={() => {
                     dispatch(filterUpdated({ filterType: "string", fieldCode: fieldCode, values: undefined }));
                   }

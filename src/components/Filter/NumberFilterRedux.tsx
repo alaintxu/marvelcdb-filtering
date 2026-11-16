@@ -4,11 +4,13 @@ import {
   Control,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import * as stylex from '@stylexjs/stylex';
 import { MCCard } from "../../store/entities/cards";
 
 import { NumberFilterOperator, NumberFilterState, filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import IconForConcept from "../IconForConcept";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import { ui } from "../../styles/ui";
 
 interface Props {
   control: Control<MCCard>;
@@ -40,15 +42,8 @@ const NumberFilterRedux = ({ control, fieldCode }: Props) => {
   };
 
   return (
-    <div key={`filter_${fieldCode}`} className="mb-3 form-group">
-      <label
-        style={{
-          fontSize: "0.75rem",
-          fontWeight: "bold",
-          lineHeight: "2",
-          color: "white",
-        }}
-      >
+    <div key={`filter_${fieldCode}`} {...stylex.props(ui.fieldGroup)}>
+      <label {...stylex.props(ui.fieldLabel)}>
         {t(fieldCode)} {storeValue && <>{`(${storeValue.operator} ${storeValue.value})`}</>}
       </label>
       <br />
@@ -57,10 +52,10 @@ const NumberFilterRedux = ({ control, fieldCode }: Props) => {
         control={control}
         render={() => (
           <Fragment>
-            <div className="input-group">
+            <div {...stylex.props(ui.inputGroup)}>
               <input
                 type="number"
-                className="form-control number-filter"
+                {...stylex.props(ui.formControl, ui.formControlNumber)}
                 id={`filter_${fieldCode}_text`}
                 value={storeValue?.value.toString() ?? ""}
                 placeholder="-"
@@ -71,25 +66,25 @@ const NumberFilterRedux = ({ control, fieldCode }: Props) => {
               />
               <button
                 type="button"
-                className="btn btn-outline-danger"
+                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
                 onClick={() => updateFilter(undefined, storeValue?.operator ?? "=")}
                 title={t('remove')}>
                 <IconForConcept concept="erase" />
               </button>
             </div>
-            <div className="d-flex justify-content-center mt-1">
-              <div className="btn-group" role="group" aria-label={t(fieldCode)}>
+            <div {...stylex.props(ui.flex, ui.justifyCenter, ui.mt1)}>
+              <div {...stylex.props(ui.buttonGroup)} role="group" aria-label={t(fieldCode)}>
                 {OPERATORS.map(({ operator, concept, titleKey }) => (
                   <Fragment key={`filter_${fieldCode}_op_${operatorId(operator)}`}>
                     <input
                       type="radio"
-                      className="btn-check"
+                      {...stylex.props(ui.radioInput)}
                       id={`filter_${fieldCode}_op_${operatorId(operator)}`}
                       checked={storeValue?.operator === operator}
                       onChange={() => updateFilter(storeValue?.value ?? 0, operator)}
                     />
                     <label
-                      className="btn btn-outline-primary"
+                      {...stylex.props(ui.optionButton, storeValue?.operator === operator && ui.optionButtonSelected)}
                       htmlFor={`filter_${fieldCode}_op_${operatorId(operator)}`}
                       title={t(titleKey)}
                     >

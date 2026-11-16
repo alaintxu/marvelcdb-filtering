@@ -1,5 +1,0 @@
-@reference "tailwindcss";
-
-.icon {
-    @apply inline mb-1 me-1;
-}

@@ -96,20 +96,20 @@ describe("ImportExportSection import", () => {
         expect(selectSelectedPackCodes(store.getState())).toEqual(expect.arrayContaining(["core", "nova"]));
         expect(selectPackStatusByCode("core")(store.getState())).toBe("downloaded");
         expect(selectPackStatusByCode("nova")(store.getState())).toBe("downloaded");
-        expect(container.querySelector(".alert-danger")).toBeNull();
+        expect(container.querySelector("[data-variant='danger']")).toBeNull();
     });
 
     it("shows an error and imports nothing when the file is not a JSON array", async () => {
         await importFile(container, JSON.stringify({ not: "an array" }));
 
         expect(selectAllCards(store.getState())).toHaveLength(0);
-        expect(container.querySelector(".alert-danger")?.textContent).toContain("expected a JSON array of cards");
+        expect(container.querySelector("[data-variant='danger']")?.textContent).toContain("expected a JSON array of cards");
     });
 
     it("shows an error when the file is not valid JSON", async () => {
         await importFile(container, "{invalid json");
 
         expect(selectAllCards(store.getState())).toHaveLength(0);
-        expect(container.querySelector(".alert-danger")).not.toBeNull();
+        expect(container.querySelector("[data-variant='danger']")).not.toBeNull();
     });
 });

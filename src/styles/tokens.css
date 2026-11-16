@@ -1,0 +1,48 @@
+/*
+ * Marvel brand tokens. Single source of truth: StyleX styles and the plain CSS
+ * in App.css both read these custom properties.
+ *
+ * Brand rules: one red accent (#EC1D24), heavy display type for headings and
+ * actions, square-ish corners and off-white paper surfaces. No second accent hue.
+ */
+:root {
+    --mc-brand: #EC1D24;
+    --mc-brand-strong: #C4171D;
+    --mc-brand-deep: #9E1217;
+    --mc-brand-soft: #FDE8E8;
+
+    --mc-ink: #202020;
+    --mc-ink-elevated: #2B2B2B;
+    --mc-paper: #FFFFFF;
+    --mc-paper-muted: #F2F2F2;
+
+    --mc-text: #1A1A1A;
+    --mc-text-inverse: #FFFFFF;
+    --mc-text-muted: #5C5C5C;
+
+    --mc-border: #D5D5D5;
+    --mc-border-strong: #6E6E6E;
+
+    --mc-success: #1E7A4B;
+    --mc-warning: #8A5B00;
+    --mc-danger: #B3261E;
+    --mc-info: #0B6E8A;
+
+    --mc-success-soft: #D8F0E2;
+    --mc-warning-soft: #FFF4D6;
+    --mc-danger-soft: #FBE3E1;
+    --mc-info-soft: #DCF0F6;
+
+    --mc-font-display: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Narrow", sans-serif;
+    --mc-font-body: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mc-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --mc-radius-sm: 0.25rem;
+    --mc-radius-md: 0.375rem;
+    --mc-radius-lg: 0.5rem;
+    --mc-radius-pill: 1000rem;
+
+    --mc-shadow-sm: 0 2px 4px rgb(0 0 0 / 18%);
+    --mc-shadow-md: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+    --mc-shadow-panel: 0 8px 24px rgb(0 0 0 / 28%);
+}

@@ -1,10 +1,14 @@
-import { HTMLAttributes } from 'react'
+import type { StyleXStyles } from '@stylexjs/stylex'
+import * as stylex from '@stylexjs/stylex'
 import { selectNumberOfFilters, selectQuickFilter } from '../../store/ui/filters';
 import { useAppSelector } from '../../hooks/useStore';
+import { ui } from '../../styles/ui';
 
-interface Props extends HTMLAttributes<HTMLSpanElement> { }
+interface Props {
+    xstyle?: StyleXStyles;
+}
 
-const NumberOfFiltersBadge = ({ className, ...rest }: Props) => {
+const NumberOfFiltersBadge = ({ xstyle }: Props) => {
 
     const numberOfFilters: number = useAppSelector(selectNumberOfFilters);
     const quickFilter = useAppSelector(selectQuickFilter);
@@ -12,7 +16,7 @@ const NumberOfFiltersBadge = ({ className, ...rest }: Props) => {
 
     if (badgeNumber === 0) return null;
     return (
-        <span className={`badge bg-secondary ${className}`} {...rest}>
+        <span {...stylex.props(ui.badge, ui.badgeSecondary, xstyle)}>
             {badgeNumber}
         </span>
 

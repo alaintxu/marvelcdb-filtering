@@ -5,6 +5,8 @@ import IconForConcept from "../IconForConcept";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 
 const AllCardActions = () => {
   const { t } = useTranslation('global');
@@ -31,16 +33,16 @@ const AllCardActions = () => {
 
 
   return (
-    <span className="d-flex gap-2">
+    <span {...stylex.props(ui.flex, ui.gap2)}>
       <button
-        className={`btn btn-${showAllCardData ? 'primary' : 'secondary'}`}
+        {...stylex.props(ui.button, showAllCardData ? ui.buttonBrand : ui.buttonSecondary)}
         onMouseEnter={() => setIsShowHovering(true)}
         onMouseLeave={() => setIsShowHovering(false)}
         onClick={() => dispatch(showAllCardDataToggled())}>
         {showIcon}
       </button>
       <button
-        className={`btn btn-${flipAllCards ? 'primary' : 'secondary'}`}
+        {...stylex.props(ui.button, flipAllCards ? ui.buttonBrand : ui.buttonSecondary)}
         onMouseEnter={() => setIsFlipHovering(true)}
         onMouseLeave={() => setIsFlipHovering(false)}
         onClick={() => dispatch(flipAllCardsToggled())}>

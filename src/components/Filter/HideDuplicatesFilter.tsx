@@ -1,24 +1,20 @@
 import { useTranslation } from 'react-i18next';
+import * as stylex from '@stylexjs/stylex';
 import { useAppDispatch, useAppSelector } from '../../hooks/useStore';
 import { hideDuplicatesSet, selectHideDuplicates } from '../../store/ui/filters';
 import IconForConcept from '../IconForConcept';
+import { ui } from '../../styles/ui';
 
-const HideDuplicatesFilter = (attributes: React.HTMLAttributes<HTMLDivElement>) => {
+const HideDuplicatesFilter = () => {
     const dispatch = useAppDispatch();
     const hideDuplicates = useAppSelector(selectHideDuplicates);
     const { t } = useTranslation("filters");
-    const updatedAttributes = {
-        ...attributes,
-        className: `btn-group ${attributes.className || ''}`,
-        role: `group ${attributes.role || ''}`,
-        'aria-label': `${t("hide_duplicates")} ${attributes['aria-label'] || ''}`
-    };
     return (
-        <div {...updatedAttributes}>
+        <div {...stylex.props(ui.buttonGroup)} role="group" aria-label={t("hide_duplicates")}>
             <input
                 type="radio"
-                className="btn-check"
-                id={`filter_hide_duplicates_true`}
+                {...stylex.props(ui.radioInput)}
+                id="filter_hide_duplicates_true"
                 value="true"
                 checked={hideDuplicates === true}
                 onChange={(e) => {
@@ -26,8 +22,8 @@ const HideDuplicatesFilter = (attributes: React.HTMLAttributes<HTMLDivElement>) 
                 }}
             />
             <label
-                className="btn btn-outline-light d-flex align-items-center gap-1"
-                htmlFor={`filter_hide_duplicates_true`}
+                {...stylex.props(ui.optionButton, hideDuplicates === true && ui.optionButtonSelected)}
+                htmlFor="filter_hide_duplicates_true"
                 title={t("filter_true")}
             >
                 <IconForConcept concept="single_card" />
@@ -35,8 +31,8 @@ const HideDuplicatesFilter = (attributes: React.HTMLAttributes<HTMLDivElement>) 
             </label>
             <input
                 type="radio"
-                className="btn-check"
-                id={`filter_hide_duplicates_false`}
+                {...stylex.props(ui.radioInput)}
+                id="filter_hide_duplicates_false"
                 value="false"
                 checked={hideDuplicates === false}
                 onChange={(e) => {
@@ -44,8 +40,8 @@ const HideDuplicatesFilter = (attributes: React.HTMLAttributes<HTMLDivElement>) 
                 }}
             />
             <label
-                className="btn btn-outline-light d-flex align-items-center gap-1"
-                htmlFor={`filter_hide_duplicates_false`}
+                {...stylex.props(ui.optionButton, hideDuplicates === false && ui.optionButtonSelected)}
+                htmlFor="filter_hide_duplicates_false"
                 title={t("filter_false")}
             >
                 <IconForConcept concept="multiple_cards" />

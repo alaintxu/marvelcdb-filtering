@@ -6,6 +6,8 @@ import IconForConcept from "../IconForConcept";
 import { MCCard } from "../../store/entities/cards";
 import { normalizeString } from "../../store/entities/cardsFilterUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 
 
 /*
@@ -110,21 +112,21 @@ const QuickSearchFilter = () => {
     };
 
     return (
-        <div className="input-group mx-2" id="quick-search-filter">
-            <label htmlFor="quick-search-input" className="input-group-text">
+        <div {...stylex.props(ui.inputGroup, ui.mx2)} id="quick-search-filter">
+            <label htmlFor="quick-search-input" {...stylex.props(ui.inputGroupText)}>
                 <IconForConcept concept="search" />
             </label>
             <input
                 id="quick-search-input"
                 type="search"
-                className="form-control search-input"
+                {...stylex.props(ui.formControl)}
                 placeholder={t('quick_search')}
                 aria-label={t('quick_search')}
                 value={quickFilterValue}
                 onChange={handleChange}
             />
             <button
-                className="btn btn-outline-danger"
+                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
                 onClick={resetValue}
                 type="button"
                 aria-label={t('clear_quick_search')}>

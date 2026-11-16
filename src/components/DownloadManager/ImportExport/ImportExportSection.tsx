@@ -1,10 +1,12 @@
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import * as stylex from '@stylexjs/stylex';
 import IconForConcept from '../../IconForConcept';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import { cardsReceived, MCCard, selectAllCards } from '../../../store/entities/cards';
 import { packCardsHydrated } from '../../../store/entities/packs';
 import { selectedPackCodesSet, selectSelectedPackCodes } from '../../../store/ui/selectedPacks';
+import { ui } from '../../../styles/ui';
 
 const ImportExportSection = () => {
     const { t } = useTranslation('global');
@@ -54,29 +56,29 @@ const ImportExportSection = () => {
     }
   }
   return (
-    <section className='d-flex flex-column mt-1 gap-1'>
-        <h3 className='fs-4 mb-4'>
-          <IconForConcept concept="jsonFile" className='inline me-2' />
+    <section {...stylex.props(ui.flex, ui.flexColumn, ui.mt1, ui.gap1)}>
+        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.mb4, ui.flex, ui.itemsCenter)}>
+          <IconForConcept concept="jsonFile" xstyle={ui.me2} />
           {t(`import_export`)}
         </h3>
-        <div className="mb-3 px-3">
-        <label htmlFor="importFileInput" className="form-label">
-            <IconForConcept concept="import" className='inline mb-1 me-1'/>
+        <div {...stylex.props(ui.mb3, ui.px3)}>
+        <label htmlFor="importFileInput" {...stylex.props(ui.formLabel)}>
+            <IconForConcept concept="import" xstyle={ui.me1}/>
             &nbsp;
             {t(`import`)}
         </label>
-        <input className="form-control bg-secondary text-light" type="file" id="importFileInput" onChange={importFromJSONFile} />
+        <input {...stylex.props(ui.formControl, ui.formControlDark)} type="file" id="importFileInput" onChange={importFromJSONFile} />
         </div>
-        <hr/>
-        <div className="px-3">
-        <button type="button" className='btn btn-secondary' onClick={exportToJSONFile}>
+        <hr {...stylex.props(ui.separator)}/>
+        <div {...stylex.props(ui.px3)}>
+        <button type="button" {...stylex.props(ui.button, ui.buttonSecondary)} onClick={exportToJSONFile}>
             <IconForConcept concept="export" />
             &nbsp;
             {t('export')}
         </button>
         </div>
-        {importError && <div className="alert alert-danger">ImportError: {importError}</div>}
-        {exportError && <div className="alert alert-danger">ExportError: {exportError}</div>}
+        {importError && <div {...stylex.props(ui.alert, ui.alertDanger)} data-alert="true" data-variant="danger">ImportError: {importError}</div>}
+        {exportError && <div {...stylex.props(ui.alert, ui.alertDanger)} data-alert="true" data-variant="danger">ExportError: {exportError}</div>}
     </section>
   )
 }

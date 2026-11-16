@@ -1,6 +1,8 @@
-import Markdown from "react-markdown";
-import ResetAppButton from "../DownloadManager/ResetAppButton";
+import { Markdown } from "@astryxdesign/core/Markdown";
 import { useTranslation } from "react-i18next";
+import * as stylex from '@stylexjs/stylex';
+import ResetAppButton from "../DownloadManager/ResetAppButton";
+import { ui } from "../../styles/ui";
 
 
 type Props = {
@@ -10,14 +12,14 @@ type Props = {
 const MainErrorView = ({error}: Props) => {
   const {t} = useTranslation("error");
   return (
-    <section className="container mt-4">
+    <section {...stylex.props(ui.p3, ui.mt4, ui.centerBlock)}>
         <h1>{t('error_title')}</h1>
         {error && (
-            <div className="alert alert-danger">
+            <div {...stylex.props(ui.alert, ui.alertDanger)} data-alert="true">
                 {error.message}
             </div>
         )}
-        <Markdown>
+        <Markdown contentWidth="100%">
             {t('error_instructions_md')}
         </Markdown>
         <ResetAppButton />

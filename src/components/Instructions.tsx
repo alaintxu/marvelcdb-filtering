@@ -1,37 +1,39 @@
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
+import { Markdown } from '@astryxdesign/core/Markdown';
+import * as stylex from '@stylexjs/stylex';
 import IconForConcept from './IconForConcept';
+import { ui } from '../styles/ui';
 
 const Instructions = () => {
   const { t } = useTranslation('instructions');
   return (
 
-    <section id="mc-card-list" className='p-3 card bg-secondary'>
-      <div className='card-body'>
-        <h1 className='card-title'>
+    <section id="mc-card-list" {...stylex.props(ui.p3, ui.card, ui.bgSecondary, ui.textDark)}>
+      <div {...stylex.props(ui.cardBody)}>
+        <h1 {...stylex.props(ui.cardTitle)}>
           {t('title')}
         </h1>
-        <div className='card-text'>
-          <div className="alert alert-warning d-flex align-items-center gap-3" role="alert">
+        <div>
+          <div {...stylex.props(ui.alert, ui.alertWarning, ui.itemsCenter, ui.gap3)} data-alert="true" role="alert">
             <IconForConcept concept="warning" />
             <div>
-              <Markdown>
+              <Markdown contentWidth="100%">
                 {t('alert_md')}
               </Markdown>
             </div>
           </div>
-          <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
+          <div {...stylex.props(ui.alert, ui.alertInfo, ui.itemsCenter, ui.gap3)} data-alert="true" role="alert">
             <IconForConcept concept="info" />
             <div>
-              <Markdown>
+              <Markdown contentWidth="100%">
                 {t('instructions_md')}
               </Markdown>
             </div>
           </div>
-          <div className="alert alert-info d-flex align-items-center gap-3" role="alert">
+          <div {...stylex.props(ui.alert, ui.alertInfo, ui.itemsCenter, ui.gap3)} data-alert="true" role="alert">
             <IconForConcept concept="info" />
             <div>
-              <Markdown>
+              <Markdown contentWidth="100%">
                 {t('reset_help_md')}
               </Markdown>
             </div>

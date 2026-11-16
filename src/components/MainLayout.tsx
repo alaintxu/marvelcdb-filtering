@@ -14,6 +14,8 @@ import { loadCardSets } from "../store/entities/cardSets";
 import { LOCAL_STORAGE_SELECTED_PACK_CODES_KEY, downloadSelectedPackCards, hydratePersistedCards, selectSelectedPackCodes } from "../store/ui/selectedPacks";
 import { useAppDispatch, useAppSelector } from "../hooks/useStore";
 import LoadingSpinner from "./LoadingSpinner";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../styles/ui";
 
 
 const CardsView = lazy(() => import('./Card/CardsView'));
@@ -32,6 +34,12 @@ const isSelectXButton = (element: HTMLElement) => {
   }
   return isSelectXButton(element.parentNode as HTMLElement);
 }
+const hasPanelInAncestors = (element: HTMLElement | null): boolean => {
+  if (!element) return false;
+  if (element.hasAttribute?.("data-panel")) return true;
+  return hasPanelInAncestors(element.parentElement);
+};
+
 const MainLayout = () => {
   const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
@@ -96,13 +104,7 @@ const MainLayout = () => {
       }
 
       // Hide asides when clicked outside
-      if (
-        !hasClassInAncestors(clickedElement, "download-manager-container")
-        &&
-        !hasClassInAncestors(clickedElement, "filter-container")
-        &&
-        !hasClassInAncestors(clickedElement, "main-navigation-item")  // se encarga nav
-      ) {
+      if (!hasPanelInAncestors(clickedElement)) {
         if (selectedNavigationOptionKey !== "card_list"){
           dispatch(navigationOptionKeySet("card_list"));
         }
@@ -140,14 +142,14 @@ const MainLayout = () => {
 
   // Other
   const mainClassNames = [
-    "p-0",
-    "container-fluid",
-    "bg-dark",
-    "text-light",
     selectedNavigationOptionKey === "download_manager" ? "main-section--download-manager" : "",
     selectedNavigationOptionKey == "card_list" ? "main-section--only-card-list" : "",
     selectedNavigationOptionKey == "filters" ? "main-section--filters" : "",
-  ]
+  ].filter(Boolean).join(" ");
+
+  // StyleX owns the generated class name, so compose the layout modifier into it.
+  const mainStyleProps = stylex.props(ui.p0, ui.bgDark, ui.textLight);
+  const mainSectionClassName = [mainClassNames, mainStyleProps.className].filter(Boolean).join(" ");
 
   return (
     <>
@@ -156,8 +158,8 @@ const MainLayout = () => {
           <LoadingSpinner />
         </div>
         }>
-      <main id="main-section" className={mainClassNames.join(" ")}>
-          <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' inert={!isDownloadManagerOpen} />
+      <main id="main-section" className={mainSectionClassName} style={mainStyleProps.style}>
+          <DownloadManager id="download-manager" data-panel="download-manager" {...stylex.props(ui.p3, ui.bgDark, ui.shadowed)} inert={!isDownloadManagerOpen} />
         {currentDeck ? (
             <DeckView deck={currentDeck} />
         ) : (
@@ -168,7 +170,8 @@ const MainLayout = () => {
         ))}
           <CardFiltersView
             id="filters" 
-            className="bg-dark shadow d-flex flex-column p-3 filter-container"
+            data-panel="filters"
+            {...stylex.props(ui.bgDark, ui.shadowed, ui.flex, ui.flexColumn, ui.p3)}
             inert={!isFiltersOpen}
             selectedFilters={{}/*selectedFilters*/} 
             setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}

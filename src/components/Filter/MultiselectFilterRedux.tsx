@@ -1,24 +1,21 @@
-import {
-  Controller,
-  Control,
-} from "react-hook-form";
-import Select, { GroupBase, OptionsOrGroups } from 'react-select';
+import { MultiSelector } from '@astryxdesign/core/MultiSelector';
 import { useTranslation } from "react-i18next";
 import { MCCard, selectUniqueFieldOptions } from "../../store/entities/cards";
 
 import { FieldOption, filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 import { selectPackOptions } from "../../store/entities/packs";
 import { selectCardSetOptions } from "../../store/entities/cardSets";
 import { selectFactionOptions } from "../../store/entities/factions";
 import { selectCardTypeOptions } from "../../store/entities/cardTypes";
 
 interface Props {
-  control: Control<MCCard>;
   fieldCode: keyof MCCard;
 }
 
-const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
+const MultiselectFilterNew = ({ fieldCode }: Props) => {
   const dispatch = useAppDispatch();
   const fieldName = fieldCode.replace("code", "name") as keyof MCCard;
   const uniqueFieldCodeNames: FieldOption[] = useAppSelector(
@@ -28,47 +25,33 @@ const MultiselectFilterNew = ({ control, fieldCode }: Props) => {
     fieldCode === "type_code" ? (state) => selectCardTypeOptions(state) :
     selectUniqueFieldOptions(fieldCode, fieldName)
   );
-
-  const options: OptionsOrGroups<unknown, GroupBase<unknown>> = uniqueFieldCodeNames.map((option: FieldOption) => {
-    return { value: option.value, label: option.label };
-  });
   const defaultValues = useAppSelector(selectFilterValues("multiselect", fieldCode)) as string[] ?? [];
-  
+
+  // Filter values are stored lower-cased, so normalise the option values once.
+  const options = uniqueFieldCodeNames.map((option) => ({
+    value: option.value.toLocaleLowerCase(),
+    label: option.label,
+  }));
+  const selectedValues = defaultValues.map((value) => value.toLocaleLowerCase());
+  const placeholder = `${options.slice(0, 2).map((option) => option.label).join(', ')}...`;
+
   const { t } = useTranslation("filters");
 
   return (
-    <div key={`filter_${fieldName}`} className="mb-3">
-      <label
-        style={{
-          fontSize: "0.75rem",
-          fontWeight: "bold",
-          lineHeight: "2",
-          color: "white",
+    <div key={`filter_${fieldName}`} {...stylex.props(ui.mb3)}>
+      <MultiSelector
+        label={t(fieldName)}
+        options={options}
+        value={selectedValues}
+        placeholder={placeholder}
+        triggerDisplay="badges"
+        maxBadges={3}
+        hasSearch
+        width="100%"
+        onChange={(values) => {
+          dispatch(filterUpdated({ filterType: "multiselect", fieldCode, values: values.length > 0 ? values : undefined }));
         }}
-      >
-        {t(fieldName)}
-      </label>
-      <br />
-      <div className="form-group text-dark" role="group" aria-label={t(fieldName)}>
-        <Controller
-          name={fieldName}
-          control={control}
-          render={() => (<>
-            <Select
-              options={options}
-              placeholder={`${options.slice(0, 2).map(option => (option as { label: string }).label).join(', ')}...`}
-              isMulti
-              value={(options as FieldOption[]).filter((option: FieldOption) => defaultValues.includes(option.value))}
-              onChange={(selectedOptions: any) => {
-                const values = selectedOptions.map((option: any) => option.value.toLocaleLowerCase());
-
-                dispatch(filterUpdated({ filterType: "multiselect", fieldCode: fieldCode, values: values.length > 0 ? values : undefined }));
-                //field.onChange(values);
-              }} />
-          </>
-          )}
-        />
-      </div>
+      />
     </div>
   );
 };

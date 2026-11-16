@@ -24,6 +24,8 @@ import DottedMultiselectFilterRedux from "./DottedMultiselectFilterRedux";
 import HideDuplicatesFilter from "./HideDuplicatesFilter";
 import { selectIsAnyPackDownloading } from "../../store/entities/packs";
 import LoadingSpinner from "../LoadingSpinner";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 
 export type FiltrableFieldType = {
   name: keyof MCCard,
@@ -77,10 +79,10 @@ const CardFiltersView = ({
   return (
     <section {...rest}>
       {/* Heading */}
-      <h3 className="d-flex align-items-center gap-2">
+      <h3 {...stylex.props(ui.flex, ui.itemsCenter, ui.gap2)}>
         <IconForConcept concept="filter" />
         {t('filters')}
-        <NumberOfFiltersBadge className="ms-auto bg-light text-dark" />
+        <NumberOfFiltersBadge xstyle={[ui.msAuto, ui.badgeLight]} />
       </h3>
 
       {/* Pagination filter */}
@@ -89,25 +91,26 @@ const CardFiltersView = ({
           />
 
       {/* Hide duplicates filter */}
-      <HideDuplicatesFilter className="mb-4" />
+      <div {...stylex.props(ui.mb4)}>
+        <HideDuplicatesFilter />
+      </div>
 
       {/* Filters */}
       <form id="filterAccordion">
         {/* Multiselect filters */}
         <details className="mc-details" name="filter-accordion">
           <summary>
-            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+            <span {...stylex.props(ui.badge, ui.badgeDark, ui.inlineFlex, ui.itemsCenter, ui.gap2, ui.me2)}>
               <IconForConcept concept="multiselect" />
               {multiselectFilterNumber+dottedFilterNumber > 0 && multiselectFilterNumber+dottedFilterNumber}
             </span>
             {t("multiselect_filters_title")}
           </summary>
-          <div className="p-4">
+          <div {...stylex.props(ui.p4)}>
             {DOTTED_FILTERS.map((field_base) => {
               return (
                 <DottedMultiselectFilterRedux
                     key={`dotted_filter_${field_base}`}
-                    control={control}
                     fieldCode={field_base as keyof MCCard}
                 />
               );
@@ -116,7 +119,6 @@ const CardFiltersView = ({
               return (
                 <MultiselectFilterRedux
                     key={`multiselect_filter_${field_base}`}
-                    control={control}
                     fieldCode={`${field_base}code` as keyof MCCard}
                 />
               );
@@ -127,13 +129,13 @@ const CardFiltersView = ({
         {/* String filters */}
         <details className="mc-details" name="filter-accordion">
           <summary>
-            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+            <span {...stylex.props(ui.badge, ui.badgeDark, ui.inlineFlex, ui.itemsCenter, ui.gap2, ui.me2)}>
               <IconForConcept concept="brackets" />
               {stringFilterNumber > 0 && stringFilterNumber}
             </span>
             {t("contains_filters_title")}
           </summary>
-          <div className="p-4">
+          <div {...stylex.props(ui.p4)}>
             {STRING_FILTERS.map((fieldCode) => (
                 <StringFilterRedux
                     key={`contains_filter_${fieldCode}`}
@@ -147,14 +149,14 @@ const CardFiltersView = ({
         {/* Number filters */}
         <details className="mc-details" name="filter-accordion">
           <summary>
-            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+            <span {...stylex.props(ui.badge, ui.badgeDark, ui.inlineFlex, ui.itemsCenter, ui.gap2, ui.me2)}>
               <IconForConcept concept="numbers" />
               {numberFilterNumber > 0 && numberFilterNumber}
             </span>
             {t("number_filters_title")}
           </summary>
-          <div className="p-4">
-            <div className="two-column-grid">
+          <div {...stylex.props(ui.p4)}>
+            <div {...stylex.props(ui.twoColumnGrid)}>
               {NUMBER_FILTERS.map((fieldCode) => (
                   <NumberFilterRedux
                       key={`number_filter_${fieldCode}`}
@@ -169,14 +171,14 @@ const CardFiltersView = ({
         {/* Boolean filters */}
         <details className="mc-details" name="filter-accordion">
           <summary>
-            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+            <span {...stylex.props(ui.badge, ui.badgeDark, ui.inlineFlex, ui.itemsCenter, ui.gap2, ui.me2)}>
               <IconForConcept concept="checkbox" />
               {booleanFilterNumber > 0 && booleanFilterNumber}
             </span>
             {t("boolean_filters_title")}
           </summary>
-          <div className="p-4">
-            <div className="two-column-grid">
+          <div {...stylex.props(ui.p4)}>
+            <div {...stylex.props(ui.twoColumnGrid)}>
               {BOOLEAN_FILTERS.map((fieldCode) => (
                 <BooleanFilterRedux
                     key={`boolean_filter_${fieldCode}`}
@@ -192,7 +194,7 @@ const CardFiltersView = ({
         <button
           type="reset" 
           title={t("reset")}
-          className="btn btn-outline-danger mt-3" onClick={() => {
+          {...stylex.props(ui.button, ui.buttonOutlineDanger, ui.mt3)} onClick={() => {
             dispatch(resetFilters());
             reset();
         }}>

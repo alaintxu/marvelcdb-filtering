@@ -1,20 +1,22 @@
 import { selectPagination } from '../../store/ui/pagination';
 import IconForConcept from '../IconForConcept';
 import { useAppSelector } from '../../hooks/useStore';
+import * as stylex from '@stylexjs/stylex';
+import { ui } from '../../styles/ui';
 
 const CardPaginationNumberBadge = () => {
     const paginationStatus = useAppSelector(selectPagination);
     return (
-        <span className='ms-1'>
-            <span className='badge bg-secondary d-inline-flex align-items-center'>
+        <span {...stylex.props(ui.ms1)}>
+            <span {...stylex.props(ui.badge, ui.badgeSecondary, ui.inlineFlex, ui.itemsCenter)}>
                 {paginationStatus.visibleFirstElementIndex+1}
                 -
                 {paginationStatus.visibleLastElementIndex}
             </span>
-            <span className='ms-1'>/</span>
-            <span className='badge bg-dark ms-1'>
+            <span {...stylex.props(ui.ms1)}>/</span>
+            <span {...stylex.props(ui.badge, ui.badgeDark, ui.ms1)}>
                 {paginationStatus.totalElements}
-                <IconForConcept concept="multiple_cards" className='ms-1' />
+                <IconForConcept concept="multiple_cards" xstyle={ui.ms1} />
             </span>
         </span>
     )

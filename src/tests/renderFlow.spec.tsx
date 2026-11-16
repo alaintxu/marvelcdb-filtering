@@ -35,10 +35,10 @@ jest.mock("react-i18next", () => ({
     initReactI18next: { type: "3rdParty", init: jest.fn() }
 }));
 
-// react-markdown is ESM-only, not transformable by ts-jest in jsdom tests
-jest.mock("react-markdown", () => ({
+// Astryx Markdown is not needed to exercise the render flow.
+jest.mock("@astryxdesign/core/Markdown", () => ({
     __esModule: true,
-    default: () => null
+    Markdown: () => null
 }));
 
 // react-lazy-load-image-component requires browser APIs jsdom does not implement

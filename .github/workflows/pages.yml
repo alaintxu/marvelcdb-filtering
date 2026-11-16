@@ -1,8 +1,8 @@
-name: Build NPM
-run-name: ${{ github.actor }} is building NPM package using GitHub Actions 🚀
+name: Build bun
+run-name: ${{ github.actor }} is building the bundle with bun using GitHub Actions 🚀
 on:
   workflow_run:
-    workflows: ["Test npm"]
+    workflows: ["Test bun"]
     types:
       - completed
   push:
@@ -17,14 +17,14 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '22.x'
-          registry-url: 'https://registry.npmjs.org'
+          bun-version: '1.4.4'
       - name: Install dependencies
-        run: npm i
-      - name: Build NPM
-        run: npm run build
+        run: bun install --frozen-lockfile
+      - name: Build bundle
+        run: bun run build
       - name: Create page artifact
         uses: actions/upload-pages-artifact@v3
         with:

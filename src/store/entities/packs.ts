@@ -342,12 +342,14 @@ export const selectNumberOfDownloadedPacks = createSelector(
     (packState: PackSliceState) => Object.values(packState.packCardLoadByCode).filter((stateByCode) => stateByCode.status === "downloaded").length
 );
 
-export const selectPackStatusBootstrapVariant = createSelector(
+export type PackStatusTone = "neutral" | "success" | "danger" | "warning";
+
+export const selectPackStatusTone = createSelector(
     selectNumberOfPacks,
     selectNumberOfDownloadedPacks,
     selectIsAnyPackDownloading,
-    (numberOfPacks: number, numberOfDownloadedPacks:number, isAnyPackDownloading: boolean) => {
-        if (isAnyPackDownloading) return "dark";
+    (numberOfPacks: number, numberOfDownloadedPacks:number, isAnyPackDownloading: boolean): PackStatusTone => {
+        if (isAnyPackDownloading) return "neutral";
         const packRatio = numberOfDownloadedPacks / numberOfPacks;
         if (packRatio === 1) return "success";
         if (packRatio < 0.25) return "danger";

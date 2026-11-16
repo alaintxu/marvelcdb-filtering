@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import * as stylex from '@stylexjs/stylex';
 
 import { paginationElementsPerPageUpdated, selectPaginationElementsPerPage } from "../../store/ui/pagination";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import IconForConcept, { IconType } from "../IconForConcept";
+import { ui } from "../../styles/ui";
 
 
 type Props = {
@@ -20,18 +22,17 @@ const PaginationElementsPerPageFilter = ({title, iconType}: Props) => {
 
   const dispatch = useAppDispatch();
 
- 
+
 
   const { control } = useForm();
 
   if(!elementsPerPage) return <div>Loading...</div>;
 
-  return (  
-    <form className="input-group mb-4">
+  return (
+    <form {...stylex.props(ui.inputGroup, ui.mb4)}>
       <label
-        className="input-group-text bg-dark text-light"
+        {...stylex.props(ui.inputGroupText, ui.inputGroupTextDark)}
         htmlFor="input-elements-per-page">
-          {/*<TbCards />&nbsp;*/}
           {iconType ? React.createElement(iconType) : <IconForConcept concept="numbers" />} {title}
       </label>
       <Controller
@@ -41,15 +42,13 @@ const PaginationElementsPerPageFilter = ({title, iconType}: Props) => {
           <input
             {...field}
             type="number"
-            className='form-control'
+            {...stylex.props(ui.formControl)}
             id="input-elements-per-page"
             min="1"
             step="1"
             value={field.value ?? elementsPerPage}
             onChange = { async (e) => {
               dispatch(paginationElementsPerPageUpdated(parseInt(e.target.value)));
-              // await setElementsPerPageMutation(parseInt(e.target.value));
-              //await mutateAsync(parseInt(e.target.value));
             }}
           />
         )}
@@ -59,4 +58,3 @@ const PaginationElementsPerPageFilter = ({title, iconType}: Props) => {
 }
 
 export default PaginationElementsPerPageFilter
-

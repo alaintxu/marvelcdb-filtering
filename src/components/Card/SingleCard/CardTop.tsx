@@ -1,6 +1,9 @@
 import comicWebp from "../../../assets/comic.webp";
 import { MCCard } from '../../../store/entities/cards'
 import IconForConcept from "../../IconForConcept";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../../styles/ui";
+import { cx } from "../../../styles/cx";
 
 type Props = {
     card: MCCard | undefined,
@@ -8,19 +11,19 @@ type Props = {
 const CardTop = ({ card }: Props) => {
     if (!card) return null;
     return (
-        <div className="d-flex justify-content-between gap-1 mb-1">
+        <div {...stylex.props(ui.flex, ui.justifyBetween, ui.gap1, ui.mb1)}>
             {(card.cost || card.cost == 0) &&
-                <span className="mc-card__cost shadowed">
+                <span className={cx("mc-card__cost", stylex.props(ui.shadowed).className)} style={stylex.props(ui.shadowed).style}>
                     {card.cost}
                 </span>
             }
             {(card.threat || card.threat == 0) &&
-                <span className="mc-card__threat shadowed">
+                <span className={cx("mc-card__threat", stylex.props(ui.shadowed).className)} style={stylex.props(ui.shadowed).style}>
                     {card.threat}
                     {card.threat_fixed !== undefined && card.threat_fixed == false && <IconForConcept concept="person" title={`${card.threat} por jugador`} />}
                 </span>
             }
-            <span className="mc-card__name shadowed flex-grow-1" style={{ backgroundImage: comicWebp }}>
+            <span className={cx("mc-card__name", stylex.props(ui.shadowed, ui.flexGrow).className)} style={{ ...stylex.props(ui.shadowed, ui.flexGrow).style, backgroundImage: comicWebp }}>
                 <a
                     href={card.url}
                     target="_blank"
@@ -31,7 +34,7 @@ const CardTop = ({ card }: Props) => {
             </span>
 
             {(card.quantity ?? 1) > 1 &&
-                <span className="bg-light text-dark shadowed d-flex align-items-center rounded px-1" title="Número de copias">
+                <span {...stylex.props(ui.bgLight, ui.textDark, ui.shadowed, ui.flex, ui.itemsCenter, ui.rounded, ui.px1)} title="Número de copias">
                     <IconForConcept concept="multiple_cards" />x{card.quantity}
                 </span>
             }

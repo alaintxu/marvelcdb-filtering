@@ -3,6 +3,7 @@
   "private": true,
   "version": "4.0.0",
   "type": "module",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -14,7 +15,6 @@
   "dependencies": {
     "@astryxdesign/core": "^0.7.16",
     "@astryxdesign/theme-neutral": "^0.7.16",
-    "@draperez/react-components": "^2.1.0",
     "@reduxjs/toolkit": "^2.11.0",
     "@stylexjs/stylex": "^0.19.2",
     "@types/jsonpack": "^1.1.6",
@@ -30,17 +30,18 @@
     "react-i18next": "^16.3.5",
     "react-icons": "^5.5.0",
     "react-lazy-load-image-component": "^1.6.3",
-    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
-    "react-select": "^5.10.2",
     "redux": "^5.0.1",
     "reselect": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
     "@eslint/js": "^9.39.5",
-    "@tailwindcss/vite": "^4.3.5",
+    "@stylexjs/babel-plugin": "0.19.2",
+    "@stylexjs/unplugin": "^0.19.2",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
@@ -62,8 +63,6 @@
     "jest-fetch-mock": "^3.0.3",
     "jest-localstorage-mock": "^2.4.26",
     "oxc-transform-react": "^0.156.0",
-    "tailwindcss": "^4.3.5",
-    "ts-jest": "^29.4.5",
     "typescript": "^5.9.3",
     "vite": "^8.3.8"
   }

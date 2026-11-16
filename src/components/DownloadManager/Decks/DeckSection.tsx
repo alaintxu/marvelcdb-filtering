@@ -5,6 +5,8 @@ import DeckList from "./DeckList";
 import DeckListItem from "./DeckListItem";
 import LoadingSpinner from "../../LoadingSpinner";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../../styles/ui";
 
 const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -53,14 +55,14 @@ const DeckSection = () => {
   return (
     <section id="deck-section">
         <h2>
-            <IconForConcept concept="deck" className="me-2" /> 
+            <IconForConcept concept="deck" xstyle={ui.me2} /> 
             {t('decks')}
         </h2>
-        <div className='alert alert-info'>
+        <div {...stylex.props(ui.alert, ui.alertInfo)} data-alert="true">
             {t('find_decks')} <a href={`${globalT('base_path')}/decklists`} target="_blank" rel="noreferrer">MarvelCDB</a>
         </div>
-        <div className="px-3">
-            <form className="input-group"
+        <div {...stylex.props(ui.px3)}>
+            <form {...stylex.props(ui.inputGroup)}
                 onSubmit={(e) => {
                     e.preventDefault();
                     callApiForDeck(e.currentTarget["deck-id-or-url"].value);
@@ -68,29 +70,29 @@ const DeckSection = () => {
             }>
                 <input
                     type="text"
-                    className="form-control"
+                    {...stylex.props(ui.formControl)}
                     placeholder={t('deck_id_or_url')} 
                     name="deck-id-or-url"
                     pattern={`(${NUMBER_REGEX.source})|(${URL_REGEX.source})`}
                     onChange={(e) => {callApiForDeck(e.currentTarget.value)}}
                 />
                 {deckDownloading && (
-                    <span className="input-group-text">
+                    <span {...stylex.props(ui.inputGroupText)}>
                         <LoadingSpinner />
                     </span>
                 )}
                 {deckDownloadError && (
-                <span className="input-group-text text-danger">
+                <span {...stylex.props(ui.inputGroupText, ui.textDanger)}>
                     <IconForConcept concept="error" title={deckDownloadError} />
                     </span>
                 )}
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" {...stylex.props(ui.button, ui.buttonBrand)}>
                     <IconForConcept concept="sendDownloadFill" title={t('download_deck')} />
                 </button>
             </form>
             {currentDeck && !isCurrentDeckInList && (
-            <div className="d-flex justify-content-center">
-                <div className="btn-group-vertical mt-3" role="group" aria-label={globalT('current_deck')}>
+            <div {...stylex.props(ui.flex, ui.justifyCenter)}>
+                <div {...stylex.props(ui.buttonGroupVertical, ui.mt3)} role="group" aria-label={globalT('current_deck')}>
                     <DeckListItem deck={currentDeck} />
                 </div>
             </div>

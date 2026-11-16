@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CardGrid from "./CardGrid";
 import { useTranslation } from "react-i18next";
-import { ReactBSPagination } from "@draperez/react-components";
+import { Pagination } from "@astryxdesign/core/Pagination";
 import { MCCard, selectAllCards } from "../../store/entities/cards";
 
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
@@ -13,6 +13,8 @@ import { quickFilterCardList } from "../Filter/QuickSearchFilter";
 import { sortCards, filterDuplicates, resolveDuplicateCards } from "../../store/entities/cardsModificationUtils";
 import { filterCards } from "../../store/entities/cardsFilterUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../styles/ui";
 
 const CardsView = () => {
   const { t } = useTranslation('global');
@@ -58,13 +60,13 @@ const CardsView = () => {
   }, [pagination, filteredCards]);
 
   return (
-    <section id="mc-card-list" className='p-0 d-flex flex-column'>
+    <section id="mc-card-list" {...stylex.props(ui.p0, ui.flex, ui.flexColumn)}>
       <TopActions />
-      <h1 id="page-title" className="px-4 py-2">
-        <IconForConcept concept="cardList" className="me-2"/>
+      <h1 id="page-title" {...stylex.props(ui.pageTitle, ui.px4, ui.py2)}>
+        <IconForConcept concept="cardList" xstyle={ui.me2}/>
         {t('card_list')}
       </h1>
-      <div className="flex-grow-1 p-4">
+      <div {...stylex.props(ui.flexGrow, ui.p4)}>
         <CardGrid
           cards={paginatedCards} 
           showAllCardData={showAllCardData} 
@@ -72,16 +74,19 @@ const CardsView = () => {
       />
       </div>
 
-      <div id="pagination-container" className="bg-dark d-flex flex-column justify-content-center align-items-center mt-3">
-        <ReactBSPagination
-          totalPages={pagination.totalPages || 1}
-          currentPage={pagination.currentPage || 1}
-          buttonSize='sm'
-          onPageClick={(pageNumber: number) => {
-            document.getElementById('page-title')?.scrollIntoView({ behavior: 'instant' });
-            dispatch(paginationCurrentPageUpdated(pageNumber));
-          }}
+      <div id="pagination-container" {...stylex.props(ui.bgDark, ui.flex, ui.flexColumn, ui.justifyCenter, ui.itemsCenter, ui.mt3)}>
+        {pagination.totalPages > 1 && (
+          <Pagination
+            page={pagination.currentPage || 1}
+            totalPages={pagination.totalPages || 1}
+            siblingCount={2}
+            size="sm"
+            onChange={(pageNumber: number) => {
+              document.getElementById('page-title')?.scrollIntoView({ behavior: 'instant' });
+              dispatch(paginationCurrentPageUpdated(pageNumber));
+            }}
           />
+        )}
       </div>
     </section>
   )

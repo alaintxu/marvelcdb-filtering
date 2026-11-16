@@ -9,6 +9,9 @@ import { cardCodeClicked, selectIsCardCodeClicked } from "../../../store/ui/othe
 import CardTop from "./CardTop";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 import IconForConcept from "../../IconForConcept";
+import * as stylex from '@stylexjs/stylex';
+import { ui } from "../../../styles/ui";
+import { cx } from "../../../styles/cx";
 
 export type MCCardKeys = keyof MCCard;
 
@@ -124,8 +127,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
         <div className="mc-card__content">
           <header>
             <CardTop card={!flipped ? card : card.linked_card} />
-            <span className="mc-card__actions d-flex justify-content-end gap-1">
-              <a className="btn btn-secondary shadowed"
+            <span className={cx("mc-card__actions", stylex.props(ui.flex, ui.justifyEnd, ui.gap1).className)} style={stylex.props(ui.flex, ui.justifyEnd, ui.gap1).style}>
+              <a {...stylex.props(ui.button, ui.buttonSecondary, ui.shadowed)}
                 href={getCardImage(card, flipped, i18n.language)}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -133,7 +136,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
                 <IconForConcept concept="image" />
               </a>
               <button
-                className="btn btn-secondary shadowed"
+                {...stylex.props(ui.button, ui.buttonSecondary, ui.shadowed)}
                 type="button"
                 disabled={isVisibleImageLoading}
                 onClick={handleImageRetry}
@@ -142,26 +145,26 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
                 <IconForConcept concept={isVisibleImageLoading ? "hourglass" : "reset"} />
               </button>
               <button
-                className={`btn btn-secondary shadowed`}
+                {...stylex.props(ui.button, ui.buttonSecondary, ui.shadowed)}
                 title={t('card.show_json')}
                 type="button"
                 onClick={() => onShowJson ? onShowJson(card) : setIsJsonModalOpen(true)}>
                 <IconForConcept concept="jsonFile" />
               </button>
               <button
-                className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
+                {...stylex.props(ui.button, flipped ? ui.buttonDark : ui.buttonLight, ui.shadowed)}
                 onClick={() => setManualFlipped((prev) => prev === undefined ? !flipAllCards : !prev)}
                 title={t('card.flip')}>
                 <IconForConcept concept="cardFlip" />
               </button>
             </span>
           </header>
-          <main className="d-flex flex-column gap-1 align-items-center">
+          <main {...stylex.props(ui.flex, ui.flexColumn, ui.gap1, ui.itemsCenter)}>
             {!flipped ? <>
 
-              {card.traits && <span className="d-flex gap-1">
+              {card.traits && <span {...stylex.props(ui.flex, ui.gap1)}>
                 {card.traits.split(". ").map((trait) =>
-                  <span className="badge bg-dark shadowed" key={`trait-back-${card.code}-${trait.replace(" ", "-")}`}>
+                  <span {...stylex.props(ui.badge, ui.badgeDark, ui.shadowed)} key={`trait-back-${card.code}-${trait.replace(" ", "-")}`}>
                     {trait}
                   </span>
                 )}
@@ -169,7 +172,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
 
               {card.text &&
                 <SanitizedHtml
-                  className="mc-card__data__text shadowed"
+                  className="mc-card__data__text"
+                  xstyle={ui.shadowed}
                   html={card.text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
                   title={t('card.text')} />
@@ -177,37 +181,40 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
               {card.flavor &&
                 <SanitizedHtml
                   as="i"
-                  className="border rounded bg-light text-dark p-1 mx-3 shadowed"
+                  className="mc-card__flavor"
+                  xstyle={[ui.border, ui.rounded, ui.bgLight, ui.textDark, ui.p1, ui.mx3, ui.shadowed]}
                   html={card.flavor}
                   style={{ fontSize: "0.75em" }}
                   title={t('card.flavor')} />
               }
 
               {card.base_threat !== undefined && card.base_threat > 0 &&
-                <span className="mc-card__threat shadowed" title={t('card.base_threat')}>
+                <span className={cx("mc-card__threat", stylex.props(ui.shadowed).className)} style={stylex.props(ui.shadowed).style} title={t('card.base_threat')}>
                   {card.base_threat}
                   {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <IconForConcept concept="person" title={t('card.threat_per_player', { threat: card.base_threat })} />}
                 </span>
               }
             </> : <>
 
-              {card.linked_card?.traits && <span className="d-flex gap-1">
+              {card.linked_card?.traits && <span {...stylex.props(ui.flex, ui.gap1)}>
                 {card.linked_card?.traits.split(". ").map((trait) =>
-                  <span className="badge bg-dark shadowed" key={`trait-${card.code}-${trait.replace(" ", "-")}`}>
+                  <span {...stylex.props(ui.badge, ui.badgeDark, ui.shadowed)} key={`trait-${card.code}-${trait.replace(" ", "-")}`}>
                     {trait}
                   </span>
                 )}
               </span>}
               {card.back_text &&
                 <SanitizedHtml
-                  className="mc-card__data__text shadowed"
+                  className="mc-card__data__text"
+                  xstyle={ui.shadowed}
                   html={card.back_text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
                   title={t('card.text')} />
               }
               {card.linked_card?.text &&
                 <SanitizedHtml
-                  className="mc-card__data__text shadowed"
+                  className="mc-card__data__text"
+                  xstyle={ui.shadowed}
                   html={card.linked_card.text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
                   title={t('card.text')} />
@@ -216,7 +223,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: 
               {card.linked_card?.flavor &&
                 <SanitizedHtml
                   as="i"
-                  className="border rounded bg-light text-dark p-1 mx-3 shadowed"
+                  className="mc-card__flavor"
+                  xstyle={[ui.border, ui.rounded, ui.bgLight, ui.textDark, ui.p1, ui.mx3, ui.shadowed]}
                   html={card.linked_card.flavor}
                   style={{ fontSize: "0.75em" }}
                   title={t('card.flavor')} />

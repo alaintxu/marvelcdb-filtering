@@ -1,10 +1,12 @@
+import * as stylex from '@stylexjs/stylex'
 import QuickSearchFilter from './Filter/QuickSearchFilter'
 import AllCardActions from './Card/AllCardActions'
+import { ui } from '../styles/ui'
 
 const TopActions = () => {
-  return (  
-    <div id="top-actions" className="bg-dark p-3 mb-1 sticky-top d-flex justify-content-between align-items-center shadow">
-        <div className="d-flex flex-grow-1 justify-content-center">
+  return (
+    <div id="top-actions" {...stylex.props(ui.bgDark, ui.p3, ui.mb1, ui.stickyTop, ui.flex, ui.justifyBetween, ui.itemsCenter, ui.shadowed)}>
+        <div {...stylex.props(ui.flex, ui.flexGrow, ui.justifyCenter)}>
             <QuickSearchFilter />
         </div>
         <AllCardActions />

@@ -13,3 +13,6 @@ Host github.com
     Port 443
     User git
 EOF
+
+echo "Installing dependencies with bun"
+bun install --frozen-lockfile
