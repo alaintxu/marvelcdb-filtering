@@ -13,7 +13,13 @@ export const checkLanguageString = (language: string): string => {
   return language;
 }
 
-i18n
+// Keep the document language in sync with the selected UI language.
+const syncDocumentLanguage = (language: string = i18n.language ?? I18N_LANGS[0]) => {
+  if (typeof document === 'undefined' || typeof language !== 'string') return;
+  document.documentElement.lang = checkLanguageString(language.split('-')[0]);
+};
+
+const i18nInitialized = i18n
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(resourcesToBackend((language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`)))
@@ -28,6 +34,17 @@ i18n
     debug: false,
     fallbackLng: I18N_LANGS[0],
   });
+
+if (i18nInitialized && typeof i18nInitialized.then === 'function') {
+  i18nInitialized.then(() => syncDocumentLanguage());
+} else {
+  syncDocumentLanguage();
+}
+
+if (typeof i18n.on === 'function') {
+  i18n.on('languageChanged', syncDocumentLanguage);
+}
+
 /*
 I18N_LANGS.map((lang) => 
   I18N_NAMESPACES.map((namespace) => {

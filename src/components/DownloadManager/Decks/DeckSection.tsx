@@ -90,7 +90,7 @@ const DeckSection = () => {
             </form>
             {currentDeck && !isCurrentDeckInList && (
             <div className="d-flex justify-content-center">
-                <div className="btn-group-vertical mt-3" role="group" aria-label="Current deck">
+                <div className="btn-group-vertical mt-3" role="group" aria-label={globalT('current_deck')}>
                     <DeckListItem deck={currentDeck} />
                 </div>
             </div>

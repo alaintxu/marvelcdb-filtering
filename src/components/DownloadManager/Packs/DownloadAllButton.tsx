@@ -1,5 +1,8 @@
-import { Modal, ModalButton } from '../../Modal';
+import { useState } from 'react';
+import { Modal } from '../../Modal';
+import SanitizedHtml from '../../SanitizedHtml/SanitizedHtml';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@astryxdesign/core/Button';
 import { useAppDispatch } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
 import { selectAllPackCodesAndDownload } from '../../../store/ui/selectedPacks';
@@ -7,22 +10,24 @@ import { selectAllPackCodesAndDownload } from '../../../store/ui/selectedPacks';
 const DownloadAllButton = () => {
     const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
         <>
-            <ModalButton className='btn btn-danger me-1' modal_id='modal-select-all'>
-                <IconForConcept concept="downloadSimple" />
-                &nbsp;
-                {t('download_all')}
-            </ModalButton>
+            <Button
+                variant="destructive"
+                label={t('download_all')}
+                icon={<IconForConcept concept="downloadSimple" />}
+                onClick={() => setIsModalOpen(true)} />
 
             <Modal
                 title={t(`modal.download_all_packs.title`)}
-                modal_id='modal-select-all'
+                isOpen={isModalOpen}
+                onOpenChange={setIsModalOpen}
                 onAccept={async () => {
                     await dispatch<any>(selectAllPackCodesAndDownload());
                 }}>
-                <div dangerouslySetInnerHTML={{ __html: t('modal.download_all_packs.content') }} />
+                <SanitizedHtml html={t('modal.download_all_packs.content')} />
             </Modal>
         </>
     )

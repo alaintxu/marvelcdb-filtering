@@ -1,6 +1,9 @@
 
-import { Modal, ModalButton } from '../../Modal';
+import { useState } from 'react';
+import { Modal } from '../../Modal';
+import SanitizedHtml from '../../SanitizedHtml/SanitizedHtml';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@astryxdesign/core/Button';
 import { useAppDispatch } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
 import { clearSelectedPacksAndCards } from '../../../store/ui/selectedPacks';
@@ -8,22 +11,24 @@ import { clearSelectedPacksAndCards } from '../../../store/ui/selectedPacks';
 const RemoveAllButton = () => {
     const { t } = useTranslation('global');
     const dispatch = useAppDispatch();
+    const [isModalOpen, setIsModalOpen] = useState(false);
     return (
         <>
-            <ModalButton className='btn btn-danger' modal_id='modal-remove-all'>
-                <IconForConcept concept="delete" />
-                &nbsp;
-                {t('remove_all')}
-            </ModalButton>
+            <Button
+                variant="destructive"
+                label={t('remove_all')}
+                icon={<IconForConcept concept="delete" />}
+                onClick={() => setIsModalOpen(true)} />
 
             
             <Modal
                 title={t(`modal.delete_all_packs.title`)}
-                modal_id='modal-remove-all'
+                isOpen={isModalOpen}
+                onOpenChange={setIsModalOpen}
                 onAccept={() => { 
                     dispatch<any>(clearSelectedPacksAndCards());
                 }} >
-                <div dangerouslySetInnerHTML={{ __html: t('modal.delete_all_packs.content') }} />
+                <SanitizedHtml html={t('modal.delete_all_packs.content')} />
             </Modal >
         </>
     )

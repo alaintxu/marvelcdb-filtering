@@ -66,11 +66,13 @@ export default [
         { allowConstantExport: true },
       ],
       'react-compiler/react-compiler': 'error',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
     }
   },
   {
-    ignores: ['dist', '.eslintrc.cjs', 'node_modules'],
+    // Build output, coverage, and editor state are not part of the source.
+    ignores: ['dist', '.eslintrc.cjs', 'node_modules', 'marvelcdb-filtering', 'coverage', '.vscode'],
   }
 ]

@@ -99,8 +99,18 @@ const conceptIcons = {
 
 export type Concepts = typeof conceptIcons;
 
-const IconForConcept = createIconComponent(conceptIcons, styles.icon);
+const BaseIcon = createIconComponent(conceptIcons, styles.icon);
 
 export type Props = IconComponentProps<typeof conceptIcons>;
+
+// Icons are decorative unless they get a title; keep them out of the accessibility tree then.
+const IconForConcept = ({ title, ...rest }: Props) => (
+    <BaseIcon
+        {...rest}
+        title={title}
+        aria-hidden={title ? undefined : true}
+        role={title ? "img" : undefined}
+    />
+);
 
 export default IconForConcept;

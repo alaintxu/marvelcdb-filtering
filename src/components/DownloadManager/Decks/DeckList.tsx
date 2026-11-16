@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 
 const DeckList = () => {
     const { t } = useTranslation('decks');
+    const { t: globalT } = useTranslation('global');
     const dispatch = useAppDispatch();
     const decks = useAppSelector(selectAllDecks);
     const showDeckList = useAppSelector(selectShowDeckList);
@@ -31,7 +32,7 @@ const DeckList = () => {
 
           {showDeckList && (
             <div className='d-flex flex-column justify-content-center'>
-                <div className="btn-group-vertical mt-3" role="group" aria-label="Bookmarked decks">
+                <div className="btn-group-vertical mt-3" role="group" aria-label={globalT('bookmarked_decks')}>
                     {Object.entries(decks).sort((a, b) => 
                     // sort by aspect, then by hero name
                     a[1]?.aspect?.localeCompare(b[1]?.aspect || "") || a[1]?.hero_name?.localeCompare(b[1]?.hero_name)

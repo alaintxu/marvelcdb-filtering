@@ -1,60 +1,52 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
+import { HStack, Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
+import { Button } from '@astryxdesign/core/Button';
 
 type Props = {
   children: React.ReactNode,
-  modal_id: string,
   title: string,
+  isOpen: boolean,
+  onOpenChange: (isOpen: boolean) => void,
   onCancel?: () => void,
   onAccept?: () => void
 }
 
-const Modal = ({ children, modal_id, title, onCancel, onAccept }: Props) => {
+const Modal = ({ children, title, isOpen, onOpenChange, onCancel, onAccept }: Props) => {
   const {t} = useTranslation('modal');
-  const label_id = modal_id + "-label";
-  return (<>
-    <div className="modal fade text-dark"
-      id={modal_id}
-      role="dialog"
-      tabIndex={-1}
-      aria-labelledby={label_id}
-      aria-hidden="true">
-      <div className="modal-dialog"
-      style={{width: "max-content", maxWidth: "90%"}}>
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id={label_id}>{title}</h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label={t('close')}>
-            </button>
-          </div>
-          <div className="modal-body">
-            {children}
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
-              onClick={() => { if (onCancel) onCancel() }}>
-              {t('close')}
-            </button>
-            {onAccept && <button
-              type="button"
-              className="btn btn-primary"
-              data-bs-dismiss="modal"
-              onClick={() => onAccept()}>
-              {t('continue')}
-            </button>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
-  </>
+  return (
+    <Dialog
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      width="min(90vw, 900px)"
+      maxHeight="80dvh">
+      <Layout
+        header={<DialogHeader title={title} onOpenChange={onOpenChange} />}
+        content={<LayoutContent>{children}</LayoutContent>}
+        footer={
+          <LayoutFooter hasDivider>
+            <HStack gap={2} justify="end">
+              <Button
+                label={t('close')}
+                variant="secondary"
+                onClick={() => {
+                  onOpenChange(false);
+                  if (onCancel) onCancel();
+                }} />
+              {onAccept && <Button
+                label={t('continue')}
+                variant="primary"
+                onClick={() => {
+                  onAccept();
+                  onOpenChange(false);
+                }} />
+              }
+            </HStack>
+          </LayoutFooter>
+        }
+      />
+    </Dialog>
   )
 }
 

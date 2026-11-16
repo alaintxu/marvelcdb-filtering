@@ -1,6 +1,9 @@
-import { Modal, ModalButton } from '../Modal';
+import { useState } from 'react';
+import { Modal } from '../Modal';
+import SanitizedHtml from '../SanitizedHtml/SanitizedHtml';
 import { useTranslation } from 'react-i18next';
 import IconForConcept from '../IconForConcept';
+import { Button } from '@astryxdesign/core/Button';
 import { clearPersistedCards } from '../../store/persistence/cardsDb';
 
 
@@ -15,20 +18,22 @@ export const resetApp = () => {
 
 const ResetAppButton = () => {
     const { t } = useTranslation('global');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     return (
             <>
-            <ModalButton className='btn btn-danger' modal_id='modal-reset-app'>
-                <IconForConcept concept="reset" />
-                &nbsp;
-                {t('reset_app')}
-                </ModalButton>
+            <Button
+                variant="destructive"
+                label={t('reset_app')}
+                icon={<IconForConcept concept="reset" />}
+                onClick={() => setIsModalOpen(true)} />
             <Modal
                 title={t(`modal.reset_app.title`)}
-                modal_id='modal-reset-app'
+                isOpen={isModalOpen}
+                onOpenChange={setIsModalOpen}
                 onAccept={() => {
                     resetApp();
                 }}>
-                <div dangerouslySetInnerHTML={{ __html: t('modal.reset_app.content') }} />
+                <SanitizedHtml html={t('modal.reset_app.content')} />
             </Modal>
         </>
     )

@@ -65,29 +65,29 @@ const DeckDataCard = ({ deck }: Props) => {
           </div>
 
           <div className="col-12 col-md-6">
-            <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-description" aria-expanded="false" aria-controls="deck-description">
-              <IconForConcept concept="chevronDown" /> {t('description')}
-            </button>
-            <div className="collapse" id="deck-description">
+            <details className="mc-details mc-details--button">
+              <summary className="btn btn-dark">
+                <IconForConcept concept="chevronDown" /> {t('description')}
+              </summary>
               <div className="border border-light rounded p-2 my-2">
                 <Markdown>
                   {deck.description_md}
                 </Markdown>
               </div>
-            </div>
+            </details>
           </div>
 
           <div className="col-12 col-md-6">
-            <button className="btn btn-dark" data-bs-toggle="collapse" data-bs-target="#deck-json" aria-expanded="false" aria-controls="deck-json">
-              <IconForConcept concept="chevronDown" /> <IconForConcept concept='jsonFile' />
-            </button>
-            <div className="collapse" id="deck-json">
+            <details className="mc-details mc-details--button">
+              <summary className="btn btn-dark">
+                <IconForConcept concept="chevronDown" /> <IconForConcept concept='jsonFile' />
+              </summary>
               <div className="border border-light rounded p-2 my-2">
                 <pre>
                   {JSON.stringify(deck, null, 2)}
                 </pre>
               </div>
-            </div>
+            </details>
           </div>
         </div>
         {/*<div className="d-flex flex-wrap align-items-center gap-1 mt-4">

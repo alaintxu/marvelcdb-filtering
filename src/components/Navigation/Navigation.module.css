@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@reference "tailwindcss";
 
 .nav {
     @apply w-screen box-border bg-[#202020] p-0 border-b-4 border-[#EC1D24] flex justify-center overflow-x-hidden;

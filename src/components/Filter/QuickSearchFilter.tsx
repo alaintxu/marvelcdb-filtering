@@ -116,13 +116,18 @@ const QuickSearchFilter = () => {
             </label>
             <input
                 id="quick-search-input"
-                type="text"
+                type="search"
                 className="form-control search-input"
                 placeholder={t('quick_search')}
+                aria-label={t('quick_search')}
                 value={quickFilterValue}
                 onChange={handleChange}
             />
-            <button className="btn btn-outline-danger" onClick={resetValue} type="button">
+            <button
+                className="btn btn-outline-danger"
+                onClick={resetValue}
+                type="button"
+                aria-label={t('clear_quick_search')}>
                 <IconForConcept concept="erase" />
             </button>
         </div>

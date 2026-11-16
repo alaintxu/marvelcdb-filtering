@@ -116,6 +116,27 @@ const MainLayout = () => {
     };
   }, [dispatch, selectedNavigationOptionKey, isAnyCardClicked]);
 
+  // Escape closes the open panel
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      // A native modal handles Escape itself; don't close the panel behind it.
+      if (document.querySelector("dialog[open]")) return;
+      if (selectedNavigationOptionKey === "download_manager" || selectedNavigationOptionKey === "filters") {
+        dispatch(navigationOptionKeySet("card_list"));
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [dispatch, selectedNavigationOptionKey]);
+
+    const isDownloadManagerOpen = selectedNavigationOptionKey === "download_manager";
+  const isFiltersOpen = selectedNavigationOptionKey === "filters";
+
 
   // Other
   const mainClassNames = [
@@ -136,7 +157,7 @@ const MainLayout = () => {
         </div>
         }>
       <main id="main-section" className={mainClassNames.join(" ")}>
-          <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' />
+          <DownloadManager id="download-manager" className='download-manager-container p-3 bg-dark shadow' inert={!isDownloadManagerOpen} />
         {currentDeck ? (
             <DeckView deck={currentDeck} />
         ) : (
@@ -148,6 +169,7 @@ const MainLayout = () => {
           <CardFiltersView
             id="filters" 
             className="bg-dark shadow d-flex flex-column p-3 filter-container"
+            inert={!isFiltersOpen}
             selectedFilters={{}/*selectedFilters*/} 
             setSelectedFilters={() => console.warn("not implemented")/*setSelectedFilters*/}
             />

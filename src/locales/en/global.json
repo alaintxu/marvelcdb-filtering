@@ -73,5 +73,20 @@
     "nightmare": "Nightmare",
     "theme": "Theme"
   },
-  "number_of_cards": "Number of cards"
+  "number_of_cards": "Number of cards",
+  "navigation": "Navigation",
+  "bookmarked_decks": "Bookmarked decks",
+  "current_deck": "Current deck",
+  "pack_selection": "Select packs",
+  "card": {
+    "open_image": "Open image of '{{name}}' (new tab)",
+    "image_loading": "Loading image",
+    "image_reload": "Reload image",
+    "show_json": "Show raw data (JSON)",
+    "flip": "Flip card",
+    "text": "Card text",
+    "flavor": "Flavor text",
+    "base_threat": "Base threat",
+    "threat_per_player": "{{threat}} per player"
+  }
 }

@@ -92,29 +92,17 @@ const CardFiltersView = ({
       <HideDuplicatesFilter className="mb-4" />
 
       {/* Filters */}
-      <form className="accordion" id="filterAccordion">
+      <form id="filterAccordion">
         {/* Multiselect filters */}
-        <div className="accordion-item bg-dark">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#multiselectFilterCollapse" 
-              aria-expanded="false" 
-              aria-controls="multiselectFilterCollapse">
-              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <IconForConcept concept="multiselect" />
-                {multiselectFilterNumber+dottedFilterNumber > 0 && multiselectFilterNumber+dottedFilterNumber}
-              </span>
-              {t("multiselect_filters_title")} 
-            </button>
-          </h2>
-          <div 
-              id="multiselectFilterCollapse"
-              className="accordion-collapse collapse p-4" 
-              data-bs-parent="#filterAccordion">
-
+        <details className="mc-details" name="filter-accordion">
+          <summary>
+            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+              <IconForConcept concept="multiselect" />
+              {multiselectFilterNumber+dottedFilterNumber > 0 && multiselectFilterNumber+dottedFilterNumber}
+            </span>
+            {t("multiselect_filters_title")}
+          </summary>
+          <div className="p-4">
             {DOTTED_FILTERS.map((field_base) => {
               return (
                 <DottedMultiselectFilterRedux
@@ -133,30 +121,19 @@ const CardFiltersView = ({
                 />
               );
             })}
-            </div>
-        </div>
+          </div>
+        </details>
 
         {/* String filters */}
-        <div className="accordion-item bg-dark">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#accordionStringFilters" 
-              aria-expanded="false" 
-              aria-controls="accordionStringFilters">
-              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <IconForConcept concept="brackets" />
-                {stringFilterNumber > 0 && stringFilterNumber}
-              </span>
-              {t("contains_filters_title")}
-            </button>
-          </h2>
-          <div 
-              id="accordionStringFilters"
-              className="accordion-collapse collapse p-4" 
-              data-bs-parent="#filterAccordion">
+        <details className="mc-details" name="filter-accordion">
+          <summary>
+            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+              <IconForConcept concept="brackets" />
+              {stringFilterNumber > 0 && stringFilterNumber}
+            </span>
+            {t("contains_filters_title")}
+          </summary>
+          <div className="p-4">
             {STRING_FILTERS.map((fieldCode) => (
                 <StringFilterRedux
                     key={`contains_filter_${fieldCode}`}
@@ -165,29 +142,18 @@ const CardFiltersView = ({
                 />
             ))}
           </div>
-        </div>
+        </details>
 
         {/* Number filters */}
-        <div className="accordion-item bg-dark">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#accordionNumberFilters" 
-              aria-expanded="false" 
-              aria-controls="accordionNumberFilters">
-              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <IconForConcept concept="numbers" />
-                {numberFilterNumber > 0 && numberFilterNumber}
-              </span>
-              {t("number_filters_title")}
-            </button>
-          </h2>
-          <div 
-              id="accordionNumberFilters"
-              className="accordion-collapse collapse p-4" 
-              data-bs-parent="#filterAccordion">
+        <details className="mc-details" name="filter-accordion">
+          <summary>
+            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+              <IconForConcept concept="numbers" />
+              {numberFilterNumber > 0 && numberFilterNumber}
+            </span>
+            {t("number_filters_title")}
+          </summary>
+          <div className="p-4">
             <div className="two-column-grid">
               {NUMBER_FILTERS.map((fieldCode) => (
                   <NumberFilterRedux
@@ -198,39 +164,29 @@ const CardFiltersView = ({
               ))}
             </div>
           </div>
-        </div>
+        </details>
 
         {/* Boolean filters */}
-        <div className="accordion-item bg-dark">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed" 
-              type="button" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#accordionBooleanFilters" 
-              aria-expanded="false" 
-              aria-controls="accordionBooleanFilters">
-              <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
-                <IconForConcept concept="checkbox" />
-                {booleanFilterNumber > 0 && booleanFilterNumber}
-              </span>
-              {t("boolean_filters_title")}
-            </button>
-          </h2>
-          <div 
-              id="accordionBooleanFilters"
-              className="accordion-collapse collapse p-4" 
-              data-bs-parent="#filterAccordion">
-                <div className="two-column-grid">
-            {BOOLEAN_FILTERS.map((fieldCode) => (
-            <BooleanFilterRedux
-                key={`boolean_filter_${fieldCode}`}
-                control={control}
-                fieldCode={fieldCode as keyof MCCard}
-            />
-            ))}</div>
+        <details className="mc-details" name="filter-accordion">
+          <summary>
+            <span className="badge bg-dark d-inline-flex align-items-center gap-2 me-2">
+              <IconForConcept concept="checkbox" />
+              {booleanFilterNumber > 0 && booleanFilterNumber}
+            </span>
+            {t("boolean_filters_title")}
+          </summary>
+          <div className="p-4">
+            <div className="two-column-grid">
+              {BOOLEAN_FILTERS.map((fieldCode) => (
+                <BooleanFilterRedux
+                    key={`boolean_filter_${fieldCode}`}
+                    control={control}
+                    fieldCode={fieldCode as keyof MCCard}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        </details>
 
         {/* Reset button */}
         <button

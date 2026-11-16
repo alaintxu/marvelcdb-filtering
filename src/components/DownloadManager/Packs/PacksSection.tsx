@@ -32,7 +32,7 @@ const PacksSection = () => {
         </div>}
         <hr />
         <h3 className='fs-4 mb-4'>
-          <img style={{ filter: "invert(1)", height: "1em", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
+          <img width={192} height={192} style={{ filter: "invert(1)", height: "1em", width: "auto", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
           &nbsp;
           {t(`import_marvelcdb`)}
         </h3>
@@ -66,7 +66,7 @@ const PacksSection = () => {
             {arePacksLoading ?
               <LoadingSpinner /> :
               <div className='d-flex justify-content-center'>
-                <div className="btn-group-vertical mt-3" role="group" aria-label="Basic checkbox toggle button group">
+                <div className="btn-group-vertical mt-3" role="group" aria-label={t('pack_selection')}>
                   {packs?.map((pack) => <PackListItem key={pack.code} pack={pack} />)}
                 </div>
               </div>

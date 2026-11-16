@@ -24,6 +24,12 @@ const navigaitonIcons: IconDict = {
   filters: <IconForConcept concept="filter" />,
 };
 
+// Panels that the navigation toggles open; the values are the panel element ids.
+const navigaitonPanels: Partial<Record<NavigationOptionsKey, string>> = {
+  download_manager: "download-manager",
+  filters: "filters",
+};
+
 const Navigation = () => {
   const { t } = useTranslation('global');
   const dispatch = useAppDispatch();
@@ -50,13 +56,16 @@ const Navigation = () => {
 
   return (
     <nav id="main-navigation" className={styles.nav}>
-      <div className={styles.navGroup} role="group" aria-label="Navigation">
+      <div className={styles.navGroup} role="group" aria-label={t('navigation')}>
         {(Object.keys(navigaitonIcons) as NavigationOptionsKey[]).map((navigationOptionKey: NavigationOptionsKey) => {
           const additionalText = getAdditionalElement(navigationOptionKey);
           const isActive: boolean = navigationOptionKey === selectedNavigationOptionKey || navigationOptionKey === "card_list";
+          const panelId = navigaitonPanels[navigationOptionKey];
           return <button
             key={`navigation-${navigationOptionKey}`}
             type="button"
+            aria-controls={panelId}
+            aria-expanded={panelId ? navigationOptionKey === selectedNavigationOptionKey : undefined}
             className={`
               main-navigation-item
               ${styles.navItem}

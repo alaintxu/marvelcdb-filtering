@@ -40,6 +40,22 @@ export type MarvelDecksDict = {
     [deck_id: number]: MarvelDeck;
 }
 
+const convertHtmlImagesToMarkdown = (markdown: string): string => {
+    if (!markdown.includes("<img")) {
+        return markdown;
+    }
+    const document = new DOMParser().parseFromString(markdown, "text/html");
+    for (const image of Array.from(document.querySelectorAll("img"))) {
+        const src = image.getAttribute("src") ?? "";
+        if (src) {
+            image.replaceWith(document.createTextNode(`![](${src})`));
+        } else {
+            image.remove();
+        }
+    }
+    return document.body.innerHTML;
+};
+
 const convertDeckToMarvelDeck = (deck: Deck): MarvelDeck => {
     const base_path = i18n.t('base_path', {ns: 'global'});
 
@@ -57,9 +73,9 @@ const convertDeckToMarvelDeck = (deck: Deck): MarvelDeck => {
         ...rest, 
         hero_code: hero_code || investigator_code, 
         hero_name: hero_name || investigator_name,
-        description_md: description_md
-            .replace(/]\(\/card\/(\w+)\)/g, `](${base_path}/card/$1)`)
-            .replace(/<img.*?src=['"](.*?)['"].*?>/gs, '![]($1)'),
+        description_md: convertHtmlImagesToMarkdown(
+            description_md.replace(/]\(\/card\/(\w+)\)/g, `](${base_path}/card/$1)`)
+        ),
         aspect: aspect, 
         tags_str: deck.tags, 
         tags: deck.tags.split(', ')

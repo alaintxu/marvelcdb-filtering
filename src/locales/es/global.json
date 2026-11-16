@@ -72,5 +72,20 @@
     "nightmare": "Pesadilla",
     "theme": "Temático"
   },
-  "number_of_cards": "Número de cartas"
+  "number_of_cards": "Número de cartas",
+  "navigation": "Navegación",
+  "bookmarked_decks": "Mazos guardados",
+  "current_deck": "Mazo actual",
+  "pack_selection": "Seleccionar packs",
+  "card": {
+    "open_image": "Abre imagen de '{{name}}' (pestaña nueva)",
+    "image_loading": "Cargando imagen",
+    "image_reload": "Recargar imagen",
+    "show_json": "Mostrar datos en crudo (JSON)",
+    "flip": "Gira la carta",
+    "text": "Texto",
+    "flavor": "Texto de ambientación",
+    "base_threat": "Amenaza base",
+    "threat_per_player": "{{threat}} por jugador"
+  }
 }

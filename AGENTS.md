@@ -10,10 +10,11 @@ Product behavior and load-reduction rules are in [README.en.md](README.en.md). T
 
 ## Stack
 
-- React 19, TypeScript 5.9 (strict), Vite 7, Node 22 (CI uses `22.x`).
+- React 19, TypeScript 5.9 (strict), Vite 8, Node 22 (CI uses `22.x`; Vite 8 needs Node `^20.19` or `>=22.12`).
 - Redux Toolkit 2 with react-redux 9, i18next 25 with react-i18next 16, idb-keyval 6, `@draperez/react-components` 2.
-- Tailwind CSS 4 via `@tailwindcss/vite`. Bootstrap 5.3 and jQuery 3.7 load from CDN tags in [index.html](index.html), not from `package.json`.
-- Jest 30 with ts-jest 29 and jsdom. ESLint 9 flat config in [eslint.config.js](eslint.config.js). `babel-plugin-react-compiler` runs through Vite.
+- Tailwind CSS 4 via `@tailwindcss/vite`. Bootstrap 5.3 CSS loads from the CDN `<link>` in [index.html](index.html), not from `package.json`; Bootstrap JS and jQuery were removed, so no `data-bs-*` behavior is available.
+- Astryx (`@astryxdesign/core` 0.7.x with `@astryxdesign/theme-neutral` and `@stylexjs/stylex`) is the in-progress design system. Its CSS is imported in [App.css](src/App.css) and the app root is wrapped in `<Theme>`. Import Astryx components from their own entry, for example `@astryxdesign/core/Button`.
+- Jest 30 with ts-jest 29 and jsdom. ESLint 9 flat config in [eslint.config.js](eslint.config.js). React Compiler runs through `@vitejs/plugin-react`'s `compiler: true` option, which needs the `oxc-transform-react` dev dependency; there is no Babel pass in the Vite pipeline.
 
 ## Commands
 
@@ -30,8 +31,9 @@ npx vite build --outDir /tmp/marvelcdb-build --emptyOutDir   # production build 
 ```
 
 - `npm run build` writes to `marvelcdb-filtering/`, which is gitignored. Use the `--outDir` form above to check the build without touching that folder.
-- `npm run lint` already fails with about 5,300 problems. Don't fix unrelated lint errors. Lint only the files you change.
-- The [ESLint config](eslint.config.js) ignores only `dist`, `node_modules`, and `.eslintrc.cjs`. It doesn't exclude the gitignored `marvelcdb-filtering/` build folder or `.vscode/`.
+- `npm run lint` reports pre-existing problems (about 100) and therefore exits non-zero. Don't fix unrelated lint errors. Lint only the files you change.
+- The [ESLint config](eslint.config.js) ignores `dist`, `node_modules`, `.eslintrc.cjs`, the gitignored `marvelcdb-filtering/` build folder, `coverage/`, and `.vscode/`.
+- When an agent wants to test the app (e.g. using Playwright), use a different port (e.g. 5175) so it has no conflicts with the user (they may be testing on their own).
 
 ## Layout
 
@@ -54,14 +56,14 @@ Data and state:
 - Small state, such as selected packs, decks, and pagination, goes in localStorage through [LocalStorageHelpers.ts](src/LocalStorageHelpers.ts).
 
 Translations:
-- `en` is the fallback language (`fallbackLng` in [i18n.ts](src/i18n.ts)). Add new keys to `en`. `de`, `fr`, `it`, and `ko` only have the `global`, `modal`, and `multiselect_filter` namespaces.
+- `en` is the fallback language (`fallbackLng` in [i18n.ts](src/i18n.ts)). Only `en` and `es` have translated namespaces; `de`, `fr`, `it`, and `ko` fall back to `en`. [i18n.ts](src/i18n.ts) also mirrors the active language to `document.documentElement.lang`. Add new keys to `en`. `de`, `fr`, `it`, and `ko` only have the `global`, `modal`, and `multiselect_filter` namespaces.
 - `base_path` in `global.json` differs by language: `https://marvelcdb.com` for `en`, `https://<lang>.marvelcdb.com` for the others. Changing the language also changes the data source.
 - [Card.tsx](src/components/Card/SingleCard/Card.tsx) has hard-coded Spanish strings. It is a known exception. Don't copy that pattern.
 
 UI and styling:
-- Modals and collapses use Bootstrap `data-bs-*` attributes, handled by Bootstrap's JS rather than React state. Check [ToDo.md](ToDo.md) before adding more, since the panel model is an open decision.
-- Tailwind is imported per CSS Module with `@import "tailwindcss";`, as in [Navigation.module.css](src/components/Navigation/Navigation.module.css). Global styles go in [App.css](src/App.css).
-- `Card.tsx` already uses `dangerouslySetInnerHTML`. Don't add new uses without sanitizing the input.
+- Modals use the Astryx `Dialog` through [Modal.tsx](src/components/Modal/Modal.tsx) and are controlled with React state: pass `isOpen` and `onOpenChange`. Accordions and collapsibles are native `<details>`/`<summary>` (filters use `name="filter-accordion"` for exclusivity). The filter and download panels are closed by outside click or Escape, and the closed panel gets `inert`; keep that wiring when touching [MainLayout.tsx](src/components/MainLayout.tsx) or [Navigation.tsx](src/components/Navigation/Navigation.tsx). Collapses still use Bootstrap `data-bs-*` attributes, handled by Bootstrap's JS rather than React state. Check [ToDo.md](ToDo.md) before adding more, since the panel model is an open decision.
+- Tailwind is imported per CSS Module with `@import "tailwindcss";`, as in [Navigation.module.css](src/components/Navigation/Navigation.module.css). Global styles go in [App.css](src/App.css), which also declares the cascade layer order Tailwind and Astryx share. Keep that order: Astryx layers must come after Tailwind's, or Tailwind preflight overrides Astryx component styles.
+- Untrusted HTML (card text and flavor from the API) goes through [SanitizedHtml](src/components/SanitizedHtml/SanitizedHtml.tsx), which uses the Sanitizer API's `setHTML()` and lazy-loads DOMPurify when it is missing. Don't add `dangerouslySetInnerHTML` for API or user data.
 - Browser support is Baseline Widely Available. Features outside it need the fallbacks their Modern Web Guidance guides specify. Vite's default build target is `baseline-widely-available`, and [vite.config.ts](vite.config.ts) doesn't override it.
 - For UI, CSS, or client-side JS changes, search and retrieve Modern Web Guidance guides first, as described in [SKILL.md](.agents/skills/modern-web-guidance/SKILL.md). The skill is vendored and pinned in [skills-lock.json](skills-lock.json). Don't edit it.
 

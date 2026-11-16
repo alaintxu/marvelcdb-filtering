@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import CardImage, { getCardImage, ImageFace, ImageLoadState } from "./CardImage"
 import { Modal } from "../../Modal"
+import SanitizedHtml from "../../SanitizedHtml/SanitizedHtml";
 import { MCCard } from "../../../store/entities/cards";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +16,8 @@ type Props = {
   card: MCCard,
   showCardData?: boolean,
   flipAllCards?: boolean,
+  // When the parent renders a shared dialog, it takes over the JSON view.
+  onShowJson?: (card: MCCard) => void,
 }
 
 export const hasClassInAncestors = (element: HTMLElement | null, classToSearch: string = "mc-card"): boolean => {
@@ -51,9 +54,9 @@ const isCardHorizontal = (card: MCCard, flipped: boolean) => {
 }
 
 
-const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
+const Card = ({ card, showCardData = false, flipAllCards = false, onShowJson }: Props) => {
   const dispatch = useAppDispatch();
-  const { i18n } = useTranslation('global');
+  const { t, i18n } = useTranslation('global');
   const isClicked = useAppSelector(selectIsCardCodeClicked(card.code));
   const [manualFlipped, setManualFlipped] = useState<boolean | undefined>(undefined);
   const [imageStates, setImageStates] = useState<Record<ImageFace, ImageLoadState>>({
@@ -99,7 +102,7 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
     isClicked ? "mc-card--clicked" : "",
     isImageLoading ? "mc-card--loading" : "",
   ]
-  const modal_json_id = `modal-${card.code}-json`;
+  const [isJsonModalOpen, setIsJsonModalOpen] = useState(false);
   return (
     <>
       <div
@@ -125,7 +128,8 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
               <a className="btn btn-secondary shadowed"
                 href={getCardImage(card, flipped, i18n.language)}
                 target="_blank"
-                title={`Abre imagen de '${card.name}' (pestaña nueva)`}>
+                rel="noopener noreferrer"
+                title={t('card.open_image', { name: card.name })}>
                 <IconForConcept concept="image" />
               </a>
               <button
@@ -133,22 +137,21 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 type="button"
                 disabled={isVisibleImageLoading}
                 onClick={handleImageRetry}
-                title={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}
-                aria-label={isVisibleImageLoading ? "Cargando imagen" : "Recargar imagen"}>
+                title={isVisibleImageLoading ? t('card.image_loading') : t('card.image_reload')}
+                aria-label={isVisibleImageLoading ? t('card.image_loading') : t('card.image_reload')}>
                 <IconForConcept concept={isVisibleImageLoading ? "hourglass" : "reset"} />
               </button>
               <button
                 className={`btn btn-secondary shadowed`}
-                title="Mostrar datos en crudo (JSON)"
+                title={t('card.show_json')}
                 type="button"
-                data-bs-toggle="modal"
-                data-bs-target={`#${modal_json_id}`}>
+                onClick={() => onShowJson ? onShowJson(card) : setIsJsonModalOpen(true)}>
                 <IconForConcept concept="jsonFile" />
               </button>
               <button
                 className={`btn btn-${flipped ? "dark" : "light"} shadowed`}
                 onClick={() => setManualFlipped((prev) => prev === undefined ? !flipAllCards : !prev)}
-                title="Gira la carta">
+                title={t('card.flip')}>
                 <IconForConcept concept="cardFlip" />
               </button>
             </span>
@@ -165,25 +168,25 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
               </span>}
 
               {card.text &&
-                <div
+                <SanitizedHtml
                   className="mc-card__data__text shadowed"
-                  dangerouslySetInnerHTML={{ __html: card.text }}
+                  html={card.text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
-                  title="Texto">
-                </div>
+                  title={t('card.text')} />
               }
               {card.flavor &&
-                <i
+                <SanitizedHtml
+                  as="i"
                   className="border rounded bg-light text-dark p-1 mx-3 shadowed"
+                  html={card.flavor}
                   style={{ fontSize: "0.75em" }}
-                  dangerouslySetInnerHTML={{ __html: card.flavor }}
-                  title="Texto de ambientación"></i>
+                  title={t('card.flavor')} />
               }
 
               {card.base_threat !== undefined && card.base_threat > 0 &&
-                <span className="mc-card__threat shadowed" title="Amenaza base">
+                <span className="mc-card__threat shadowed" title={t('card.base_threat')}>
                   {card.base_threat}
-                  {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <IconForConcept concept="person" title={`${card.base_threat} por jugador`} />}
+                  {card.base_threat_fixed !== undefined && card.base_threat_fixed == false && <IconForConcept concept="person" title={t('card.threat_per_player', { threat: card.base_threat })} />}
                 </span>
               }
             </> : <>
@@ -196,37 +199,40 @@ const Card = ({ card, showCardData = false, flipAllCards = false }: Props) => {
                 )}
               </span>}
               {card.back_text &&
-                <div
+                <SanitizedHtml
                   className="mc-card__data__text shadowed"
-                  dangerouslySetInnerHTML={{ __html: card.back_text }}
+                  html={card.back_text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
-                  title="Texto">
-                </div>
+                  title={t('card.text')} />
               }
               {card.linked_card?.text &&
-                <div
+                <SanitizedHtml
                   className="mc-card__data__text shadowed"
-                  dangerouslySetInnerHTML={{ __html: card.linked_card.text }}
+                  html={card.linked_card.text}
                   style={{ fontSize: "0.9em", borderColor: String(card.meta?.colors?.[0]) || 'black' }}
-                  title="Texto">
-                </div>
+                  title={t('card.text')} />
               }
 
               {card.linked_card?.flavor &&
-                <i
+                <SanitizedHtml
+                  as="i"
                   className="border rounded bg-light text-dark p-1 mx-3 shadowed"
+                  html={card.linked_card.flavor}
                   style={{ fontSize: "0.75em" }}
-                  dangerouslySetInnerHTML={{ __html: card.linked_card.flavor }}
-                  title="Texto de ambientación"></i>
+                  title={t('card.flavor')} />
               }
             </>}
           </main>
         </div>
       </div>
 
-      <Modal title="JSON" modal_id={modal_json_id} key={`mc-card-modal-${card.code}`} >
+      {!onShowJson && <Modal
+        title="JSON"
+        isOpen={isJsonModalOpen}
+        onOpenChange={setIsJsonModalOpen}
+        key={`mc-card-modal-${card.code}`} >
         <pre><code>{JSON.stringify(card, undefined, 2)}</code></pre>
-      </Modal>
+      </Modal>}
     </>
   )
 }

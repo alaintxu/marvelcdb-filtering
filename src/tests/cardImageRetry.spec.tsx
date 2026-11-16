@@ -93,20 +93,20 @@ describe("card image retry action", () => {
     it("retries only the displayed face and shows loading and reload states", async () => {
         await renderCard();
 
-        const retryButton = container.querySelector<HTMLButtonElement>('button[aria-label="Cargando imagen"]');
+        const retryButton = container.querySelector<HTMLButtonElement>('button[aria-label="card.image_loading"]');
         const frontImage = container.querySelector<HTMLImageElement>(".front-image");
         expect(retryButton).not.toBeNull();
         expect(retryButton?.disabled).toBe(true);
         expect(frontImage).not.toBeNull();
 
         triggerImageEvent(frontImage!, "load");
-        const reloadButton = container.querySelector<HTMLButtonElement>('button[aria-label="Recargar imagen"]');
+        const reloadButton = container.querySelector<HTMLButtonElement>('button[aria-label="card.image_reload"]');
         expect(reloadButton?.disabled).toBe(false);
 
         act(() => {
-            container.querySelector<HTMLButtonElement>('button[title="Gira la carta"]')?.click();
+            container.querySelector<HTMLButtonElement>('button[title="card.flip"]')?.click();
         });
-        expect(container.querySelector<HTMLButtonElement>('button[aria-label="Cargando imagen"]')?.disabled).toBe(true);
+        expect(container.querySelector<HTMLButtonElement>('button[aria-label="card.image_loading"]')?.disabled).toBe(true);
 
         const backImage = container.querySelector<HTMLImageElement>(".back-image");
         expect(backImage).not.toBeNull();
@@ -115,12 +115,12 @@ describe("card image retry action", () => {
         const loadedBackImage = container.querySelector<HTMLImageElement>(".back-image");
         const loadedFrontImage = container.querySelector<HTMLImageElement>(".front-image");
         act(() => {
-            container.querySelector<HTMLButtonElement>('button[aria-label="Recargar imagen"]')?.click();
+            container.querySelector<HTMLButtonElement>('button[aria-label="card.image_reload"]')?.click();
         });
 
         expect(container.querySelector<HTMLImageElement>(".back-image")).not.toBe(loadedBackImage);
         expect(container.querySelector<HTMLImageElement>(".front-image")).toBe(loadedFrontImage);
-        expect(container.querySelector<HTMLButtonElement>('button[aria-label="Cargando imagen"]')?.disabled).toBe(true);
+        expect(container.querySelector<HTMLButtonElement>('button[aria-label="card.image_loading"]')?.disabled).toBe(true);
     });
 
     it("retries the active English fallback source after an error", async () => {
@@ -132,7 +132,7 @@ describe("card image retry action", () => {
         expect(frontImage?.src).toBe("https://marvelcdb.com/bundles/cards/01001a.png");
 
         triggerImageEvent(frontImage!, "error");
-        const retryButton = container.querySelector<HTMLButtonElement>('button[aria-label="Recargar imagen"]');
+        const retryButton = container.querySelector<HTMLButtonElement>('button[aria-label="card.image_reload"]');
         expect(retryButton?.disabled).toBe(false);
 
         act(() => retryButton?.click());
