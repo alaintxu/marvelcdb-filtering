@@ -8,6 +8,9 @@ import { MCCard, selectAllCards } from "../store/entities/cards";
 import { selectPackStatusByCode } from "../store/entities/packs";
 import { selectSelectedPackCodes } from "../store/ui/selectedPacks";
 import ImportExportSection from "../components/DownloadManager/ImportExport/ImportExportSection";
+import DeckImportExportSection from "../components/DownloadManager/ImportExport/DeckImportExportSection";
+import { selectDeckSlice } from "../store/entities/decks";
+import fetchMock from "jest-fetch-mock";
 
 enableMapSet();
 
@@ -54,6 +57,16 @@ const importFile = async (container: HTMLElement, content: string) => {
     const input = container.querySelector<HTMLInputElement>("#importFileInput")!;
     // jsdom's File does not implement text(), which the importer uses to read the file
     const file = { name: "cards.json", text: () => Promise.resolve(content) };
+    Object.defineProperty(input, "files", { value: [file], configurable: true });
+    await act(async () => {
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+};
+
+const importDeckIds = async (container: HTMLElement, content: string) => {
+    const input = container.querySelector<HTMLInputElement>("#importDeckIdsFileInput")!;
+    const file = { name: "decks.json", text: () => Promise.resolve(content) };
     Object.defineProperty(input, "files", { value: [file], configurable: true });
     await act(async () => {
         input.dispatchEvent(new Event("change", { bubbles: true }));
@@ -111,5 +124,73 @@ describe("ImportExportSection import", () => {
 
         expect(selectAllCards(store.getState())).toHaveLength(0);
         expect(container.querySelector("[data-variant='danger']")).not.toBeNull();
+    });
+});
+
+describe("DeckImportExportSection import", () => {
+    let container: HTMLDivElement;
+    let root: Root;
+    let store: AppStore;
+
+    const deckResponse = (id: number) => ({
+        id,
+        name: `Deck ${id}`,
+        slots: {},
+        hero_code: "01001a",
+        date_creation: "2020-01-01T00:00:00Z",
+        date_update: "2020-01-01T00:00:00Z",
+        description_md: "",
+        meta: '{"aspect":"aggression"}',
+        tags: "",
+        version: "1.0",
+        cards: [],
+        hero_name: "Hero",
+        investigator_name: "Hero",
+    });
+
+    const bookmarkedDeckIds = () => Object.keys(selectDeckSlice(store.getState()).decks).map(Number);
+
+    beforeEach(() => {
+        fetchMock.resetMocks();
+        fetchMock.enableMocks();
+        fetchMock.mockResponse((req) => {
+            const id = Number(req.url.split("/").pop());
+            return Promise.resolve(JSON.stringify(deckResponse(id)));
+        });
+        container = document.createElement("div");
+        document.body.appendChild(container);
+        store = createStore();
+        root = createRoot(container);
+        act(() => {
+            root.render(
+                <Provider store={store}>
+                    <DeckImportExportSection />
+                </Provider>
+            );
+        });
+    });
+
+    afterEach(() => {
+        act(() => root.unmount());
+        container.remove();
+    });
+
+    it("bookmarks only the deck IDs that are not already bookmarked", async () => {
+        await importDeckIds(container, "[100]");
+        fetchMock.mockClear();
+
+        await importDeckIds(container, "[100, 200, 200]");
+
+        expect(fetchMock.mock.calls.map(([url]) => String(url))).toEqual([expect.stringContaining("/decklist/200")]);
+        expect(bookmarkedDeckIds()).toEqual(expect.arrayContaining([100, 200]));
+        expect(container.querySelector("[data-variant='danger']")).toBeNull();
+    });
+
+    it("shows an error and bookmarks nothing when the file is not an array of IDs", async () => {
+        await importDeckIds(container, '["abc"]');
+
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(bookmarkedDeckIds()).toHaveLength(0);
+        expect(container.querySelector("[data-variant='danger']")?.textContent).toContain("expected a JSON array of deck IDs");
     });
 });

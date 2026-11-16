@@ -143,6 +143,16 @@ const slice = createSlice({
             state.deckError = "";
             return state;
         },
+        deckImported: (state, action: PayloadAction<Deck>) => {
+            const marvelDeck: MarvelDeck = convertDeckToMarvelDeck(action.payload);
+            state.decks[marvelDeck.id] = marvelDeck;
+            return state;
+        },
+        deckImportFailed: (state, action: PayloadAction<{ error: string, errorPayload: number }>) => {
+            const { error, errorPayload } = action.payload;
+            state.deckError = `Deck ${errorPayload}: ${error}`;
+            return state;
+        },
     }
 });
 
@@ -159,6 +169,8 @@ const {
     deckReceived,
     deckRequested,
     deckRequestFailed,
+    deckImported,
+    deckImportFailed,
 } = slice.actions;  // Do not export events
 
 /* Actions */
@@ -168,6 +180,14 @@ export const loadDeck = (deckId: number) => apiCallBegan({
     onError: deckRequestFailed.type,
     onStart: deckRequested.type,
 }); // No cache
+
+/* Fetches a deck and bookmarks it, without making it the current deck */
+export const importDeck = (deckId: number) => apiCallBegan({
+    url: `/decklist/${deckId}`,
+    onSuccess: deckImported.type,
+    onError: deckImportFailed.type,
+    onErrorPayload: deckId,
+});
 
 /* Selectors */
 export const selectDeckSlice = (rootState: RootState) => rootState.entities.decks;

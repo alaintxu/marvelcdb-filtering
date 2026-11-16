@@ -3,6 +3,9 @@ import CardGrid from "./CardGrid";
 import { useTranslation } from "react-i18next";
 import { Pagination } from "@astryxdesign/core/Pagination";
 import { MCCard, selectAllCards } from "../../store/entities/cards";
+import { selectIsAnyPackDownloading, selectPackLoadProgress } from "../../store/entities/packs";
+import LoadingSpinner from "../LoadingSpinner";
+import CardGridSkeleton from "./CardGridSkeleton";
 
 import { paginationCurrentPageUpdated, paginationTotalElementsUpdated, selectPagination } from "../../store/ui/pagination";
 import IconForConcept from "../IconForConcept";
@@ -31,6 +34,8 @@ const CardsView = () => {
   const quickFilter = useAppSelector(selectQuickFilter);
   const hideDuplicates = useAppSelector(selectHideDuplicates);
   const filters: FiltersByTypes = useAppSelector(selectFilters);
+  const isAnyPackDownloading = useAppSelector(selectIsAnyPackDownloading);
+  const packLoadProgress = useAppSelector(selectPackLoadProgress);
 
 
   //const filters = useAppSelector((state: RootState) => state.filters);
@@ -67,11 +72,21 @@ const CardsView = () => {
         {t('card_list')}
       </h1>
       <div {...stylex.props(ui.flexGrow, ui.p4)}>
-        <CardGrid
-          cards={paginatedCards} 
-          showAllCardData={showAllCardData} 
-          flipAllCards={flipAllCards}
-      />
+        {isAnyPackDownloading ? (
+          <>
+            <div {...stylex.props(ui.flex, ui.itemsCenter, ui.gap2, ui.mb3)}>
+              <LoadingSpinner small />
+              {t('loading_packs', { loaded: packLoadProgress.loaded, total: packLoadProgress.total })}
+            </div>
+            <CardGridSkeleton count={pagination.elementsPerPage} />
+          </>
+        ) : (
+          <CardGrid
+            cards={paginatedCards}
+            showAllCardData={showAllCardData}
+            flipAllCards={flipAllCards}
+          />
+        )}
       </div>
 
       <div id="pagination-container" {...stylex.props(ui.bgDark, ui.flex, ui.flexColumn, ui.justifyCenter, ui.itemsCenter, ui.mt3)}>

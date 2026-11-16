@@ -3,6 +3,7 @@ import * as stylex from '@stylexjs/stylex';
 import ResetAppButton from './ResetAppButton';
 import PacksSection from './Packs/PacksSection';
 import ImportExportSection from './ImportExport/ImportExportSection';
+import DeckImportExportSection from './ImportExport/DeckImportExportSection';
 import DeckSection from './Decks/DeckSection';
 import { ui } from '../../styles/ui';
 
@@ -16,6 +17,8 @@ const DownloadManager = ({...rest}: HTMLAttributes<HTMLDivElement>) => {
           <DeckSection />
           <hr {...stylex.props(ui.separator)} />
           <ImportExportSection />
+          <hr {...stylex.props(ui.separator)} />
+          <DeckImportExportSection />
           <hr {...stylex.props(ui.separator)} />
           <div {...stylex.props(ui.px3)}>
             <ResetAppButton />

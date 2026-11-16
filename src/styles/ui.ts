@@ -20,6 +20,11 @@ const spinnerRotation = stylex.keyframes({
     to: { transform: 'rotate(360deg)' },
 });
 
+const skeletonShimmer = stylex.keyframes({
+    from: { backgroundPosition: '200% 0' },
+    to: { backgroundPosition: '-200% 0' },
+});
+
 export const ui = stylex.create({
     /* Layout */
     flex: { display: 'flex' },
@@ -473,6 +478,22 @@ export const ui = stylex.create({
     spinnerOnLight: {
         borderColor: 'rgb(0 0 0 / 15%)',
         borderBlockStartColor: colors.brand,
+    },
+
+    /* Card placeholder shown while packs load */
+    skeletonCard: {
+        width: '100%',
+        aspectRatio: '5 / 7',
+        borderRadius: '1rem',
+        backgroundImage: 'linear-gradient(90deg, rgb(255 255 255 / 6%) 25%, rgb(255 255 255 / 14%) 50%, rgb(255 255 255 / 6%) 75%)',
+        backgroundSize: '200% 100%',
+        animationName: skeletonShimmer,
+        animationDuration: '1.5s',
+        animationTimingFunction: 'linear',
+        animationIterationCount: 'infinite',
+        '@media (prefers-reduced-motion: reduce)': {
+            animationName: 'none',
+        },
     },
 });
 

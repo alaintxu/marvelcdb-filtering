@@ -342,6 +342,18 @@ export const selectNumberOfDownloadedPacks = createSelector(
     (packState: PackSliceState) => Object.values(packState.packCardLoadByCode).filter((stateByCode) => stateByCode.status === "downloaded").length
 );
 
+/* Packs requested so far (downloading, downloaded or failed) and how many finished downloading */
+export const selectPackLoadProgress = createSelector(
+    selectPackState,
+    (packState: PackSliceState) => {
+        const statuses = Object.values(packState.packCardLoadByCode).map((stateByCode) => stateByCode.status);
+        return {
+            loaded: statuses.filter((status) => status === "downloaded").length,
+            total: statuses.length,
+        };
+    }
+);
+
 export type PackStatusTone = "neutral" | "success" | "danger" | "warning";
 
 export const selectPackStatusTone = createSelector(
