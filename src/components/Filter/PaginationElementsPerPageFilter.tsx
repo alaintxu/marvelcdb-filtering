@@ -7,6 +7,8 @@ import { paginationElementsPerPageUpdated, selectPaginationElementsPerPage } fro
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import IconForConcept, { IconType } from "../IconForConcept";
 import { ui } from "../../styles/ui";
+import { InputGroup, InputGroupText } from "@astryxdesign/core/InputGroup";
+import { NumberInput } from "@astryxdesign/core/NumberInput";
 
 
 type Props = {
@@ -29,30 +31,29 @@ const PaginationElementsPerPageFilter = ({title, iconType}: Props) => {
   if(!elementsPerPage) return <div>Loading...</div>;
 
   return (
-    <form {...stylex.props(ui.inputGroup, ui.mb4)}>
-      <label
-        {...stylex.props(ui.inputGroupText, ui.inputGroupTextDark)}
-        htmlFor="input-elements-per-page">
+    <form {...stylex.props(ui.mb4)}>
+      <InputGroup label={title} isLabelHidden>
+        <InputGroupText>
           {iconType ? React.createElement(iconType) : <IconForConcept concept="numbers" />} {title}
-      </label>
-      <Controller
-        control={control}
-        name="elementsPerPage"
-        render={({ field }) => (
-          <input
-            {...field}
-            type="number"
-            {...stylex.props(ui.formControl)}
-            id="input-elements-per-page"
-            min="1"
-            step="1"
-            value={field.value ?? elementsPerPage}
-            onChange = { async (e) => {
-              dispatch(paginationElementsPerPageUpdated(parseInt(e.target.value)));
-            }}
-          />
-        )}
-      />
+        </InputGroupText>
+        <Controller
+          control={control}
+          name="elementsPerPage"
+          render={({ field }) => (
+            <NumberInput
+              id="input-elements-per-page"
+              label={title}
+              isLabelHidden
+              min={1}
+              step={1}
+              value={field.value ?? elementsPerPage}
+              onChange={(value) => {
+                dispatch(paginationElementsPerPageUpdated(value));
+              }}
+            />
+          )}
+        />
+      </InputGroup>
     </form>
   )
 }

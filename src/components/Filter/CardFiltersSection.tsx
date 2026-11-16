@@ -156,7 +156,7 @@ const CardFiltersView = ({
             {t("number_filters_title")}
           </summary>
           <div {...stylex.props(ui.p4)}>
-            <div {...stylex.props(ui.twoColumnGrid)}>
+            <div {...stylex.props(ui.filterStack)}>
               {NUMBER_FILTERS.map((fieldCode) => (
                   <NumberFilterRedux
                       key={`number_filter_${fieldCode}`}
@@ -178,7 +178,7 @@ const CardFiltersView = ({
             {t("boolean_filters_title")}
           </summary>
           <div {...stylex.props(ui.p4)}>
-            <div {...stylex.props(ui.twoColumnGrid)}>
+            <div {...stylex.props(ui.filterStack)}>
               {BOOLEAN_FILTERS.map((fieldCode) => (
                 <BooleanFilterRedux
                     key={`boolean_filter_${fieldCode}`}

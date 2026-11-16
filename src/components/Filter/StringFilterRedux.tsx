@@ -10,6 +10,9 @@ import IconForConcept from "../IconForConcept";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import * as stylex from '@stylexjs/stylex';
 import { ui } from "../../styles/ui";
+import { InputGroup } from "@astryxdesign/core/InputGroup";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import { Button } from "@astryxdesign/core/Button";
 
 interface Props {
   control: Control<MCCard>;
@@ -22,41 +25,38 @@ const StringFilterRedux = ({ control, fieldCode }: Props) => {
   const { t } = useTranslation("filters");
 
   return (
-    <div key={`filter_${fieldCode}`} {...stylex.props(ui.fieldGroupInset)}>
+    <div key={`filter_${fieldCode}`} {...stylex.props(ui.fieldGroup)}>
       <label {...stylex.props(ui.fieldLabel)}>
         {t(fieldCode)}
       </label>
-      <br />
-      <div {...stylex.props(ui.buttonGroup, ui.wFull)} role="group" aria-label={t(fieldCode)}>
+      <div {...stylex.props(ui.wFull)}>
         <Controller
           name={fieldCode}
           control={control}
           defaultValue={storeValue}
           render={() => (
-            <div {...stylex.props(ui.inputGroup)}>
-              <input
-                {...stylex.props(ui.formControl)}
-                type="text"
+            <InputGroup label={t(fieldCode)} isLabelHidden>
+              <TextInput
                 id={`filter_${fieldCode}_text`}
+                type="text"
+                label={t(fieldCode)}
+                isLabelHidden
                 value={storeValue ?? ""}
-                onChange={(e) => {
-                  //field.onChange(e.target.value);
-                  const newValue = e.target.value === "" ? undefined : e.target.value;
+                onChange={(value) => {
+                  const newValue = value === "" ? undefined : value;
                   dispatch(filterUpdated({ filterType: "string", fieldCode: fieldCode, values: newValue }));
                 }}
               />
-              <button 
-                type="button" 
-                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
-
+              <Button
+                label={t('remove')}
+                isIconOnly
+                variant="destructive"
+                icon={<IconForConcept concept="erase" />}
                 onClick={() => {
-                    dispatch(filterUpdated({ filterType: "string", fieldCode: fieldCode, values: undefined }));
-                  }
-                } 
-                title={t('remove')}>
-                <IconForConcept concept="erase" />
-              </button>
-            </div>
+                  dispatch(filterUpdated({ filterType: "string", fieldCode: fieldCode, values: undefined }));
+                }}
+              />
+            </InputGroup>
           )}
         />
       </div>

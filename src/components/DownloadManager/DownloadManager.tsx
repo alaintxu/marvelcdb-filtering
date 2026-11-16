@@ -9,15 +9,17 @@ import { ui } from '../../styles/ui';
 const DownloadManager = ({...rest}: HTMLAttributes<HTMLDivElement>) => {
 
   return (
-      <section {...rest}>
-        <PacksSection />
-        <hr {...stylex.props(ui.separator)} />
-        <DeckSection />
-        <hr {...stylex.props(ui.separator)} />
-        <ImportExportSection />
-        <hr {...stylex.props(ui.separator)} />
-        <div {...stylex.props(ui.mb3, ui.px3)}>
-          <ResetAppButton />
+        <section {...rest}>
+        <div {...stylex.props(ui.flex, ui.flexColumn, ui.gap4)}>
+          <PacksSection />
+          <hr {...stylex.props(ui.separator)} />
+          <DeckSection />
+          <hr {...stylex.props(ui.separator)} />
+          <ImportExportSection />
+          <hr {...stylex.props(ui.separator)} />
+          <div {...stylex.props(ui.px3)}>
+            <ResetAppButton />
+          </div>
         </div>
       </section>
   )

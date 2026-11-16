@@ -11,6 +11,10 @@ import { NumberFilterOperator, NumberFilterState, filterUpdated, selectFilterVal
 import IconForConcept from "../IconForConcept";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import { ui } from "../../styles/ui";
+import { InputGroup } from "@astryxdesign/core/InputGroup";
+import { NumberInput } from "@astryxdesign/core/NumberInput";
+import { Button } from "@astryxdesign/core/Button";
+import { SegmentedControl, SegmentedControlItem } from "@astryxdesign/core/SegmentedControl";
 
 interface Props {
   control: Control<MCCard>;
@@ -24,9 +28,6 @@ const OPERATORS: { operator: NumberFilterOperator; concept: OperatorConcept; tit
   { operator: "=", concept: "equalTo", titleKey: "filter_equal_to" },
   { operator: ">", concept: "greaterThan", titleKey: "filter_greater_than" },
 ];
-
-const operatorId = (operator: NumberFilterOperator) =>
-  operator === "<" ? "lt" : operator === ">" ? "gt" : "eq";
 
 const NumberFilterRedux = ({ control, fieldCode }: Props) => {
   const dispatch = useAppDispatch();
@@ -46,53 +47,45 @@ const NumberFilterRedux = ({ control, fieldCode }: Props) => {
       <label {...stylex.props(ui.fieldLabel)}>
         {t(fieldCode)} {storeValue && <>{`(${storeValue.operator} ${storeValue.value})`}</>}
       </label>
-      <br />
       <Controller
         name={fieldCode}
         control={control}
         render={() => (
           <Fragment>
-            <div {...stylex.props(ui.inputGroup)}>
-              <input
-                type="number"
-                {...stylex.props(ui.formControl, ui.formControlNumber)}
-                id={`filter_${fieldCode}_text`}
-                value={storeValue?.value.toString() ?? ""}
+            <InputGroup label={t(fieldCode)} isLabelHidden>
+              <NumberInput
+                label={t(fieldCode)}
+                isLabelHidden
+                hasNumberSteppers
                 placeholder="-"
-                onChange={(e) => {
-                  const raw = e.target.value;
-                  updateFilter(raw === "" ? undefined : Number(raw), storeValue?.operator ?? "=");
-                }}
+                value={storeValue?.value ?? null}
+                onChange={(value) => updateFilter(value ?? undefined, storeValue?.operator ?? "=")}
               />
-              <button
-                type="button"
-                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
+              <Button
+                label={t('remove')}
+                isIconOnly
+                variant="destructive"
+                icon={<IconForConcept concept="erase" />}
                 onClick={() => updateFilter(undefined, storeValue?.operator ?? "=")}
-                title={t('remove')}>
-                <IconForConcept concept="erase" />
-              </button>
-            </div>
-            <div {...stylex.props(ui.flex, ui.justifyCenter, ui.mt1)}>
-              <div {...stylex.props(ui.buttonGroup)} role="group" aria-label={t(fieldCode)}>
+              />
+            </InputGroup>
+            <div {...stylex.props(ui.mt2)}>
+              <SegmentedControl
+                label={t(fieldCode)}
+                layout="fill"
+                value={storeValue?.operator ?? ""}
+                onChange={(operator) => updateFilter(storeValue?.value ?? 0, operator as NumberFilterOperator)}
+              >
                 {OPERATORS.map(({ operator, concept, titleKey }) => (
-                  <Fragment key={`filter_${fieldCode}_op_${operatorId(operator)}`}>
-                    <input
-                      type="radio"
-                      {...stylex.props(ui.radioInput)}
-                      id={`filter_${fieldCode}_op_${operatorId(operator)}`}
-                      checked={storeValue?.operator === operator}
-                      onChange={() => updateFilter(storeValue?.value ?? 0, operator)}
-                    />
-                    <label
-                      {...stylex.props(ui.optionButton, storeValue?.operator === operator && ui.optionButtonSelected)}
-                      htmlFor={`filter_${fieldCode}_op_${operatorId(operator)}`}
-                      title={t(titleKey)}
-                    >
-                      <IconForConcept concept={concept} />
-                    </label>
-                  </Fragment>
+                  <SegmentedControlItem
+                    key={operator}
+                    value={operator}
+                    label={t(titleKey)}
+                    isLabelHidden
+                    icon={<IconForConcept concept={concept} />}
+                  />
                 ))}
-              </div>
+              </SegmentedControl>
             </div>
           </Fragment>
         )}

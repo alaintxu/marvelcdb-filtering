@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import * as stylex from '@stylexjs/stylex'
 import IconForConcept from '../IconForConcept'
 import { ui } from '../../styles/ui'
+import { InputGroup, InputGroupText } from '@astryxdesign/core/InputGroup'
+import { Selector } from '@astryxdesign/core/Selector'
 
 type Props = {
   onLanguageUpdated?: (newLanguage: string) => void
@@ -19,34 +21,26 @@ const LanguageSelect = ({onLanguageUpdated}: Props) => {
     }
   }, [i18n.language]);
   return (
-    <div {...stylex.props(ui.inputGroup, ui.mb1)}>
-      <label {...stylex.props(ui.inputGroupText, ui.ms1)} htmlFor="langSelect">
-        <IconForConcept concept="translate" />
-        &nbsp;
-        {t('language')}
-      </label>
-      <select
-        {...stylex.props(ui.formControl)}
-        key="lang-select"
-        id="langSelect"
-        onChange={(event) => {
-          console.debug("Language select changed", event.target.value);
-          i18n.changeLanguage(event.target.value);
-          if (onLanguageUpdated) onLanguageUpdated(event.target.value);
-          }
-        }
-        value={i18n.language}
-      >
-        {I18N_LANGS.map((lang) => <option
-          key={`lang-select-option-${lang}`}
-          title={`lang-select-option-${lang}`}
-          value={lang}
-        >
-          {t('lang.' + lang)}
-        </option>
-        )}
-      </select>
-      </div>
+    <div {...stylex.props(ui.mb1)}>
+      <InputGroup label={t('language')} isLabelHidden>
+        <InputGroupText>
+          <IconForConcept concept="translate" />
+          &nbsp;
+          {t('language')}
+        </InputGroupText>
+        <Selector
+          label={t('language')}
+          isLabelHidden
+          options={I18N_LANGS.map((lang) => ({ value: lang, label: t('lang.' + lang) }))}
+          value={i18n.language}
+          onChange={(newLanguage) => {
+            console.debug("Language select changed", newLanguage);
+            i18n.changeLanguage(newLanguage);
+            if (onLanguageUpdated) onLanguageUpdated(newLanguage);
+          }}
+        />
+      </InputGroup>
+    </div>
   )
 }
 

@@ -109,7 +109,6 @@ const styles = stylex.create({
         display: 'inline',
         verticalAlign: 'middle',
         marginInlineEnd: '0.25rem',
-        marginBlockEnd: '0.25rem',
     },
     titled: { display: 'inline-flex', alignItems: 'center' },
 });
@@ -121,7 +120,7 @@ const IconForConcept = ({ concept, title, xstyle, ...rest }: Props) => {
             icon={conceptIcons[concept]}
             label={title}
             size="sm"
-            xstyle={[styles.icon, xstyle]}
+            xstyle={title ? xstyle : [styles.icon, xstyle]}
             {...rest}
         />
     );

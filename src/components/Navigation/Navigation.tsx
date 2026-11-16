@@ -19,6 +19,7 @@ const styles = stylex.create({
   nav: {
     width: '100%',
     boxSizing: 'border-box',
+    overflow: 'hidden',
     backgroundColor: colors.ink,
     borderBlockEndStyle: 'solid',
     borderBlockEndWidth: 4,
@@ -27,6 +28,7 @@ const styles = stylex.create({
   },
   navGroup: {
     display: 'flex',
+    boxSizing: 'border-box',
     width: '100%',
     justifyContent: 'center',
     gap: '0.25rem',
@@ -34,6 +36,7 @@ const styles = stylex.create({
   navItem: {
     position: 'relative',
     flex: 1,
+    minWidth: 0,
     margin: 0,
     padding: '0.5rem',
     borderStyle: 'none',
@@ -44,7 +47,6 @@ const styles = stylex.create({
     fontFamily: fonts.display,
     fontSize: '0.75rem',
     letterSpacing: '0.5px',
-    textTransform: 'uppercase',
     transitionProperty: 'background-color, color',
     transitionDuration: '200ms',
     transitionTimingFunction: 'ease-in-out',

@@ -1,5 +1,4 @@
-import {
-  Controller,
+import { Controller,
   Control,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -10,6 +9,7 @@ import { filterUpdated, selectFilterValues } from "../../store/ui/filters";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import IconForConcept from "../IconForConcept";
 import { ui } from "../../styles/ui";
+import { SegmentedControl, SegmentedControlItem } from "@astryxdesign/core/SegmentedControl";
 
 interface Props {
   control: Control<MCCard>;
@@ -58,47 +58,33 @@ const BooleanFilterRedux = ({ control, fieldCode }: Props) => {
   ];
 
   return (
-    <div key={`filter_${fieldCode}`}>
+    <div key={`filter_${fieldCode}`} {...stylex.props(ui.fieldGroup)}>
       <label {...stylex.props(ui.fieldLabel)}>
         {t(fieldCode)}
-        <IconForConcept
-          concept={storeValue === undefined ? "checkboxIndeterminate" : storeValue ? "checkbox" : "checkboxOutline"}
-          xstyle={[ui.mb1, ui.ms2]}
-        />
       </label>
-      <br />
-      <div {...stylex.props(ui.buttonGroup)} role="group" aria-label={t(fieldCode)}>
-        <Controller
-          name={fieldCode}
-          control={control}
-          defaultValue={storeValue}
-          render={() => (
-            <>
-              {choices.map((choice) => (
-                <span key={choice.id} {...stylex.props(ui.inlineFlex)}>
-                  <input
-                    type="radio"
-                    {...stylex.props(ui.radioInput)}
-                    id={choice.id}
-                    value={choice.value}
-                    checked={choice.checked}
-                    onChange={(e) => {
-                      if (e.target.checked) choice.onSelect();
-                    }}
-                  />
-                  <label
-                    {...stylex.props(ui.optionButton, choice.checked && ui.optionButtonSelected)}
-                    htmlFor={choice.id}
-                    title={t(choice.titleKey)}
-                  >
-                    <IconForConcept concept={choice.concept} />
-                  </label>
-                </span>
-              ))}
-            </>
-          )}
-        />
-      </div>
+      <Controller
+        name={fieldCode}
+        control={control}
+        defaultValue={storeValue}
+        render={() => (
+          <SegmentedControl
+            label={t(fieldCode)}
+            layout="fill"
+            value={choices.find((choice) => choice.checked)?.value ?? "disabled"}
+            onChange={(value) => choices.find((choice) => choice.value === value)?.onSelect()}
+          >
+            {choices.map((choice) => (
+              <SegmentedControlItem
+                key={choice.id}
+                value={choice.value}
+                label={t(choice.titleKey)}
+                isLabelHidden
+                icon={<IconForConcept concept={choice.concept} />}
+              />
+            ))}
+          </SegmentedControl>
+        )}
+      />
     </div>
   );
 };

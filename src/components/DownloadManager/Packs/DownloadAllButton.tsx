@@ -15,7 +15,7 @@ const DownloadAllButton = () => {
     return (
         <>
             <Button
-                variant="destructive"
+                variant="primary"
                 label={t('download_all')}
                 icon={<IconForConcept concept="downloadSimple" />}
                 onClick={() => setIsModalOpen(true)} />

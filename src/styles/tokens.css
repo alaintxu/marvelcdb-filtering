@@ -33,8 +33,9 @@
     --mc-danger-soft: #FBE3E1;
     --mc-info-soft: #DCF0F6;
 
-    --mc-font-display: Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Narrow", sans-serif;
-    --mc-font-body: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mc-font-display: "Oswald", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    --mc-font-body: Inter, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mc-font-flavor: "Shantell Sans", Inter, system-ui, sans-serif;
     --mc-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     --mc-radius-sm: 0.25rem;

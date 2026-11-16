@@ -82,7 +82,6 @@ export const ui = stylex.create({
         fontFamily: fonts.display,
         fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
         letterSpacing: '1px',
-        textTransform: 'uppercase',
         color: colors.textInverse,
         margin: 0,
         paddingBlock: '0.5rem',
@@ -90,7 +89,6 @@ export const ui = stylex.create({
     },
     sectionTitle: {
         fontFamily: fonts.display,
-        textTransform: 'uppercase',
         letterSpacing: '0.5px',
         color: colors.textInverse,
         marginBlock: '0.5rem',
@@ -115,7 +113,7 @@ export const ui = stylex.create({
         borderWidth: 0,
         borderBlockStartWidth: 1,
         borderColor: colors.border,
-        marginBlock: '1rem',
+        marginBlock: 0,
     },
     visuallyHidden: {
         position: 'absolute',
@@ -160,7 +158,6 @@ export const ui = stylex.create({
         color: colors.textInverse,
         fontFamily: fonts.display,
         letterSpacing: '0.5px',
-        textTransform: 'uppercase',
         ':hover': { backgroundColor: colors.brandStrong, borderColor: colors.brandStrong },
         ':active': { backgroundColor: colors.brandDeep, borderColor: colors.brandDeep },
     },
@@ -312,29 +309,6 @@ export const ui = stylex.create({
         borderColor: colors.borderStrong,
         color: colors.textInverse,
     },
-    formControlNumber: { maxWidth: '8ch', textAlign: 'center' },
-    inputGroup: { display: 'flex', width: '100%', alignItems: 'stretch' },
-    inputGroupText: {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.25rem',
-        paddingBlock: '0.375rem',
-        paddingInline: '0.75rem',
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        backgroundColor: colors.paperMuted,
-        color: colors.text,
-        fontSize: '0.9rem',
-        whiteSpace: 'nowrap',
-    },
-    inputGroupTextDark: {
-        backgroundColor: colors.ink,
-        borderColor: colors.borderStrong,
-        color: colors.textInverse,
-    },
-
     /* Cards and lists */
     card: {
         backgroundColor: colors.paper,
@@ -359,7 +333,6 @@ export const ui = stylex.create({
         color: colors.text,
         fontSize: '1.25rem',
         letterSpacing: '0.5px',
-        textTransform: 'uppercase',
         marginBlock: 0,
         marginBlockEnd: '1rem',
     },
@@ -406,20 +379,19 @@ export const ui = stylex.create({
     aspectProtection: { backgroundColor: colors.success, color: colors.textInverse },
     aspectPool: { backgroundColor: colors.brand, color: colors.textInverse },
 
-    twoColumnGrid: {
+    filterStack: {
         display: 'grid',
-        gridTemplateColumns: 'auto auto',
-        gap: '0.5em',
+        gridTemplateColumns: 'minmax(0, 1fr)',
     },
 
     /* Filter fields */
     fieldGroup: { marginBlockEnd: '1rem' },
-    fieldGroupInset: { marginBlockEnd: '1rem', paddingInline: '2rem' },
     fieldLabel: {
         display: 'block',
         fontSize: '0.75rem',
         fontWeight: 700,
-        lineHeight: 2,
+        lineHeight: 1.4,
+        marginBlockEnd: '0.25rem',
         color: colors.textInverse,
     },
     radioInput: {
@@ -474,7 +446,6 @@ export const ui = stylex.create({
         fontFamily: fonts.display,
         fontSize: '1.5rem',
         letterSpacing: '0.5px',
-        textTransform: 'uppercase',
         textAlign: 'center',
         marginBlock: '1.5rem',
         display: 'flex',

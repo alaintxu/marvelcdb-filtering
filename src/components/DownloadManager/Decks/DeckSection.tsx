@@ -7,6 +7,10 @@ import LoadingSpinner from "../../LoadingSpinner";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useStore";
 import * as stylex from '@stylexjs/stylex';
 import { ui } from "../../../styles/ui";
+import { useState } from "react";
+import { InputGroup, InputGroupText } from "@astryxdesign/core/InputGroup";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import { Button } from "@astryxdesign/core/Button";
 
 const NUMBER_REGEX = /^\d{5}$/;
 const URL_REGEX = /^https?:\/\/(?:[a-z]{2}\.)?marvelcdb\.com\/decklist\/view\/(\d+)\/?.*$/;
@@ -39,6 +43,7 @@ const DeckSection = () => {
     const { t } = useTranslation("decks");
     const dispatch = useAppDispatch();
     const deckDownloading = useAppSelector(selectIsDeckLoading);
+    const [deckInput, setDeckInput] = useState("");
     const deckDownloadError = useAppSelector(selectDeckError);
     const currentDeck = useAppSelector(selectCurrentDeck);
     const isCurrentDeckInList = useAppSelector(selectIsCurrentInList);
@@ -53,42 +58,47 @@ const DeckSection = () => {
     }
 
   return (
-    <section id="deck-section">
-        <h2>
+    <section id="deck-section" {...stylex.props(ui.flex, ui.flexColumn, ui.gap3)}>
+        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.flex, ui.itemsCenter)}>
             <IconForConcept concept="deck" xstyle={ui.me2} /> 
             {t('decks')}
-        </h2>
-        <div {...stylex.props(ui.alert, ui.alertInfo)} data-alert="true">
-            {t('find_decks')} <a href={`${globalT('base_path')}/decklists`} target="_blank" rel="noreferrer">MarvelCDB</a>
+        </h3>
+        <div {...stylex.props(ui.px3)}>
+            <div {...stylex.props(ui.alert, ui.alertInfo)} data-alert="true">
+                {t('find_decks')} <a href={`${globalT('base_path')}/decklists`} target="_blank" rel="noreferrer">MarvelCDB</a>
+            </div>
         </div>
         <div {...stylex.props(ui.px3)}>
-            <form {...stylex.props(ui.inputGroup)}
-                onSubmit={(e) => {
+            <form onSubmit={(e) => {
                     e.preventDefault();
-                    callApiForDeck(e.currentTarget["deck-id-or-url"].value);
+                    callApiForDeck(deckInput);
                 }
             }>
-                <input
-                    type="text"
-                    {...stylex.props(ui.formControl)}
-                    placeholder={t('deck_id_or_url')} 
-                    name="deck-id-or-url"
-                    pattern={`(${NUMBER_REGEX.source})|(${URL_REGEX.source})`}
-                    onChange={(e) => {callApiForDeck(e.currentTarget.value)}}
-                />
-                {deckDownloading && (
-                    <span {...stylex.props(ui.inputGroupText)}>
-                        <LoadingSpinner />
-                    </span>
-                )}
-                {deckDownloadError && (
-                <span {...stylex.props(ui.inputGroupText, ui.textDanger)}>
-                    <IconForConcept concept="error" title={deckDownloadError} />
-                    </span>
-                )}
-                <button type="submit" {...stylex.props(ui.button, ui.buttonBrand)}>
-                    <IconForConcept concept="sendDownloadFill" title={t('download_deck')} />
-                </button>
+                <InputGroup label={t('deck_id_or_url')} isLabelHidden>
+                    <TextInput
+                        label={t('deck_id_or_url')}
+                        isLabelHidden
+                        placeholder={t('deck_id_or_url')}
+                        value={deckInput}
+                        onChange={(value) => {
+                            setDeckInput(value);
+                            callApiForDeck(value);
+                        }}
+                    />
+                    {deckDownloading && (
+                        <InputGroupText>
+                            <LoadingSpinner />
+                        </InputGroupText>
+                    )}
+                    {deckDownloadError && (
+                        <InputGroupText>
+                            <span {...stylex.props(ui.textDanger)}>
+                                <IconForConcept concept="error" title={deckDownloadError} />
+                            </span>
+                        </InputGroupText>
+                    )}
+                    <Button type="submit" variant="primary" label={t('download_deck')} isIconOnly icon={<IconForConcept concept="sendDownloadFill" />} />
+                </InputGroup>
             </form>
             {currentDeck && !isCurrentDeckInList && (
             <div {...stylex.props(ui.flex, ui.justifyCenter)}>

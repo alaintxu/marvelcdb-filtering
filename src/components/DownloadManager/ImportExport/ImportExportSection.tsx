@@ -56,12 +56,12 @@ const ImportExportSection = () => {
     }
   }
   return (
-    <section {...stylex.props(ui.flex, ui.flexColumn, ui.mt1, ui.gap1)}>
-        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.mb4, ui.flex, ui.itemsCenter)}>
+    <section {...stylex.props(ui.flex, ui.flexColumn, ui.gap3)}>
+        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.flex, ui.itemsCenter)}>
           <IconForConcept concept="jsonFile" xstyle={ui.me2} />
           {t(`import_export`)}
         </h3>
-        <div {...stylex.props(ui.mb3, ui.px3)}>
+        <div {...stylex.props(ui.px3)}>
         <label htmlFor="importFileInput" {...stylex.props(ui.formLabel)}>
             <IconForConcept concept="import" xstyle={ui.me1}/>
             &nbsp;
@@ -69,7 +69,6 @@ const ImportExportSection = () => {
         </label>
         <input {...stylex.props(ui.formControl, ui.formControlDark)} type="file" id="importFileInput" onChange={importFromJSONFile} />
         </div>
-        <hr {...stylex.props(ui.separator)}/>
         <div {...stylex.props(ui.px3)}>
         <button type="button" {...stylex.props(ui.button, ui.buttonSecondary)} onClick={exportToJSONFile}>
             <IconForConcept concept="export" />

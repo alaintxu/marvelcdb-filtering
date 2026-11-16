@@ -15,12 +15,21 @@
     box-sizing: border-box;
 }
 
-/* Standard scrollbar properties; the thumb reaches 3:1 against the track. */
+body {
+    font-family: var(--mc-font-body);
+}
+
+.mc-card__flavor {
+    font-family: var(--mc-font-flavor);
+}
+
+/* Standard scrollbar properties, using the dark theme tokens. */
+html,
 #main-section>*,
 #download-manager,
 #filters {
     scrollbar-width: thin;
-    scrollbar-color: #6E6E6E #F2F2F2;
+    scrollbar-color: var(--mc-border-strong) var(--mc-ink);
 }
 
 /* Fallback for browsers without the standard properties. */
@@ -30,18 +39,16 @@
     }
 
     ::-webkit-scrollbar-track {
-        background: #F2F2F2;
-        border-radius: 1000rem;
+        background: var(--mc-ink);
     }
 
     ::-webkit-scrollbar-thumb {
-        background: #6E6E6E;
+        background: var(--mc-border-strong);
         border-radius: 1000rem;
-        margin: 1px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #4A4A4A;
+        background: var(--mc-text-muted);
     }
 }
 
@@ -69,7 +76,7 @@ img {
     justify-content: center;
     align-items: center;
     gap: 1em;
-    font-size: 0.8em;
+    font-size: 0.95em;
 
     @media (width >=768px) {
         --min-width: 325px;
@@ -78,7 +85,7 @@ img {
 
     @media (width >=1200px) {
         --min-width: 419px;
-        font-size: 1em;
+        font-size: 1.1em;
     }
 }
 
@@ -94,13 +101,14 @@ img {
 
     width: 100%;
     max-width: calc(750% / 10.39);
-    aspect-ratio: 750/1039;
+    /* Standard card size: 2.5" x 3.5" */
+    aspect-ratio: 5/7;
     contain: content;
 
     /* Card horizontal modifier */
     &.mc-card--horizontal {
         max-width: 100%;
-        aspect-ratio: 1039/750;
+        aspect-ratio: 7/5;
     }
 
     &>* {
@@ -138,6 +146,7 @@ img {
 
     /* Card image element */
     .mc-card__image,
+    .lazy-load-image-background,
     .lazy-load-image-loaded {
         position: absolute;
         top: 0;
@@ -253,6 +262,7 @@ img {
     transform: translateX(100%) scale3d(0, 1, 1);
 }
 #quick-search-filter {
+    width: min(60ch, 100%);
     max-width: 60ch;
 
     /* The custom clear button replaces the native search one. */
@@ -265,7 +275,8 @@ img {
 #main-section {
     height: 100%;
     position: relative;
-    overflow-y: hidden;
+    /* Panels sit off-screen while closed; clip them instead of letting them scroll the page sideways. */
+    overflow: hidden;
 }
 
 #main-section > * {
@@ -372,6 +383,27 @@ img {
         outline: 2px solid var(--mc-brand);
         outline-offset: -2px;
     }
+}
+
+/* Astryx's group edge radii are not applied to every member (text inputs, selectors), so the outer corners are set here. Astryx's StyleX rules have ID-level specificity, hence !important. */
+.astryx-input-group>[data-astryx-input-group-item]:first-child {
+    border-start-start-radius: var(--radius-element) !important;
+    border-end-start-radius: var(--radius-element) !important;
+}
+
+.astryx-input-group>[data-astryx-input-group-item]:nth-last-child(1 of :not([popover]):not(template):not(dialog)) {
+    border-start-end-radius: var(--radius-element) !important;
+    border-end-end-radius: var(--radius-element) !important;
+}
+
+.astryx-button-group>[data-astryx-pressable]:first-child {
+    border-start-start-radius: var(--radius-element) !important;
+    border-end-start-radius: var(--radius-element) !important;
+}
+
+.astryx-button-group>[data-astryx-pressable]:nth-last-child(1 of :not([popover]):not(template):not(dialog)) {
+    border-start-end-radius: var(--radius-element) !important;
+    border-end-end-radius: var(--radius-element) !important;
 }
 
 /* Deck details reuse the button look for their summary. */

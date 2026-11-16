@@ -12,6 +12,17 @@ export default defineConfig({
   ],
   base: '/marvelcdb-filtering',
   build: {
-    outDir: 'marvelcdb-filtering'
+    outDir: 'marvelcdb-filtering',
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            { name: 'astryx', test: /node_modules[\\/]@astryxdesign[\\/]/, tags: ['$initial'], maxSize: 480 * 1024 },
+            { name: 'react-vendor', test: /node_modules[\\/](react|react-dom|scheduler|react-redux|redux|@reduxjs|react-i18next|i18next)[\\/]/, tags: ['$initial'] },
+            { name: 'vendor', test: /node_modules[\\/]/, tags: ['$initial'] },
+          ],
+        },
+      },
+    },
   }
 })

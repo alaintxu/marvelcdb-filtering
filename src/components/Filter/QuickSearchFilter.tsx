@@ -8,6 +8,9 @@ import { normalizeString } from "../../store/entities/cardsFilterUtils";
 import { useAppDispatch, useAppSelector } from "../../hooks/useStore";
 import * as stylex from '@stylexjs/stylex';
 import { ui } from "../../styles/ui";
+import { InputGroup } from "@astryxdesign/core/InputGroup";
+import { TextInput } from "@astryxdesign/core/TextInput";
+import { Button } from "@astryxdesign/core/Button";
 
 
 /*
@@ -100,8 +103,7 @@ const QuickSearchFilter = () => {
         }, 500);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value;
+    const handleChange = (inputValue: string) => {
         setQuickFilterValue(inputValue);
         delayedDispatch(inputValue);
     };
@@ -112,26 +114,27 @@ const QuickSearchFilter = () => {
     };
 
     return (
-        <div {...stylex.props(ui.inputGroup, ui.mx2)} id="quick-search-filter">
-            <label htmlFor="quick-search-input" {...stylex.props(ui.inputGroupText)}>
-                <IconForConcept concept="search" />
-            </label>
-            <input
-                id="quick-search-input"
-                type="search"
-                {...stylex.props(ui.formControl)}
-                placeholder={t('quick_search')}
-                aria-label={t('quick_search')}
-                value={quickFilterValue}
-                onChange={handleChange}
-            />
-            <button
-                {...stylex.props(ui.button, ui.buttonOutlineDanger)}
-                onClick={resetValue}
-                type="button"
-                aria-label={t('clear_quick_search')}>
-                <IconForConcept concept="erase" />
-            </button>
+        <div {...stylex.props(ui.mx2)} id="quick-search-filter">
+            <InputGroup label={t('quick_search')} isLabelHidden size="lg">
+                <TextInput
+                    id="quick-search-input"
+                    type="search"
+                    label={t('quick_search')}
+                    aria-label={t('quick_search')}
+                    isLabelHidden
+                    startIcon={<IconForConcept concept="search" />}
+                    placeholder={t('quick_search')}
+                    value={quickFilterValue}
+                    onChange={handleChange}
+                />
+                <Button
+                    label={t('clear_quick_search')}
+                    isIconOnly
+                    variant="destructive"
+                    icon={<IconForConcept concept="erase" />}
+                    onClick={resetValue}
+                />
+            </InputGroup>
         </div>
     )
 }

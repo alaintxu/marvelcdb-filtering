@@ -7,6 +7,7 @@ import LanguageSelect from '../LanguageSelect';
 import PacksData from '../Packs/PacksData';
 import RemoveAllButton from '../Packs/RemoveAllButton';
 import DownloadAllButton from '../Packs/DownloadAllButton';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import PackStatusCountBadge from './PackStatusCountBadge';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useStore';
 import IconForConcept from '../../IconForConcept';
@@ -25,15 +26,14 @@ const PacksSection = () => {
     const isAnyPackDownloading = useAppSelector(selectIsAnyPackDownloading);
 
   return (
-    <section id="pack-section">
+    <section id="pack-section" {...stylex.props(ui.flex, ui.flexColumn, ui.gap3)}>
         <PacksData />
         {packsError && <div {...stylex.props(ui.alert, ui.alertDanger, ui.textCenter)} data-alert="true" role="alert">
           <IconForConcept concept="warning" />
           &nbsp;
           {packsError}
         </div>}
-        <hr />
-        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.mb4, ui.flex, ui.itemsCenter)}>
+        <h3 {...stylex.props(ui.sectionTitle, ui.fs4, ui.flex, ui.itemsCenter)}>
           <img width={192} height={192} style={{ filter: "invert(1)", height: "1em", width: "auto", display: "inline", verticalAlign: "center" }} alt='MarvelCDB logo' src='https://marvelcdb.com/icon-192.png' />
           &nbsp;
           {t(`import_marvelcdb`)}
@@ -47,11 +47,13 @@ const PacksSection = () => {
             {t('language-redownload')}
           </div>
         </div>
-        <div {...stylex.props(ui.flex, ui.justifyCenter, ui.px3, ui.mb3)}>
-          <DownloadAllButton />
-          <RemoveAllButton />
+        <div {...stylex.props(ui.flex, ui.justifyCenter, ui.px3)}>
+          <ButtonGroup label={t('import_marvelcdb')}>
+            <DownloadAllButton />
+            <RemoveAllButton />
+          </ButtonGroup>
         </div>
-        <div id="packListAccordion" {...stylex.props(ui.px3, ui.mb3)}>
+        <div id="packListAccordion" {...stylex.props(ui.px3)}>
           <button
             type='button'
             {...stylex.props(ui.button, ui.buttonSecondary)}

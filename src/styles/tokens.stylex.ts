@@ -34,6 +34,7 @@ export const colors = stylex.defineVars({
 export const fonts = stylex.defineVars({
     display: 'var(--mc-font-display)',
     body: 'var(--mc-font-body)',
+    flavor: 'var(--mc-font-flavor)',
     mono: 'var(--mc-font-mono)',
 });
 
